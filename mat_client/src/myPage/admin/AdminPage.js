@@ -1,7 +1,7 @@
 import React from 'react';
 import LevelupList from './LevelupList';
 
-const AdminUser = () => {
+const AdminPage = () => {
     return (
         <div>
             <h1>관리자 페이지</h1>
@@ -10,4 +10,4 @@ const AdminUser = () => {
     );
 };
 
-export default AdminUser;
+export default AdminPage;
