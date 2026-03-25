@@ -1,15 +1,15 @@
 import React from 'react';
-import AdminUser from './admin/AdminUser';
-import CityUser from './cityuser/CityUser';
+import AdminPage from './admin/AdminPage';
+import CityPage from './cityuser/CityPage';
 
 
 const MyPage = () => {
     return (
         <div>
             
-            <CityUser/>
+            <CityPage/>
             <hr/>
-            <AdminUser/>
+            <AdminPage/>
         </div> 
     );
 };
