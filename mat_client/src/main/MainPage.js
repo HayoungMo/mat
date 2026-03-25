@@ -28,6 +28,7 @@ function MainPage() {
         <p style={{ color: 'blue', fontSize: '20px', fontWeight: 'bold' }}>
           {serverData}
         </p>
+        ㅎㅇㅎㅇㅎ
       </div>
     </div>
   );

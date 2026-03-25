@@ -9,6 +9,7 @@ const ArticleSchema = mongoose.Schema({
   region:           { type: String, required: true },
   matName:          { type: String },
   matTel:           { type: String },
+
   images: [
     {
       saveFileName:     { type: String, required: true },
