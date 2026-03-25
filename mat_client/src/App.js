@@ -1,10 +1,3 @@
-<<<<<<< Updated upstream
-function App() {
-  return (
-    <div>
-      <h1>성공여부</h1>
-    </div>
-=======
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MainPage from './main/MainPage';
 import MapPage from './map/MapPage';
@@ -29,7 +22,6 @@ function App() {
         <Route path="/admin" element={<AdminPage />} />
       </Routes>
     </BrowserRouter>
->>>>>>> Stashed changes
   );
 }
 
