@@ -5,6 +5,12 @@ const session = require('express-session');
 const app = express();
 const PORT = 4000;
 
+const cors = require('cors');
+
+app.use(cors({
+    origin: 'http://localhost:3000', 
+    credentials: true
+}))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 app.use(session({
@@ -18,8 +24,8 @@ mongoose.connect('mongodb://localhost:27017/matDB')
     .catch((err) => console.log('MongoDB 연결 실패:', err));
 
 //라우터 연결용입니다. 주석 풀어서 사용하세요.
-//const userRouters =require('./routes/userRoutes');
-//app.use('/api/user',userRoutes);
+const matRoutes =require('./routes/matRoutes');
+app.use('/api/mat',matRoutes);
 
 app.get('/',(req,res) => {
     res.json({message: 'Mat 서버 작동중입니다'});
