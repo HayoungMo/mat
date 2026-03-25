@@ -9,8 +9,6 @@ const ArticleSchema = mongoose.Schema({
   region:           { type: String, required: true },
   matName:          { type: String },
   matTel:           { type: String },
-  saveFileName:     { type: String, required: true },
-  originalFileName: { type: String, required: true },
   sysdate:          { type: Date, default: Date.now }
 });
 
