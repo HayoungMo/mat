@@ -17,7 +17,7 @@ mongoose.connect('mongodb://localhost:27017/matDB')
     .then(()=> console.log('MongoDB 연결 성공'))
     .catch((err) => console.log('MongoDB 연결 실패:', err));
 
-//라우터 연결용 주석 풀어서 사용하세요.
+//라우터 연결용입니다. 주석 풀어서 사용하세요.
 //const userRouters =require('./routes/userRoutes');
 //app.use('/api/user',userRoutes);
 
