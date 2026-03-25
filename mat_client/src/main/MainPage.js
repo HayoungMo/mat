@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios'; 
+import LoginPage from '../login/LoginPage';
+import Notice from '../login/Notice';
 
 function MainPage() {
   // 백엔드에서 받아올 데이터를 저장할 공간입니다.
@@ -28,7 +30,9 @@ function MainPage() {
         <p style={{ color: 'blue', fontSize: '20px', fontWeight: 'bold' }}>
           {serverData}
         </p>
-        ㅎㅇㅎㅇㅎ
+        ㅎㅇㅎㅇ
+        {/* <LoginPage/> */}
+        <Notice/>
       </div>
     </div>
   );
