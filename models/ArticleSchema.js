@@ -19,4 +19,7 @@ const ArticleSchema = mongoose.Schema({
   sysdate:          { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('articles', ArticleSchema);
+mongoose.model('articles',ArticleSchema)
+console.log('모델 정의')
+
+//module.exports = mongoose.model('articles', ArticleSchema);

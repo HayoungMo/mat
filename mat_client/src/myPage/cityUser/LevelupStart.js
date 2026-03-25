@@ -1,4 +1,4 @@
-import {Link, Route, Switch} from "react-router-dom/cjs/react-router-dom.min";
+import {Link, Route, Routes} from "react-router-dom";
 import React from 'react';
 import LevelupAdd from "./LevelupAdd";
 
@@ -13,9 +13,9 @@ const LevelupStart = () => {
             </nav>
         </div>
 
-        <Switch>
-            <Route path='/levelup/add' exact><LevelupAdd/></Route>
-        </Switch>
+        <Routes>
+            <Route element={<LevelupAdd/>} exact></Route>
+        </Routes>
 
         </>
     );
