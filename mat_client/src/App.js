@@ -4,7 +4,7 @@ import MapPage from './map/MapPage';
 import SearchPage from './totSearch/SearchPage';
 import LoginPage from './login/LoginPage';
 import MyPage from './myPage/MyPage';
-import CityHome from './myPage/cityuser/CityPage';
+import CityHome from './myPage/cityUser/CityPage';
 
 function App() {
   return (

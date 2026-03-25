@@ -1,3 +1,4 @@
+import SearchPage from "../totSearch/SearchPage";
 
 
 function MainPage() {
@@ -6,7 +7,7 @@ function MainPage() {
     <div >
       
 
-
+    <SearchPage/>
  
     </div>
   );
