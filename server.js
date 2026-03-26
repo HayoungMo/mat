@@ -25,22 +25,31 @@ mongoose.connect('mongodb://localhost:27017/matDB')
 
 //라우터 연결용입니다. 주석 풀어서 사용하세요.
 
-//1. 맛집(Article)
-require('./models/ArticleSchema.js')
-require('./models/UserSchema.js')
-require('./routes/matRoutes')(app)
-require('./routes/UserRoutes.js')(app)
-require('./routes/bookmarkRoutes.js')(app)
+// //1. 맛집(Article)
+// require('./models/ArticleSchema.js')
+// require('./models/UserSchema.js')
+// require('./routes/matRoutes')(app)
+// require('./routes/UserRoutes.js')(app)
+// // require('./routes/bookmarkRoutes.js')(app)
 
 
-//2. 등업(UpgradeRequest)
-require('./models/UpgradeRequestSchema.js')
-require('./routes/upgradeRoutes.js')(app)
+// //2. 등업(UpgradeRequest)
+// require('./models/UpgradeRequestSchema.js')
+// require('./routes/upgradeRoutes.js')(app)
+
+//3. 리뷰(Review)
+require('./models/ReviewSchema.js')
+require('./routes/reviewRoutes.js')(app)
 
 app.get('/',(req,res) => {
     res.json({message: 'Mat 서버 작동중입니다'});
 });
 
+//4. 프로필(Profile)
+require('./models/UserSchema.js')
+require('./routes/UserRoutes.js')(app)
+
 app.listen(PORT, () => {
     console.log(`서버 실행중입니다: http://localhost:${PORT}`)
 });
+
