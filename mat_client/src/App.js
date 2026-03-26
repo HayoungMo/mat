@@ -20,7 +20,7 @@ function App() {
         <Link to='/mypage'><button>마이 페이지</button></Link>
         <Link to='/cityhome'><button>지역 모음</button></Link>
         <Link to='/board'><button>게시판</button></Link>
-
+      어쩔
 
       </p>
       <Routes>
