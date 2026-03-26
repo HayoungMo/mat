@@ -10,6 +10,7 @@ const USerSchema = mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
+//모델 중복으로 인해서 exportt만 살려뒀습니다
 module.exports = mongoose.model('users', USerSchema);
 
 
