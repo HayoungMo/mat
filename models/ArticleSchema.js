@@ -9,6 +9,7 @@ const ArticleSchema = mongoose.Schema({
   region:           { type: String, required: true },
   matName:          { type: String },
   matTel:           { type: String },
+  matAddr:          { type: String},
 
   images: [
     {
@@ -22,4 +23,4 @@ const ArticleSchema = mongoose.Schema({
 mongoose.model('articles',ArticleSchema)
 console.log('모델 정의')
 
-//module.exports = mongoose.model('articles', ArticleSchema);
+module.exports = mongoose.model('articles', ArticleSchema);
