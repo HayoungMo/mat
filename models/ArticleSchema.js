@@ -22,4 +22,4 @@ const ArticleSchema = mongoose.Schema({
 mongoose.model('articles',ArticleSchema)
 console.log('모델 정의')
 
-//module.exports = mongoose.model('articles', ArticleSchema);
+module.exports = mongoose.model('articles', ArticleSchema);

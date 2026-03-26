@@ -25,8 +25,9 @@ mongoose.connect('mongodb://localhost:27017/matDB')
 
 //라우터 연결용입니다. 주석 풀어서 사용하세요.
 require('./models/ArticleSchema.js')
+require('./models/UserSchema.js')
 require('./routes/matRoutes')(app)
-
+require('./routes/UserRoutes.js')(app)
 
 app.get('/',(req,res) => {
     res.json({message: 'Mat 서버 작동중입니다'});
