@@ -28,6 +28,9 @@ require('./models/ArticleSchema.js')
 require('./models/UserSchema.js')
 require('./routes/matRoutes')(app)
 require('./routes/UserRoutes.js')(app)
+require('./routes/bookmarkRoutes.js')(app)
+
+
 
 app.get('/',(req,res) => {
     res.json({message: 'Mat 서버 작동중입니다'});
