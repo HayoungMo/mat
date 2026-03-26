@@ -1,6 +1,6 @@
 import React from 'react';
 import AdminPage from './admin/AdminPage';
-import CityPage from './cityUser/CityPage';
+import CityPage from './cityuser/CityPage';
 
 
 const MyPage = () => {
