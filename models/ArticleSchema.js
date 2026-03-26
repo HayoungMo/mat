@@ -19,8 +19,7 @@ const ArticleSchema = mongoose.Schema({
   ],
   sysdate:          { type: Date, default: Date.now }
 });
-
-mongoose.model('articles',ArticleSchema)
+//모델 중복으로 인해서 exportt만 살려뒀습니다
 console.log('맛집 모델 정의')
 
 module.exports = mongoose.model('articles', ArticleSchema);
