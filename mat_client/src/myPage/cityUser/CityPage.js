@@ -11,7 +11,7 @@ const state = ''
 const CityPage = () => {
     return (
         <div>
-            <h1>등업 페이지</h1>
+            <h2>등업 페이지</h2>
             {state === 'approved' ? <CityMyhome/> 
                 : 
                 <div>
