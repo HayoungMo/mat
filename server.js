@@ -28,13 +28,15 @@ mongoose.connect('mongodb://localhost:27017/matDB')
 //1. 맛집(Article)
 require('./models/ArticleSchema.js')
 require('./models/UserSchema.js')
-require('./routes/matRoutes')(app)
-require('./routes/UserRoutes.js')(app)
-require('./routes/bookmarkRoutes.js')(app)
+require('./models/UpgradeRequestSchema.js')
+
 
 
 //2. 등업(UpgradeRequest)
-require('./models/UpgradeRequestSchema.js')
+
+require('./routes/matRoutes')(app)
+require('./routes/UserRoutes.js')(app)
+require('./routes/bookmarkRoutes.js')(app)
 require('./routes/upgradeRoutes.js')(app)
 
 app.get('/',(req,res) => {
