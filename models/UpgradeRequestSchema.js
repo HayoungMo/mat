@@ -8,6 +8,6 @@ const UpgradeRequestSchema = mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-mongoose.model('upgrade',UpgradeRequestSchema)
+mongoose.model('upgradeRequests',UpgradeRequestSchema)
 console.log('등급 모델 정의')
 //module.exports = mongoose.model('upgradeRequests', UpgradeRequestSchema);
