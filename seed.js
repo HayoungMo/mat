@@ -4,7 +4,6 @@ const Article = require('./models/ArticleSchema');
 const Bookmark = require('./models/BookmarkSchema');
 const Review = require('./models/ReviewSchema');
 const UpgradeRequest = require('./models/UpgradeRequestSchema');
-const FreeBoard = require('./models/FreeBoardSchema');
 
 //터미널에 node seed.js 입력하면 더미데이터가 들어갑니다.
 
@@ -13,13 +12,12 @@ mongoose.connect('mongodb://localhost:27017/matDB')
   .then(async () => {
     console.log('DB 연결됨');
 
-    // 기존 데이터 전부 초기화,이 파일 실행할때마다 데이터가 초기화 되고 새로 들어갑니다.
+    // 기존 데이터 전부 초기화
     await User.deleteMany({});
     await Article.deleteMany({});
     await Bookmark.deleteMany({});
     await Review.deleteMany({});
     await UpgradeRequest.deleteMany({});
-    await FreeBoard.deleteMany({});
     console.log('기존 데이터 삭제 완료');
 
     // =============================================
@@ -128,25 +126,10 @@ mongoose.connect('mongodb://localhost:27017/matDB')
     ]);
     console.log('등업신청 데이터 입력 완료');
 
-    // 자유게시판 더미
-    await FreeBoard.create([
-  {
-    userId: 'user01', title: '홍대 맛집 추천해주세요!',
-    subject: '이번 주말에 홍대 갈 건데 맛집 추천 부탁드립니다.',
-    images: [], type: 'free'
-  },
-  {
-    userId: 'user02', title: '강남 파스타 맛집 후기',
-    subject: '어제 다녀온 강남 파스타집 진짜 맛있었어요!',
-    images: [{ saveFileName: 'free1.jpg', originalFileName: '파스타후기.jpg' }],
-    type: 'free'
-  }
-]);
-
     // =============================================
     console.log('=============================');
     console.log('전체 더미데이터 입력 완료!');
-    console.log('유저 7명 / 기사 6개 / 북마크 5개 / 리뷰 5개 / 등업신청 2개/자유게시판 2개');
+    console.log('유저 7명 / 기사 6개 / 북마크 5개 / 리뷰 5개 / 등업신청 2개');
     console.log('=============================');
 
     process.exit();
