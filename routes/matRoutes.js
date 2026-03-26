@@ -5,6 +5,7 @@ const path = require('path')
 
 const Article = mongoose.model('articles')
 
+
 // uploads 폴더 생성
 try {
   fs.readdirSync('uploads')

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import LoginPageInfo from './LoginPageInfo';
+import axios from 'axios';
 
 const EMAIL_OPTION = [
     {value: '', label: '직접입력'},
@@ -52,8 +53,18 @@ const LoginPage = () => {
     }
     
 
-    const onNext = () => {
-        setStep(state => state + 1)
+    const onNext = async () => {
+        try {
+            const response = await axios.post('http://localhost:4000/api/register',form)
+
+            if(response.data.success) {
+                setStep(state => state + 1)
+            }
+        }catch (error) {
+            console.error("회원가입 에러",error)
+            alert("이미 사용 중인 ID이거나 저장에 실패했습니다")
+        }
+        
     }
 
     //const onPrev = () => {
