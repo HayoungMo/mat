@@ -126,7 +126,7 @@ const MapPage = ({setAddress}) => {
             <div className="map_wrap" style={{ 
             position: 'relative', // 기준점 설정
             width: '100%', 
-            height: '1500px' 
+            height: '1000px' 
         }}>
             {/* 1. 지도 영역 (배경처럼 깔림) */}
             <div ref={mapRef} style={{ 
@@ -173,7 +173,9 @@ const MapPage = ({setAddress}) => {
                     return (
                         <li key={place.id || index} style={{ display: 'flex', alignItems: 'center', padding: '10px', borderBottom: '1px solid #eee' }}>
                             {/* 정보 영역 */}
-                            <div className="info" style={{ flex: 1 }} onClick={() => {/* 지도 이동 로직 */}}>
+                            <div className="info" style={{ flex: 1 }} onClick={() => {const moveLatLon = new window.kakao.maps.LatLng(place.y, place.x);
+                                mapInstance.current.panTo(moveLatLon);
+                                displayInfowindow(markersRef.current[index], place.place_name);}}>
                                 <strong>{place.place_name}</strong>
                                 <div>{place.address_name}</div>
                             </div>
