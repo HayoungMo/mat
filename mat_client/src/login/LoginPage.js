@@ -70,6 +70,8 @@ const LoginPage = () => {
                 alert(response.data.message);
             }
         } catch (error) {
+            console.log(error.response) //서버가 보내는 오류
+            console.log(error.message) //에러 메세지
             alert("로그인 중 서버 오류가 발생했습니다");
         }
     };
