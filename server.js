@@ -24,9 +24,14 @@ mongoose.connect('mongodb://localhost:27017/matDB')
     .catch((err) => console.log('MongoDB 연결 실패:', err));
 
 //라우터 연결용입니다. 주석 풀어서 사용하세요.
+
+//1. 맛집(Article)
 require('./models/ArticleSchema.js')
 require('./routes/matRoutes')(app)
 
+//2. 등업(UpgradeRequest)
+require('./models/UpgradeRequestSchema.js')
+require('./routes/upgradeRoutes.js')(app)
 
 app.get('/',(req,res) => {
     res.json({message: 'Mat 서버 작동중입니다'});

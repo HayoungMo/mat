@@ -20,6 +20,6 @@ const ArticleSchema = mongoose.Schema({
 });
 
 mongoose.model('articles',ArticleSchema)
-console.log('모델 정의')
+console.log('맛집 모델 정의')
 
 //module.exports = mongoose.model('articles', ArticleSchema);
