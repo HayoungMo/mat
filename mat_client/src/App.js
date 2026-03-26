@@ -1,13 +1,15 @@
-import { Link, Routes, Route } from 'react-router-dom';
+import { Link, Routes, Route} from 'react-router-dom';
 import MainPage from './main/MainPage';
 import MapPage from './map/MapPage';
 import SearchPage from './totSearch/SearchPage';
 import LoginPage from './login/LoginPage';
 import MyPage from './myPage/MyPage';
-import CityHome from './myPage/cityuser/CityPage';
-import LevelupStart from './myPage/cityuser/LevelupStart';
+import CityHome from './myPage/cityUser/CityPage';
+import Board from './board/boardList/Board';
 
 function App() {
+
+  
   return (
     <div>
       <p>
@@ -16,8 +18,9 @@ function App() {
         <Link to='/search'><button>검색</button></Link>
         <Link to='/login'><button>로그인</button></Link>
         <Link to='/mypage'><button>마이 페이지</button></Link>
-        <Link to='/mypage/gradeup'><button>등급업</button></Link>
         <Link to='/cityhome'><button>지역 모음</button></Link>
+        <Link to='/board'><button>게시판</button></Link>
+
 
       </p>
       <Routes>
@@ -26,8 +29,8 @@ function App() {
         <Route path="/search" element={<SearchPage/>} ></Route>
         <Route path="/login" element={<LoginPage/>} ></Route>
         <Route path="/mypage" element={<MyPage/>} ></Route>
-        <Route path="/mypage/gradeup" element={<LevelupStart/>} ></Route>
         <Route path="/cityhome" element={<CityHome/>} ></Route>
+        <Route path="/board" element={<Board/>} ></Route>
       </Routes>
     </div>
   );
