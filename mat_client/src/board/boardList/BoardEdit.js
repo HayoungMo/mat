@@ -1,98 +1,113 @@
-import React, { useRef, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BoardService from './BoardService';
 
 const BoardEdit = ({ item, onUpdate, onCancel }) => {
-    const titleRef = useRef();
-    
-    // 1. 기존 아이템 데이터를 초기값으로 설정
-    const [board, setBoard] = useState({ ...item });
-    const { userId, title, subject, opt1, opt2, opt3, opt4, opt5, region, cityName, matName } = board;
-    
-    // 2. 작성 모드 설정 (설문 데이터가 있으면 'survey', 없으면 'text')
-    const [isShow, setIsShow] = useState(item.opt1 ? 'survey' : 'text');
-    const [image, setImage] = useState(null); // 새로 수정할 이미지
+    // 1. 기존 데이터로 초기 상태 설정
+    const [board, setBoard] = useState({
+        userId: '',
+        title: '',
+        subject: '',
+        type: 'text',
+        opt1: '',
+        opt2: ''
+    });
+    const [image, setImage] = useState(null);
 
-    const changeInput = (evt) => {
-        const { value, name } = evt.target;
+    // 컴포넌트 마운트 시 데이터 세팅
+    useEffect(() => {
+        if (item) {
+            setBoard({
+                userId: item.userId || '',
+                title: item.title || '',
+                subject: item.subject || '',
+                type: item.type || 'text',
+                opt1: item.opt1 || '',
+                opt2: item.opt2 || ''
+            });
+        }
+    }, [item]);
+
+    const changeInput = (e) => {
+        const { name, value } = e.target;
         setBoard({ ...board, [name]: value });
     };
 
-    const changeFile = (evt) => {
-        setImage(evt.target.files[0]);
-    };
+    const onSubmit = async (e) => {
+        e.preventDefault();
 
-    const onSubmit = async (evt) => {
-        evt.preventDefault();
-        if (!title) {
-            alert("제목을 입력해주세요.");
-            titleRef.current.focus();
-            return;
-        }
+        // 2. 수정 시 타입 자동 재판별 (로직 강화)
+        let finalType = board.type;
+        if (image) finalType = 'image'; // 새 이미지를 올리면 무조건 image 타입
+        if (board.opt1 || board.opt2) finalType = 'survey'; // 설문 옵션이 있으면 survey
 
         const formData = new FormData();
-        // 텍스트 필드 추가
-        Object.keys(board).forEach(key => {
-            formData.append(key, board[key]);
-        });
-        // 새로운 이미지가 선택되었다면 추가
-        if (image) {
-            formData.append('images', image);
+        formData.append('userId', board.userId);
+        formData.append('title', board.title);
+        formData.append('subject', board.subject);
+        formData.append('type', finalType);
+        
+        if (finalType === 'survey') {
+            formData.append('opt1', board.opt1);
+            formData.append('opt2', board.opt2);
         }
+        if (image) formData.append('images', image);
 
         try {
-            // BoardService에 updateMat(또는 editMat) 함수가 있어야 함
-            await BoardService.updateMat(item._id, formData); 
-            alert("게시글이 수정되었습니다.");
-            onUpdate(); // 수정 후 목록 새로고침
-        } catch (err) {
-            console.error(err);
-            alert("수정 중 오류가 발생했습니다.");
+            await BoardService.updateMat(item._id, formData);
+            alert("수정이 완료되었습니다!");
+            onUpdate(); // 목록 새로고침 및 이동
+        } catch (e) {
+            alert("수정 실패: 서버 상태를 확인하세요.");
         }
     };
 
     return (
-        <form onSubmit={onSubmit} encType="multipart/form-data">
-            <h3 style={{ borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>📝 게시글 수정</h3>
-            <table className="write-table" style={{ width: '100%' }}>
+        <form onSubmit={onSubmit} className="write-form">
+            <h3 style={{color: '#2d5a3d'}}>게시글 수정</h3>
+            <table className="write-table">
                 <tbody>
                     <tr>
-                        <td>작성자: <strong>{userId}</strong></td>
+                        <td>작성자: <input name="userId" value={board.userId} readOnly style={{backgroundColor: '#f0f0f0'}} /></td>
                     </tr>
                     <tr>
-                        <td>
-                            <label>제목 </label>
-                            <input type='text' name='title' value={title} onChange={changeInput} ref={titleRef} style={{ width: '80%' }} />
+                        <td>타입 변경: 
+                            <select name="type" value={board.type} onChange={changeInput}>
+                                <option value="text">일반 텍스트</option>
+                                <option value="image">이미지 포스팅</option>
+                                <option value="survey">설문조사</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <label><input type="checkbox" checked={isShow === 'text'} onChange={() => setIsShow('text')} /> 텍스트</label>
-                            <label style={{ marginLeft: '10px' }}><input type="checkbox" checked={isShow === 'survey'} onChange={() => setIsShow('survey')} /> 설문</label>
-                        </td>
+                        <td>제목: <input name="title" value={board.title} onChange={changeInput} required /></td>
                     </tr>
+
+                    {/* 타입이 survey일 때만 옵션창 노출 */}
+                    {board.type === 'survey' && (
+                        <tr>
+                            <td className="survey-inputs">
+                                <p>📊 설문 옵션 수정</p>
+                                <input name="opt1" value={board.opt1} placeholder="옵션 1" onChange={changeInput} />
+                                <input name="opt2" value={board.opt2} placeholder="옵션 2" onChange={changeInput} />
+                            </td>
+                        </tr>
+                    )}
+
+                    <tr>
+                        <td>내용: <textarea name="subject" value={board.subject} onChange={changeInput} /></td>
+                    </tr>
+                    
                     <tr>
                         <td>
-                            {isShow === 'survey' ? (
-                                <div>
-                                    <input type='text' name='opt1' value={opt1} onChange={changeInput} placeholder="옵션 1" /><br/>
-                                    <input type='text' name='opt2' value={opt2} onChange={changeInput} placeholder="옵션 2" /><br/>
-                                    <input type='text' name='opt3' value={opt3} onChange={changeInput} placeholder="옵션 3" />
-                                </div>
-                            ) : (
-                                <textarea name='subject' value={subject} onChange={changeInput} style={{ width: '100%', height: '150px' }}></textarea>
-                            )}
+                            사진 변경: <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+                            {item.saveFileName && <p style={{fontSize: '12px', color: '#666'}}>기존 파일: {item.originalFileName}</p>}
                         </td>
                     </tr>
-                    <tr>
+                    
+                    <tr className="btn-row">
                         <td>
-                            <p style={{ fontSize: '12px', color: '#666' }}>기존 이미지: {item.saveFileName || '없음'}</p>
-                            <input type='file' name="images" onChange={changeFile} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style={{ textAlign: 'right', paddingTop: '20px' }}>
-                            <button type='submit' style={{ backgroundColor: '#2d5a3d', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '4px', cursor: 'pointer' }}>수정완료</button>
-                            <button type="button" onClick={onCancel} style={{ marginLeft: '10px', padding: '8px 20px', borderRadius: '4px', cursor: 'pointer' }}>취소</button>
+                            <button type="submit" className="btn-primary">수정 완료</button>
+                            <button type="button" onClick={onCancel} className="btn-cancel">취소</button>
                         </td>
                     </tr>
                 </tbody>
