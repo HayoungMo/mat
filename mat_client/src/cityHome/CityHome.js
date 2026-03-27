@@ -3,22 +3,29 @@ import CityList from './CityList';
 import articleService from '../services/articleServices'
 import CityMessage from './CityMessage';
 import CityAdd from './CityAdd';
+import CityEdit from './CityEdit';
+import { useParams,useNavigate } from 'react-router-dom';
 
 const CityHome = () => {
 
+    const {cityName} = useParams()
+    const navigate = useNavigate()
+
     const [articles,setArticles] = useState([])
     const [isEdit,setIsEdit] = useState(false)
-    const [current,setCurrent] = useState({})
     const [msg,setMsg] = useState('')
     const [isShow,setIsShow] = useState(false)
 
     useEffect(()=>{
         onData()
-    },[])
+    },[cityName])
 
     const onData = async()=>{
         const res = await articleService.getArticle()
-        setArticles(res)
+        
+        const filtered= res.filter(item=>item.cityName === cityName)
+        
+        setArticles(filtered)
     }
 
     const onAdd= async(user,image)=>{
@@ -34,14 +41,14 @@ const CityHome = () => {
         await onData()
         onShow('글 삭제')
     }
-    const onEdit=(user)=>{
-        setCurrent(user)
-        setIsEdit(true)
-        onShow('수정')
+    const onEdit=(item)=>{
+        navigate(`/city/${cityName}/article/edit/${item._id}`)
     }
-    const onUpdate= async (data)=>{
+    const onUpdate= async (id,formData)=>{
         setIsEdit(false)
-        await articleService.updateArticle(data)
+        console.log("id:",id)
+        console.log("data:",formData)
+        await articleService.updateArticle(id,formData)
         await onData()
         onShow('수정완료')
     }
@@ -52,8 +59,8 @@ const CityHome = () => {
     }
     return (
         <div>
-            <h1>여행사 홈</h1>
-            <CityAdd onAdd={onAdd}/>
+            <h1>개인 블로그</h1>
+            <CityAdd/>
             {
                 isShow && <CityMessage msg={msg} isShow={isShow} setIsShow={setIsShow}/>
             }

@@ -19,21 +19,22 @@ app.use(session({
     saveUninitialized: false
 }));
 
+app.use('/uploads', express.static('uploads'))
+
 mongoose.connect('mongodb://localhost:27017/matDB')
     .then(()=> console.log('MongoDB 연결 성공'))
     .catch((err) => console.log('MongoDB 연결 실패:', err));
 
 //라우터 연결용입니다. 주석 풀어서 사용하세요.
 
-//1. 맛집(Article)
+//1. 모델   
 require('./models/ArticleSchema.js')
 require('./models/UserSchema.js')
 require('./models/UpgradeRequestSchema.js')
 
 
 
-//2. 등업(UpgradeRequest)
-
+//2. 라우터
 require('./routes/matRoutes')(app)
 require('./routes/UserRoutes.js')(app)
 require('./routes/bookmarkRoutes.js')(app)
