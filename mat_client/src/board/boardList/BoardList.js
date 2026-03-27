@@ -16,13 +16,21 @@ const BoardList = ({ list = [], viewType, setViewType, onDetail, onSearch, onBoo
         surveyPage * SURVEY_PER_PAGE
     );
 
-    // ── 게시글 목록 (이미지형 or 목록형, 최신순) ──
+    // ── 게시글 목록 (이미지형 or 목록형 or 북마크 목록, 최신순) ──
     const filteredList = list.filter(item => {
+        
+        if (viewType === 'bookmark') return item.isBookmarked === true;
+        
         if (viewType === 'card') return item.type === 'image';
+        
+      
         if (viewType === 'list') return item.type === 'text';
-        return true;
+        
+        return false; 
     });
+    
     const totalPages = Math.max(1, Math.ceil(filteredList.length / POSTS_PER_PAGE));
+    
     const pagedList = filteredList.slice(
         (currentPage - 1) * POSTS_PER_PAGE,
         currentPage * POSTS_PER_PAGE
@@ -44,9 +52,11 @@ const BoardList = ({ list = [], viewType, setViewType, onDetail, onSearch, onBoo
             {surveyList.length > 0 && (
                 <div className="survey-section">
                     <div className="survey-section-header">
-                        <span className="survey-section-title">📊 설문 게시글</span>
+                        <span className="survey-section-title">📊 맛잘러들에게 물어보기</span>
                         <span className="survey-section-count">
-                            {surveyPage} / {totalSurveyPages} 페이지
+                         
+                         {/* 여기 type:survey  총갯수  */}
+                            {surveyPage} / {totalSurveyPages} 
                         </span>
                     </div>
 
@@ -68,6 +78,7 @@ const BoardList = ({ list = [], viewType, setViewType, onDetail, onSearch, onBoo
                                     onClick={() => onDetail(item)}
                                 >
                                     <h4>📊 {item.title}</h4>
+                                    <p className="survey-author">👤 작성자: {item.userId}</p>
                                     {options.slice(0, 3).map((opt, idx) => {
                                         const pct = getPercent(votes, idx, total);
                                         return (
@@ -82,7 +93,7 @@ const BoardList = ({ list = [], viewType, setViewType, onDetail, onSearch, onBoo
                                             </div>
                                         );
                                     })}
-                                    <p className="survey-total">총 {total}표</p>
+                                    <p className="survey-total"> 총 몇명 투표중 {total}표</p>
                                 </div>
                             );
                         })}
@@ -116,14 +127,27 @@ const BoardList = ({ list = [], viewType, setViewType, onDetail, onSearch, onBoo
             <div className="list-controls">
                 <span className="list-count">📋 게시글 ({filteredList.length})</span>
                 <div className="view-type-buttons">
-                    <button
-                        className={viewType === 'card' ? 'active' : ''}
-                        onClick={() => { setViewType('card'); setCurrentPage(1); }}
-                    >🖼 이미지형</button>
-                    <button
-                        className={viewType === 'list' ? 'active' : ''}
-                        onClick={() => { setViewType('list'); setCurrentPage(1); }}
-                    >☰ 목록형</button>
+                  <button 
+                        className={viewType === 'card' ? 'active' : ''} 
+                        onClick={() => setViewType('card')}
+                        >
+                        🖼️ 이미지형
+                    </button>
+                    <button 
+                        className={viewType === 'list' ? 'active' : ''} 
+                        onClick={() => setViewType('list')}
+                         >
+                         📝 목록형
+                    </button>
+                    {/* 북마크 버튼 추가 */}
+                    <button 
+                        className={viewType === 'bookmark' ? 'active' : ''} 
+                        onClick={() => setViewType('bookmark')}
+                        >
+                            <span className="bookmark-icon">
+                                {viewType === 'bookmark' ? '⭐' : '☆'}
+                            </span>
+                    </button>
                 </div>
             </div>
 

@@ -26,27 +26,35 @@ const Board = ({ loginUser }) => {
 
     useEffect(() => { fetchList(); }, [fetchList]);
 
-    // 북마크 토글 + 알림 + 마이페이지 이동 확인
-    const onBookmark = async (id) => {
-        try {
-            const res = await BoardService.updateBookmark(id);
-            const isBookmarked = res.data?.isBookmarked;
-            fetchList();
+    // 북마크 토글
+    // Board.js 내부의 onBookmark 함수
 
-            if (isBookmarked) {
-                // 북마크 추가됐을 때만 알림
-                const goMyPage = window.confirm(
-                    "⭐ 북마크에 추가되었습니다!\n마이페이지에서 확인하시겠습니까?"
-                );
-                if (goMyPage) navigate('/mypage');
-            } else {
-                alert("북마크가 해제되었습니다.");
+        const onBookmark = async (id) => {
+            // [추가] 로그인 체크: 이게 없으면 서버 통신 전에 막을 수 없어
+            if (!loginUser) {
+                alert("로그인한 사용자만 북마크를 이용할 수 있습니다.");
+                return;
             }
-        } catch (e) {
-            alert("북마크 처리 실패");
-        }
-    };
 
+            try {
+                const res = await BoardService.updateBookmark(id);
+                
+                // 목록 새로고침 (이게 돌아야 DB 상태가 반영된 ⭐ 노란 별이 보임)
+                fetchList();
+
+                const isBookmarked = res.data?.isBookmarked;
+                if (isBookmarked) {
+                    console.log("북마크 추가됨");
+                    // alert("⭐ 북마크에 추가되었습니다."); // 원하면 알림 추가
+                } else {
+                    console.log("북마크 해제됨");
+                }
+                
+            } catch (e) {
+                console.error("북마크 처리 실패", e);
+                alert("북마크 처리 중 오류가 발생했습니다.");
+            }
+        };
     // 삭제
     const onDelete = async (id) => {
         if (!window.confirm("정말로 삭제하시겠습니까?")) return;
@@ -85,10 +93,12 @@ const Board = ({ loginUser }) => {
                 <BoardList
                     list={matList}
                     viewType={viewType}
-                    setViewType={setViewType}
-                    onDetail={goDetail}
+                    setViewType={setViewType} 
                     onSearch={fetchList}
                     onBookmark={onBookmark}
+                    loginUser={loginUser}
+                    
+                    onDetail={goDetail} 
                 />
             )}
             {view === 'write' && (
@@ -101,6 +111,8 @@ const Board = ({ loginUser }) => {
             {view === 'detail' && (
                 <BoardItem
                     item={selected}
+                    loginUser={loginUser}
+                    onBookmark={onBookmark}
                     onBack={() => setView('list')}
                     onEdit={() => setView('edit')}
                     onDelete={onDelete}

@@ -53,7 +53,7 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
         if (!board.title.trim()) return alert("제목을 입력해주세요.");
 
         const formData = new FormData();
-        formData.append('userId', finalUserId); // 수정된 finalUserId 전송
+        formData.append('userId', finalUserId);
         formData.append('title', board.title);
         formData.append('type', board.type);
 

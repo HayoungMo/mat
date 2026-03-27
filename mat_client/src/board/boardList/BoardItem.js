@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import BoardService from './BoardService';
 
-const BoardItem = ({ item, onBack, onEdit, onDelete, onVoteSuccess }) => {
-    const [detail, setDetail] = useState(item); // ← item 대신 detail 사용
+const BoardItem = ({ item, onBack, onEdit, onDelete, onVoteSuccess, onBookmark, loginUser }) => {
+    const [detail, setDetail] = useState(item);
     const [selectedOption, setSelectedOption] = useState('');
     const [isVoted, setIsVoted] = useState(false);
     const [localVotes, setLocalVotes] = useState([]);
 
-    // ← 이 부분 추가! 마운트 시 상세 조회 API 호출 → 조회수 증가
     useEffect(() => {
         if (item?._id) {
             BoardService.getDetail(item._id)
@@ -38,6 +37,18 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onVoteSuccess }) => {
         }
     }, [detail]);
 
+    // ✅ 내 북마크 여부 판단 (배열 체크)
+    const isMyBookmark = detail.isBookmarked && Array.isArray(detail.isBookmarked) 
+                         ? detail.isBookmarked.includes(loginUser) 
+                         : false;
+
+    // ✅ 북마크 클릭 핸들러: 실행 후 데이터를 다시 가져와서 별 색깔을 즉시 변경
+    const handleBookmark = async () => {
+        await onBookmark(detail._id); // 부모(Board.js)의 북마크 함수 호출
+        const updatedData = await BoardService.getDetail(detail._id); // 최신 데이터 다시 가져오기
+        if (updatedData) setDetail(updatedData);
+    };
+
     const totalVotes = localVotes.reduce((a, b) => a + b, 0);
 
     const handleVote = async () => {
@@ -62,6 +73,14 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onVoteSuccess }) => {
             <div className="detail-header">
                 <span className="detail-type-badge">[{detail.type?.toUpperCase()}]</span>
                 <h2 className="detail-title">{detail.title}</h2>
+                <span 
+                    className="detail-bookmark-btn" 
+                    onClick={handleBookmark} 
+                    style={{ cursor: 'pointer', marginLeft: '10px', fontSize: '1.2rem' }}
+                >
+                   
+                    {isMyBookmark ? '⭐' : '☆'}
+                </span>
                 <p className="detail-info">
                     👤 {detail.userId}
                     &nbsp;|&nbsp;

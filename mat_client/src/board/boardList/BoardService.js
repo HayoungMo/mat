@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = '/api/freeboard';
+const API_URL = 'http://localhost:4000/api/freeboard';
 
 const BoardService = {
     // [R] 목록 조회
@@ -36,8 +36,11 @@ const BoardService = {
 
     // [U] 북마크 토글
     updateBookmark: async (id) => {
-        return await axios.patch(`${API_URL}/${id}/bookmark`);
+       return await axios.patch(`${API_URL}/${id}/bookmark`, {}, { 
+            withCredentials: true
+    });
     },
+
 
     // [U] 투표
     updateVote: async (id, index) => {
