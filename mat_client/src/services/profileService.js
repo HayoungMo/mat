@@ -8,9 +8,9 @@ const getProfile = async() => {
 //입력
 const addProfile = async(user) => {
     axios.post('/api/profile',{
-        userId:user.userId,
-        content:user.content,
-        rating:user.rating
+        id: user.userId,
+        tel: user.tel,
+        email: user.email
     }).then(res => {
         console.log(res)
     }).catch(error => {
@@ -21,10 +21,11 @@ const addProfile = async(user) => {
 //수정
 const updateProfile = async (user) => {
     try {
+        console.log('보내는 데이터: ', user)
         const res = await axios.put('/api/profile', {
-            id: user.id,
-            content: user.content,
-            rating: user.rating
+            id:user._id,
+            tel: user.tel,
+            email: user.email
         });
         return res.data;
     } catch (err) {

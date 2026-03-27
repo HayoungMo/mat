@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
-const UserProfileUpdate = ({current,onUpdate,setIsEdit}) => {
+const UserProfileUpdate = ({users,current,onUpdate,setIsEdit}) => {
     const [user,setUser] = useState(current)
-    const {id,name,job} =user
+    const {userId,tel,email} =user
 
     const changeInput =(evt)=>{
         const{value,name}=evt.target
@@ -18,7 +18,7 @@ const UserProfileUpdate = ({current,onUpdate,setIsEdit}) => {
         onUpdate(user)
 
         setUser({
-            name:'',job:''
+            userId:'',tel:'',email:''
         })
     }
 
@@ -29,16 +29,16 @@ const UserProfileUpdate = ({current,onUpdate,setIsEdit}) => {
     return (
         <form onSubmit={onSubmit}>
             <p>
-                <label>이름</label>
-                <input type='text' value={name} name='name' onChange={changeInput}/>
-            </p> 
-            <p>
-                <label>직업</label>
-                <input type='text' value={job} name='job' onChange={changeInput}/>
+                <label>전화번호</label>
+                <input type='text' value={tel} name='tel' onChange={changeInput}/>
             </p>
             <p>
-                <button>수정</button>
-                <button onClick={()=>setIsEdit(false)}>취소</button>
+                <label>이메일</label>
+                <input type='text' value={email} name='email' onChange={changeInput}/>
+            </p>
+            <p>
+                <button type='submit'>수정</button>
+                <button type='button' onClick={()=>setIsEdit(false)}>취소</button>
             </p>
         </form>
     );
