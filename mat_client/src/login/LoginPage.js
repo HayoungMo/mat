@@ -10,9 +10,10 @@ const EMAIL_OPTION = [
     {value: '@nate.com', label:'@nate.com'},
 ]
 
-const LoginPage = () => {
+//수정한 부분(세션관련)
+const LoginPage = ({loginUser,setLoginUser}) => {
     const [step, setStep] = useState(0);
-    const [loginUser, setLoginUser] = useState(null);
+    //const [loginUser, setLoginUser] = useState(localStorage.getItem('userId'));
     const [form, setForm] = useState({
         userId: '', password: '', tel: '', email: '', addr: '', birth: ''
     });
@@ -55,28 +56,32 @@ const LoginPage = () => {
         }
     };
 
+    //수정한부분(세션관련)
     const onLogin = async () => {
         try {
             const response = await axios.post('http://localhost:4000/api/login', {
                 userId,
                 password
-            });
+            },{withCredentials:true})
 
             if (response.data.success) {
-                alert(response.data.userId + "님 환영합니다");
+                localStorage.setItem('userId',response.data.userId)
                 setLoginUser(response.data.userId);
                 setStep(0); 
+                alert(response.data.userId + "님 환영합니다");
             } else {
                 alert(response.data.message);
             }
         } catch (error) {
-            console.log(error.response) //서버가 보내는 오류
-            console.log(error.message) //에러 메세지
+            //console.log(error.response) //서버가 보내는 오류
+            //console.log(error.message) //에러 메세지
             alert("로그인 중 서버 오류가 발생했습니다");
         }
     };
 
+    //수정한부분(세션관련)
     const onLogout = () => {
+        localStorage.removeItem('userId')
         setLoginUser(null);
         onReset();
         setStep(0);
@@ -89,6 +94,16 @@ const LoginPage = () => {
         });
         setStep(0);
     };
+
+    //로그인 안했으면 로그인 페이지로 보내기 기능
+    const checkLoginAndAction = (action) => {
+        if(!loginUser){
+            alert("로그인이 필요한 서비스입니다.")
+            setStep(3)
+            return
+        }
+        action()
+    }
 
     return (
         <div className='wrap'>
