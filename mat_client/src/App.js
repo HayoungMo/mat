@@ -28,8 +28,7 @@ function App() {
         <Route path="/map" element={<MapPage/>} ></Route>
         <Route path="/search" element={<SearchPage/>} ></Route>
         <Route path="/login" element={<LoginPage/>} ></Route>
-        <Route path="/mypage" element={<MyPage/>} ></Route>
-        <Route path="/city/*" element={<CityAll/>} ></Route>
+        <Route path="/mypage" element={<MyPage/>} ></Route> <Route path="/city/*" element={<CityAll/>} ></Route>
         <Route path="/board" element={<Board/>} ></Route>
       </Routes>
     </div>
