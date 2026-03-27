@@ -11,12 +11,12 @@ const MapPage = ({setAddress}) => {
     const markersRef = useRef([]);        // 마커들을 담을 배열
     const infowindowRef = useRef(null);   // 인포윈도우 객체 참조
 
-    
+    const userId = "user1";
 
 
     // 1. 지도 초기화 (최초 1회 실행)
     useEffect(() => {
-        window.kakao.maps.load(() => {
+        window.kakao.maps.load(async () => {
             const container = mapRef.current;
             const options = {
                 center: new window.kakao.maps.LatLng(37.566826, 126.9786567), // 기본 위치 (서울시청)
@@ -24,8 +24,63 @@ const MapPage = ({setAddress}) => {
             };
             mapInstance.current = new window.kakao.maps.Map(container, options);
             infowindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
+
+            try {
+            //북마크 불러오기
+            const res = await fetch(`http://localhost:4000/api/bookmarks?userId=${userId}`);
+            const bookmarks = await res.json();
+
+            //kakaoid들을 markedIds state에 반ㅇ영
+            const savedMarks = {};
+            bookmarks.forEach(b=> {savedMarks[b.kakaoId]=true;});
+            setMarkedIds(savedMarks);
+
+            displayBookmarkMarkers(bookmarks);
+        } catch (err) {
+            console.error('북마크 로드 실패:' , err);
+        }
         });
+        
     }, []);
+
+    //추가 북마크 마커 지도에 표시
+    const displayBookmarkMarkers = (bookmarks) => {
+        bookmarks.forEach((b,i)=>{
+            const position = new window.kakao.maps.LatLng(b.lat, b.lng);
+            const marker = addMarker(position, i);
+            window.kakao.maps.event.addListener(marker, "click", () => {
+                displayInfowindow(marker, b.matName, b.matTel, b.matAddr);
+            })
+        })
+    }
+
+    const handleBookmarkToggle = async(place) => {
+        try {
+            const res = await fetch('http://localhost:4000/api/bookmarks/toggle', {
+                method: 'POST',
+                headers: {'Content-Type' : 'application/json'},
+                body: JSON.stringify({
+                    userId,
+                    kakaoId: place.id,
+                    matName: place.place_name,
+                    matTel : place.phone,
+                    matAddr : place.address_name,
+                    lat: place.y,
+                    lng: place.x
+                })
+            });
+
+            const data = await res.json();
+
+            //백엔드 응답에 따라서 업데이트
+            setMarkedIds(prev => ({
+                ...prev,
+                [place.id] : data.bookmarked
+            }))
+        } catch (err) {
+            console.error('북마크 저장 실패', err);
+        }
+    }
 
     // 2. 마커 제거 함수
     const removeMarker = () => {
@@ -56,7 +111,7 @@ const MapPage = ({setAddress}) => {
 
     // 4. 인포윈도우 표시 함수
     const displayInfowindow = (marker, title, tel, addr) => {
-        const content = `<div style="padding:5px;z-index:1;">${title}
+        const content = `<div style="padding:5px;z-index:1; width:300px">${title}
             <div style="font-size:12px; color:#666; margin-top:4px;">${addr}</div>
             <div style="font-size:12px; color:#007bff;">${tel ? tel : '전화번호 없음'}</div>
         </div>`;
@@ -186,10 +241,7 @@ const MapPage = ({setAddress}) => {
                                 onClick={(e) => {
                                     e.stopPropagation(); // 지도 이동 방지
                                     // 토글 로직: 기존 객체를 복사하고 현재 ID 값만 반전
-                                    setMarkedIds(prev => ({
-                                        ...prev,
-                                        [place.id]: !prev[place.id]
-                                    }));
+                                    handleBookmarkToggle(place);
                                 }}
                                 style={{
                                     height: '35px',

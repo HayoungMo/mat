@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 //DB 작명
-const Upgrade = mongoose.model('upgrade')
+const Upgrade = mongoose.model('upgradeRequests')
 
 //미들 웨어 생성하기
 

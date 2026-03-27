@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BoardList from './BoardList';
 import BoardWrite from './BoardWrite';
 import BoardItem from './BoardItem';
@@ -6,17 +7,18 @@ import BoardEdit from './BoardEdit';
 import BoardService from './BoardService';
 import './Board.css';
 
-const Board = () => {
-    const [view, setView] = useState('list');        // list | write | detail | edit
+const Board = ({ loginUser }) => {
+    const [view, setView] = useState('list');
     const [matList, setMatList] = useState([]);
     const [selected, setSelected] = useState(null);
-    const [viewType, setViewType] = useState('card'); // card | list
+    const [viewType, setViewType] = useState('card');
+    const navigate = useNavigate();
 
-    // [R] 목록 불러오기 - useCallback으로 안정화
     const fetchList = useCallback(async (keyword = "") => {
         try {
             const data = await BoardService.getMatList(keyword);
-            setMatList(data);
+            // isHidden 필터링 (숨김 처리된 글 제외)
+            setMatList(data.filter(item => !item.isHidden));
         } catch (e) {
             console.error("데이터 로드 실패", e);
         }
@@ -24,17 +26,28 @@ const Board = () => {
 
     useEffect(() => { fetchList(); }, [fetchList]);
 
-    // [U] 북마크 토글
+    // 북마크 토글 + 알림 + 마이페이지 이동 확인
     const onBookmark = async (id) => {
         try {
-            await BoardService.updateBookmark(id);
+            const res = await BoardService.updateBookmark(id);
+            const isBookmarked = res.data?.isBookmarked;
             fetchList();
+
+            if (isBookmarked) {
+                // 북마크 추가됐을 때만 알림
+                const goMyPage = window.confirm(
+                    "⭐ 북마크에 추가되었습니다!\n마이페이지에서 확인하시겠습니까?"
+                );
+                if (goMyPage) navigate('/mypage');
+            } else {
+                alert("북마크가 해제되었습니다.");
+            }
         } catch (e) {
             alert("북마크 처리 실패");
         }
     };
 
-    // [D] 삭제
+    // 삭제
     const onDelete = async (id) => {
         if (!window.confirm("정말로 삭제하시겠습니까?")) return;
         try {
@@ -47,7 +60,6 @@ const Board = () => {
         }
     };
 
-    // 상세 보기 이동 + selected 갱신
     const goDetail = (item) => {
         setSelected(item);
         setView('detail');
@@ -81,6 +93,7 @@ const Board = () => {
             )}
             {view === 'write' && (
                 <BoardWrite
+                    loginUser={loginUser} // 로그인 유저 전달
                     onAdd={() => { fetchList(); setView('list'); }}
                     onCancel={() => setView('list')}
                 />
@@ -98,7 +111,6 @@ const Board = () => {
                 <BoardEdit
                     item={selected}
                     onUpdate={(updatedItem) => {
-                        // 수정 후 selected도 최신 데이터로 업데이트
                         if (updatedItem) setSelected(updatedItem);
                         fetchList();
                         setView('list');
