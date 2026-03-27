@@ -47,8 +47,12 @@ const CityAdd = ({onAdd}) => {
                 <input type='text' value={userId} name='userId' onChange={changeInput} ref={nameRef}></input>
             </p>
             <p>
-                <label>홈 이름</label>
-                <input type='text' value={cityName} name='cityName' onChange={changeInput}></input>
+                <label>구역</label>
+                <input type='radio' value='Gangnam' name='cityName' onChange={changeInput} checked={cityName==="Gangnam"}/>강남구
+                <input type='radio' value='Yongsan' name='cityName' onChange={changeInput} checked={cityName==="Yongsan"}/>용산구
+                <input type='radio' value='Dongjak' name='cityName' onChange={changeInput} checked={cityName==="Dongjak"}/>동작구
+                <input type='radio' value='Mapo' name='cityName' onChange={changeInput} checked={cityName==="Mapo"}/>마포구
+                <input type='radio' value='Jung' name='cityName' onChange={changeInput} checked={cityName==="Jung"}/>중구
             </p>
             <p>
                 <label>제목</label>
