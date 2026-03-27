@@ -7,12 +7,14 @@ import reviewService from '../../services/reviewService';
 import profileService from '../../services/profileService';
 import UserProfileUpdate from './UserProfileUpdate';
 
-const UserMyPage = () => {
+const UserMyPage = ({loginUser}) => {
 
      const [users,setUsers] = useState([])
      const [profile,setProfile] = useState({})
      const [isEdit,setIsEdit] = useState(false)
      const [current,setCurrent] =useState({})
+
+     console.log('loginUser 확인',loginUser)
 
     
         useEffect(() => {
@@ -30,7 +32,7 @@ const UserMyPage = () => {
             setIsEdit(true)
          }
 
-        const onUpdate= async () =>{
+        const onUpdate= async (user) =>{
             console.log('onUpdate 호출됨: ',profile)
             setIsEdit(false)
             await profileService.updateProfile(profile)
@@ -54,7 +56,7 @@ const UserMyPage = () => {
 
         const onProfile = async () => {
            try {
-        const res = await profileService.getProfile()
+        const res = await profileService.getProfile(loginUser)
         console.log('getProfile 응답:',res)
         // 배열로 오면 첫 번째 요소만, 객체로 오면 그대로
         setProfile(Array.isArray(res) ? res[0] : res.data?.[0] ?? res.data ?? res)
@@ -83,7 +85,7 @@ const UserMyPage = () => {
             </Link>
 
             <h3>프로필</h3>
-            <UserMyPageProfile profile={profile} onEdit={onEdit} isEdit={isEdit} changeInput={changeInput}/>
+            <UserMyPageProfile profile={profile} onEdit={onEdit} isEdit={isEdit} changeInput={changeInput} loginUser={loginUser}/>
            {isEdit
             ? <>
                 <button onClick={onUpdate}>저장</button>

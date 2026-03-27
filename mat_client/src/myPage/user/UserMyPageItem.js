@@ -1,8 +1,9 @@
 import React from 'react';
 
-const UserMyPageItem = ({item}) => {
+const UserMyPageItem = ({item,loginUser}) => {
   
     const {_id,userId,aNo,content,rating,createdAt} =item
+
 
 
     return (

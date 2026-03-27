@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const UserProfileUpdate = ({users,current,onUpdate,setIsEdit}) => {
+const UserProfileUpdate = ({users,current,onUpdate,setIsEdit,loginUser}) => {
     const [user,setUser] = useState(current)
     const {userId,tel,email} =user
 
