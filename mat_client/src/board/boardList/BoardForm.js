@@ -3,34 +3,26 @@ import React, { useEffect, useState } from 'react';
 const BoardForm = ({ onSearch }) => {
     const [search, setSearch] = useState('');
 
-    // 1. 입력창 값 변경
-    const changeInput = (evt) => {
-        setSearch(evt.target.value);
-    };
-
-    // 2. 실시간 검색 (search값이 바뀔 때마다 부모의 검색 함수 호출)
+    // 실시간 검색 (입력 즉시 반응)
     useEffect(() => {
         onSearch(search);
     }, [search, onSearch]);
 
-    // 3. 엔터 쳤을 때 처리
-    const onSubmit = (evt) => {
-        evt.preventDefault();
-        // 검색어가 없어도 전체 리스트를 보여주기 위해 그대로 넘김
+    const onSubmit = (e) => {
+        e.preventDefault();
         onSearch(search);
-        setSearch(''); // 입력창 초기화 (선택 사항)
     };
 
     return (
-        <form onSubmit={onSubmit}>
-            {/* 스타일 없이 순수 태그만 구성 */}
-            <input 
-                type="text" 
-                placeholder="맛집명, 지역, 제목으로 검색..." 
-                value={search} 
-                onChange={changeInput} 
+        <form className="search-form" onSubmit={onSubmit}>
+            <input
+                type="text"
+                className="search-input"
+                placeholder="🔍 맛집명, 지역, 제목으로 검색..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
             />
-            <button type="submit">검색</button>
+            <button type="submit" className="btn-search">검색</button>
         </form>
     );
 };

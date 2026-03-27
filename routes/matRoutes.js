@@ -62,8 +62,12 @@ module.exports = (app) => {
         originalFileName: encoding(file.originalname)
       }))
 
+      const last = await Article.findOne().sort({no:-1})
+      const newNo = last ? last.no + 1 : 1
+
       const article = await Article.create({
         ...req.body,
+        no:newNo,
         images: imageList
       })
 

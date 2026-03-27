@@ -15,4 +15,6 @@ router.get('/check', controller.checkBookmark);
 
 module.exports = (app) => {
     app.use('/api/bookmarks', router);
+
+
 };

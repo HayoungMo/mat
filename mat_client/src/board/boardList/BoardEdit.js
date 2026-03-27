@@ -97,6 +97,11 @@ const BoardEdit = ({ item, onUpdate, onCancel }) => {
                     </tr>
                 </tbody>
             </table>
+
+            <div className="form-footer">
+                <button type="submit" className="btn-submit">수정 완료</button>
+                <button type="button" className="btn-cancel" onClick={onCancel}>취소</button>
+            </div>
         </form>
     );
 };

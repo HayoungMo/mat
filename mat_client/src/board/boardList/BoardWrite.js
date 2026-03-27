@@ -108,7 +108,26 @@ const BoardWrite = ({ onAdd, onCancel }) => {
                                     <input type='text' name='opt1' onChange={changeInput} placeholder="옵션 1" /><br/>
                                     <input type='text' name='opt2' onChange={changeInput} placeholder="옵션 2" />
                                 </div>
-                            )}
+                            ) : (
+                                <>
+                                    <textarea
+                                        name="subject"
+                                        value={board.subject}
+                                        onChange={changeInput}
+                                        placeholder="내용을 입력하세요"
+                                    />
+                                    {board.type === 'image' && (
+                                        <div className="file-row">
+                                            <label>📎 파일 첨부</label>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => setImage(e.target.files[0])}
+                                            />
+                                        </div>
+                                    )}
+                                </>
+                            )
                         </td>
                     </tr>
                     <tr>
@@ -124,6 +143,11 @@ const BoardWrite = ({ onAdd, onCancel }) => {
                     </tr>
                 </tbody>
             </table>
+
+            <div className="form-footer">
+                <button type="submit" className="btn-submit">올리기</button>
+                <button type="button" className="btn-cancel" onClick={onCancel}>취소</button>
+            </div>
         </form>
     );
 };

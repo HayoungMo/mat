@@ -28,7 +28,7 @@ const addArticle = async (article, images) => {
         }
     }
 
-    axios.post('/api/article', formData, {
+    const res= axios.post('/api/article', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     })
     .then(res => {
@@ -36,6 +36,8 @@ const addArticle = async (article, images) => {
     }).catch(error => {
         console.log(error)
     })
+
+    return res.data
 }
 
 
@@ -71,12 +73,14 @@ const updateArticle = async (id, article, images) => {
 
 // 삭제
 const deleteArticle = async (id) => {
-    axios.delete(`/api/article/${id}`)
-    .then(res => {
+    try{
+        const res = await axios.delete(`/api/article/${id}`)
         console.log(res)
-    }).catch(error => {
-        console.log(error)
-    })
+        return res.data
+    }catch (error){
+        console.error(error)
+        throw error
+    }
 }
 
 
