@@ -18,7 +18,7 @@ function App() {
         <Link to='/search'><button>검색</button></Link>
         <Link to='/login'><button>로그인</button></Link>
         <Link to='/mypage'><button>마이 페이지</button></Link>
-        <Link to='/city'><button>지역 모음</button></Link>
+        <Link to='/city'><button>블로그 홈</button></Link>
         <Link to='/board'><button>게시판</button></Link>
       
 
@@ -28,7 +28,8 @@ function App() {
         <Route path="/map" element={<MapPage/>} ></Route>
         <Route path="/search" element={<SearchPage/>} ></Route>
         <Route path="/login" element={<LoginPage/>} ></Route>
-        <Route path="/mypage" element={<MyPage/>} ></Route> <Route path="/city/*" element={<CityAll/>} ></Route>
+        <Route path="/mypage" element={<MyPage/>} ></Route> 
+        <Route path="/city/*" element={<CityAll/>} ></Route>
         <Route path="/board" element={<Board/>} ></Route>
       </Routes>
     </div>
