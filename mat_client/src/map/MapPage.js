@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { toggleBookmark, getBookmarks } from '../services/bookmarkService'; // ← 추가
 
 const MapPage = ({setAddress}) => {
 
@@ -27,8 +28,8 @@ const MapPage = ({setAddress}) => {
 
             try {
             //북마크 불러오기
-            const res = await fetch(`http://localhost:4000/api/bookmarks?userId=${userId}`);
-            const bookmarks = await res.json();
+            const bookmarks = await getBookmarks(userId);
+            
 
             //kakaoid들을 markedIds state에 반ㅇ영
             const savedMarks = {};
@@ -56,27 +57,11 @@ const MapPage = ({setAddress}) => {
 
     const handleBookmarkToggle = async(place) => {
         try {
-            const res = await fetch('http://localhost:4000/api/bookmarks/toggle', {
-                method: 'POST',
-                headers: {'Content-Type' : 'application/json'},
-                body: JSON.stringify({
-                    userId,
-                    kakaoId: place.id,
-                    matName: place.place_name,
-                    matTel : place.phone,
-                    matAddr : place.address_name,
-                    lat: place.y,
-                    lng: place.x
-                })
-            });
-
-            const data = await res.json();
-
-            //백엔드 응답에 따라서 업데이트
-            setMarkedIds(prev => ({
-                ...prev,
-                [place.id] : data.bookmarked
-            }))
+        const data = await toggleBookmark(userId, place); // ← fetch 대신
+        setMarkedIds(prev => ({
+            ...prev,
+            [place.id]: data.bookmarked
+            }));
         } catch (err) {
             console.error('북마크 저장 실패', err);
         }
