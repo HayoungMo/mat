@@ -33,10 +33,24 @@ module.exports = (app) => {
   
   // 1. 전체 조회
 
-  app.get('/api/article', async (req, res) => {
-    const list = await Article.find().sort({ no: -1 })
-    res.send(list)
-  })
+  // 3월 25일 모하영 수정: 총합검색을 위해서 한번에 묶고 mongodb는 $or로 묶는다. or은 배웠던 그대로 이중 하나라도 참이면 참을 출력해준다
+  app.get('/api/article', async(req,res) => {
+    const {keyword} = req.query;
+  
+    if (keyword){
+      const list = await Article.find({
+        $or: [
+          {title:{$regex: keyword, $options: 'i'}},
+          {subject:{$regex: keyword, $options: 'i'}},
+          {userId:{$regex: keyword, $options: 'i'}},
+        ]
+      }).sort({no: -1});
+      res.send(list);
+    }else{
+      const list = await Article.find().sort({ no: -1});
+      res.send(list);
+    }
+  });
 
   // 2. 글 작성 + 이미지 업로드
   app.post('/api/article', upload.array('images', 10), async (req, res) => {

@@ -1,198 +1,102 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import BoardService from './BoardService';
 
 const BoardEdit = ({ item, onUpdate, onCancel }) => {
-    const [board, setBoard] = useState({
-        userId: '',
-        title: '',
-        subject: '',
-        type: 'text',
-    });
-    const [options, setOptions] = useState(['', '']); // 설문 옵션 배열
-    const [image, setImage] = useState(null);
+    const titleRef = useRef();
+    
+    // 1. 기존 아이템 데이터를 초기값으로 설정
+    const [board, setBoard] = useState({ ...item });
+    const { userId, title, subject, opt1, opt2, opt3, opt4, opt5, region, cityName, matName } = board;
+    
+    // 2. 작성 모드 설정 (설문 데이터가 있으면 'survey', 없으면 'text')
+    const [isShow, setIsShow] = useState(item.opt1 ? 'survey' : 'text');
+    const [image, setImage] = useState(null); // 새로 수정할 이미지
 
-    // subject 파싱 헬퍼 (JSON 배열 또는 '^' 구분자 모두 지원)
-    const parseOptions = (subject) => {
-        if (!subject) return ['', ''];
-        try {
-            const parsed = JSON.parse(subject);
-            if (Array.isArray(parsed) && parsed.length >= 2) return parsed;
-        } catch {}
-        const arr = subject.split('^').filter(Boolean);
-        return arr.length >= 2 ? arr : ['', ''];
-    };
-
-    // 컴포넌트 마운트 시 기존 데이터 세팅
-    useEffect(() => {
-        if (!item) return;
-        setBoard({
-            userId: item.userId || '',
-            title: item.title || '',
-            subject: item.subject || '',
-            type: item.type || 'text',
-        });
-        if (item.type === 'survey') {
-            setOptions(parseOptions(item.subject));
-        }
-    }, [item]);
-
-    const changeInput = (e) => {
-        const { name, value } = e.target;
+    const changeInput = (evt) => {
+        const { value, name } = evt.target;
         setBoard({ ...board, [name]: value });
     };
 
-    // 타입 변경 시 옵션 초기화
-    const changeType = (newType) => {
-        setBoard({ ...board, type: newType });
-        if (newType === 'survey' && item?.type === 'survey') {
-            setOptions(parseOptions(item.subject));
+    const changeFile = (evt) => {
+        setImage(evt.target.files[0]);
+    };
+
+    const onSubmit = async (evt) => {
+        evt.preventDefault();
+        if (!title) {
+            alert("제목을 입력해주세요.");
+            titleRef.current.focus();
+            return;
         }
-    };
-
-    const handleOptionChange = (index, value) => {
-        const newOptions = [...options];
-        newOptions[index] = value;
-        setOptions(newOptions);
-    };
-
-    const addOption = () => setOptions([...options, '']);
-
-    const removeOption = (index) => {
-        if (options.length <= 2) return alert("최소 2개의 옵션이 필요합니다.");
-        setOptions(options.filter((_, i) => i !== index));
-    };
-
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        if (!board.title.trim()) return alert("제목을 입력해주세요.");
 
         const formData = new FormData();
-        formData.append('userId', board.userId);
-        formData.append('title', board.title);
-        formData.append('type', board.type);
-
-        if (board.type === 'survey') {
-            const filtered = options.filter(o => o.trim() !== '');
-            if (filtered.length < 2) return alert("설문 옵션을 최소 2개 입력해주세요.");
-            formData.append('subject', JSON.stringify(filtered));
-        } else {
-            formData.append('subject', board.subject);
+        // 텍스트 필드 추가
+        Object.keys(board).forEach(key => {
+            formData.append(key, board[key]);
+        });
+        // 새로운 이미지가 선택되었다면 추가
+        if (image) {
+            formData.append('images', image);
         }
 
-        if (image) formData.append('images', image);
-
         try {
-            await BoardService.updateMat(item._id, formData);
-            alert("수정이 완료되었습니다!");
-            onUpdate();
-        } catch (e) {
-            alert("수정 실패: 서버 상태를 확인해주세요.");
+            // BoardService에 updateMat(또는 editMat) 함수가 있어야 함
+            await BoardService.updateMat(item._id, formData); 
+            alert("게시글이 수정되었습니다.");
+            onUpdate(); // 수정 후 목록 새로고침
+        } catch (err) {
+            console.error(err);
+            alert("수정 중 오류가 발생했습니다.");
         }
     };
 
     return (
-        <form onSubmit={onSubmit} className="write-form">
-            <h3 className="form-title">✏️ 게시글 수정</h3>
-
-            <table className="write-table">
+        <form onSubmit={onSubmit} encType="multipart/form-data">
+            <h3 style={{ borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>📝 게시글 수정</h3>
+            <table className="write-table" style={{ width: '100%' }}>
                 <tbody>
                     <tr>
-                        <th>작성자</th>
+                        <td>작성자: <strong>{userId}</strong></td>
+                    </tr>
+                    <tr>
                         <td>
-                            <input
-                                name="userId"
-                                value={board.userId}
-                                readOnly
-                                className="input-readonly"
-                            />
+                            <label>제목 </label>
+                            <input type='text' name='title' value={title} onChange={changeInput} ref={titleRef} style={{ width: '80%' }} />
                         </td>
                     </tr>
                     <tr>
-                        <th>제목</th>
                         <td>
-                            <input
-                                name="title"
-                                value={board.title}
-                                onChange={changeInput}
-                                placeholder="제목 입력"
-                                required
-                            />
+                            <label><input type="checkbox" checked={isShow === 'text'} onChange={() => setIsShow('text')} /> 텍스트</label>
+                            <label style={{ marginLeft: '10px' }}><input type="checkbox" checked={isShow === 'survey'} onChange={() => setIsShow('survey')} /> 설문</label>
                         </td>
                     </tr>
                     <tr>
-                        <th>유형 변경</th>
                         <td>
-                            <div className="type-select">
-                                {['text', 'image', 'survey'].map(t => (
-                                    <label key={t} className={`type-label ${board.type === t ? 'active' : ''}`}>
-                                        <input
-                                            type="radio"
-                                            name="type"
-                                            value={t}
-                                            checked={board.type === t}
-                                            onChange={() => changeType(t)}
-                                        />
-                                        {t === 'text' ? '📝 텍스트' : t === 'image' ? '🖼 이미지' : '📊 설문'}
-                                    </label>
-                                ))}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>내용</th>
-                        <td>
-                            {board.type === 'survey' ? (
-                                <div className="survey-box">
-                                    <p className="survey-hint">📊 설문 항목 수정 (최소 2개)</p>
-                                    {options.map((opt, i) => (
-                                        <div key={i} className="survey-option-row">
-                                            <span className="option-num">{i + 1}.</span>
-                                            <input
-                                                value={opt}
-                                                onChange={(e) => handleOptionChange(i, e.target.value)}
-                                                placeholder={`옵션 ${i + 1}`}
-                                            />
-                                            <button
-                                                type="button"
-                                                className="btn-remove-opt"
-                                                onClick={() => removeOption(i)}
-                                            >✕</button>
-                                        </div>
-                                    ))}
-                                    <button type="button" className="btn-add-opt" onClick={addOption}>
-                                        + 항목 추가
-                                    </button>
+                            {isShow === 'survey' ? (
+                                <div>
+                                    <input type='text' name='opt1' value={opt1} onChange={changeInput} placeholder="옵션 1" /><br/>
+                                    <input type='text' name='opt2' value={opt2} onChange={changeInput} placeholder="옵션 2" /><br/>
+                                    <input type='text' name='opt3' value={opt3} onChange={changeInput} placeholder="옵션 3" />
                                 </div>
                             ) : (
-                                <textarea
-                                    name="subject"
-                                    value={board.subject}
-                                    onChange={changeInput}
-                                    placeholder="내용을 입력하세요"
-                                />
+                                <textarea name='subject' value={subject} onChange={changeInput} style={{ width: '100%', height: '150px' }}></textarea>
                             )}
                         </td>
                     </tr>
                     <tr>
-                        <th>사진 변경</th>
                         <td>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => setImage(e.target.files[0])}
-                            />
-                            {item?.originalFileName && (
-                                <p className="current-file">📎 현재 파일: {item.originalFileName}</p>
-                            )}
+                            <p style={{ fontSize: '12px', color: '#666' }}>기존 이미지: {item.saveFileName || '없음'}</p>
+                            <input type='file' name="images" onChange={changeFile} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style={{ textAlign: 'right', paddingTop: '20px' }}>
+                            <button type='submit' style={{ backgroundColor: '#2d5a3d', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '4px', cursor: 'pointer' }}>수정완료</button>
+                            <button type="button" onClick={onCancel} style={{ marginLeft: '10px', padding: '8px 20px', borderRadius: '4px', cursor: 'pointer' }}>취소</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
-
-            <div className="form-footer">
-                <button type="submit" className="btn-submit">수정 완료</button>
-                <button type="button" className="btn-cancel" onClick={onCancel}>취소</button>
-            </div>
         </form>
     );
 };

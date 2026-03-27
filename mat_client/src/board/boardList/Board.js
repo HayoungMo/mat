@@ -1,109 +1,67 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import BoardList from './BoardList';
 import BoardWrite from './BoardWrite';
 import BoardItem from './BoardItem';
-import BoardEdit from './BoardEdit';
 import BoardService from './BoardService';
-import './Board.css';
 
 const Board = () => {
-    const [view, setView] = useState('list');        // list | write | detail | edit
+    const [view, setView] = useState('list');
     const [matList, setMatList] = useState([]);
     const [selected, setSelected] = useState(null);
-    const [viewType, setViewType] = useState('card'); // card | list
+    const [viewType, setViewType] = useState('card');
 
-    // [R] 목록 불러오기 - useCallback으로 안정화
-    const fetchList = useCallback(async (keyword = "") => {
+    const fetchList = async (keyword = "") => {
         try {
             const data = await BoardService.getMatList(keyword);
             setMatList(data);
-        } catch (e) {
-            console.error("데이터 로드 실패", e);
+        } catch (e) { 
+            console.error("데이터 로드 실패", e); 
         }
+    };
+
+    useEffect(() => { 
+        fetchList(); 
     }, []);
 
-    useEffect(() => { fetchList(); }, [fetchList]);
-
-    // [U] 북마크 토글
-    const onBookmark = async (id) => {
-        try {
-            await BoardService.updateBookmark(id);
-            fetchList();
-        } catch (e) {
-            alert("북마크 처리 실패");
-        }
-    };
-
-    // [D] 삭제
-    const onDelete = async (id) => {
-        if (!window.confirm("정말로 삭제하시겠습니까?")) return;
-        try {
-            await BoardService.deleteMat(id);
-            alert("삭제되었습니다.");
-            fetchList();
-            setView('list');
-        } catch (e) {
-            alert("삭제 실패");
-        }
-    };
-
-    // 상세 보기 이동 + selected 갱신
-    const goDetail = (item) => {
+    const onDetail = (item) => {
         setSelected(item);
         setView('detail');
     };
 
     return (
-        <div className="board-container">
-            <div className="board-header">
-                <h2>🍽️ 맛집 게시판</h2>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px', fontFamily: 'sans-serif' }}>
+            {/* 상단 헤더 영역 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #2d5a3d', paddingBottom: '15px', marginBottom: '20px' }}>
+                <h2 style={{ margin: 0, color: '#2d5a3d', cursor: 'pointer' }} onClick={() => setView('list')}>🌮 맛집 기사 커뮤니티</h2>
                 {view === 'list' && (
-                    <button onClick={() => setView('write')} className="btn-submit">
-                        ✏️ 글쓰기
-                    </button>
-                )}
-                {view !== 'list' && (
-                    <button onClick={() => setView('list')} className="btn-back">
-                        ← 목록으로
+                    <button 
+                        onClick={() => setView('write')} 
+                        style={{ backgroundColor: '#2d5a3d', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '5px', cursor: 'pointer' }}
+                    >
+                        글쓰기
                     </button>
                 )}
             </div>
 
+            {/* 메인 화면 전환 */}
             {view === 'list' && (
-                <BoardList
-                    list={matList}
-                    viewType={viewType}
-                    setViewType={setViewType}
-                    onDetail={goDetail}
-                    onSearch={fetchList}
-                    onBookmark={onBookmark}
+                <BoardList 
+                    list={matList} 
+                    viewType={viewType} 
+                    setViewType={setViewType} 
+                    onDetail={onDetail} 
+                    onSearch={fetchList} 
                 />
             )}
-            {view === 'write' && (
-                <BoardWrite
-                    onAdd={() => { fetchList(); setView('list'); }}
-                    onCancel={() => setView('list')}
-                />
-            )}
+            
             {view === 'detail' && (
-                <BoardItem
-                    item={selected}
-                    onBack={() => setView('list')}
-                    onEdit={() => setView('edit')}
-                    onDelete={onDelete}
-                    onVoteSuccess={fetchList}
-                />
+                <BoardItem item={selected} onBack={() => setView('list')} />
             )}
-            {view === 'edit' && (
-                <BoardEdit
-                    item={selected}
-                    onUpdate={(updatedItem) => {
-                        // 수정 후 selected도 최신 데이터로 업데이트
-                        if (updatedItem) setSelected(updatedItem);
-                        fetchList();
-                        setView('list');
-                    }}
-                    onCancel={() => setView('detail')}
+            
+            {view === 'write' && (
+                <BoardWrite 
+                    onAdd={() => { fetchList(); setView('list'); }} 
+                    onCancel={() => setView('list')} 
                 />
             )}
         </div>

@@ -14,33 +14,29 @@ module.exports = (app) => {
     }
   });
 
-  // 프로필 조회
-  app.get('/api/profile', async (req, res) => {
+  app.post('/api/login', async (req, res) => {
     try {
-      const user = await User.find()
-      res.send(user)
+      const { userId, password } = req.body; 
+
+      const user = await User.findOne({ userId: userId });
+
+      if (!user) {
+        
+        return res.send({ success: false, message: "존재하지 않는 아이디입니다." });
+      }
+
+      if (user.password === password) {
+          console.log('로그인 성공:', user.userId);
+          res.send({ success: true, userId: user.userId }); // 리액트가 기다리는 형식
+      } else {
+          res.send({ success: false, message: "비밀번호가 일치하지 않습니다." });
+      }
+
     } catch (err) {
-      console.error('프로필 조회 실패:', err)
-      res.status(500).send({ success: false, message: '조회 실패' })
+      console.error('로그인 서버 에러:', err);
+      res.status(500).send({ success: false, message: "서버 오류 발생" });
     }
   });
-
-  //프로필 수정
-     app.put('/api/profile', async (req, res) => {
-    try {
-      console.log('받은 데이터:',req.body)
-        const user = await User.findOneAndUpdate(
-            req.body.id,
-            { tel: req.body.tel, email: req.body.email },
-            { new: true }
-        )
-        console.log('수정된 유저:',user)
-        return res.status(200).send({ error: false, user })
-    } catch (err) {
-        console.error('프로필 수정 실패:', err)
-        res.status(500).send({ success: false, message: '수정 실패' })
-    }
-})
-  
-
 };
+
+

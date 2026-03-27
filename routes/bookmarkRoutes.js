@@ -1,17 +1,18 @@
 const exprres = require("express")
 const router = exprres.Router();
-const controller = require("../controllers/bookmarkController");
+const path = require('path');
+const controller  = require('../controller/bookmarkController');
 
-// 북마크 추가
-router.post("/", controller.addBookmark);
 
-// 북마크 삭제
-router.delete("/", controller.removeBookmark);
 
-// 북마크 조회
-router.get("/", controller.getBookmarks);
+router.get('/', controller.getBookmarks);
 
 // 북마크 토글
-router.post("/toggle", controller.toggleBookmark);
+router.post('/toggle', controller.toggleBookmark);
 
-module.exports = router;
+// 북마크 여부 확인
+router.get('/check', controller.checkBookmark);
+
+module.exports = (app) => {
+    app.use('/api/bookmarks', router);
+};
