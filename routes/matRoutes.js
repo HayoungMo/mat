@@ -52,6 +52,24 @@ module.exports = (app) => {
     }
   });
 
+  // 1-1 cityhome 아티클을 위한 기능
+  app.get('/api/article/:id',async (req,res)=>{
+    try{
+      const {id} = req.params
+
+      const article = await Article.findById(id)
+
+      if (!article){
+        return res.status(404).send({message: '데이터는 죽었다 다음은 너다...'})
+      }
+
+      res.send(article)
+    }catch(err){
+      console.error(err)
+      res.status(500).send({message: '서버도 죽었다 다음은 너다...'})
+    }
+  })
+
   // 2. 글 작성 + 이미지 업로드
   app.post('/api/article', upload.array('images', 10), async (req, res) => {
     try {
@@ -85,20 +103,32 @@ module.exports = (app) => {
       const { id } = req.params
       const files = req.files || []
 
-      const newImages = files.map(file => ({
+      const article = await Article.findById(id)
+    
+      let images = article.images || []
+
+      const deletedImages = req.body.deletedImages
+      ? JSON.parse(req.body.deletedImages)
+      : []
+
+      images = images.filter(
+        img => !deletedImages.includes(img.saveFileName)
+      )
+
+      if (req.files.length >0){
+        const newImages = files.map(file => ({
         saveFileName: file.filename,
         originalFileName: encoding(file.originalname)
-      }))
+        }))
 
-      const article = await Article.findById(id)
-
-      const updatedImages = [...article.images, ...newImages]
+        images = [...images, ...newImages]
+      }
 
       const updated = await Article.findByIdAndUpdate(
         id,
         {
           ...req.body,
-          images: updatedImages
+          images: images
         },
         { new: true }
       )
