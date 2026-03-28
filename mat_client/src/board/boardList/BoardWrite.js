@@ -1,112 +1,140 @@
-
-
-
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import BoardService from './BoardService';
 
 const BoardWrite = ({ onAdd, onCancel }) => {
-    const titleRef = useRef();
-    
-    // 초기 상태에 모든 필수 필드 포함
-    const boardForm = {
+    const [board, setBoard] = useState({
         userId: '',
         title: '',
         subject: '',
-        region: '',   
-        cityName: '', 
-        matName: '',  
-        opt1: '', opt2: '', opt3: '', opt4: '', opt5: '',
-    };
-
-    const [board, setBoard] = useState(boardForm);
-    const { userId, title, subject, region, cityName, matName, isShowType } = board;
-    const [isShow, setIsShow] = useState('text');
+        type: 'text',
+    });
+    const [options, setOptions] = useState(['', '']); // 설문 옵션 배열 (최소 2개)
     const [image, setImage] = useState(null);
 
-    const changeInput = (evt) => {
-        const { value, name } = evt.target;
+    const changeInput = (e) => {
+        const { name, value } = e.target;
         setBoard({ ...board, [name]: value });
     };
 
-    const changeFile = (evt) => {
-        setImage(evt.target.files[0]);
+    const handleOptionChange = (index, value) => {
+        const newOptions = [...options];
+        newOptions[index] = value;
+        setOptions(newOptions);
     };
 
-    const onSubmit = async (evt) => {
-        evt.preventDefault();
+    const addOption = () => setOptions([...options, '']);
 
-        // 유효성 검사 (필수 필드가 비어있는지 확인)
-        if (!title || !userId || !region || !cityName) {
-            alert("글쓴이, 제목, 지역, 시/구는 필수 입력 사항입니다.");
-            return;
-        }
+    const removeOption = (index) => {
+        if (options.length <= 2) return alert("최소 2개의 옵션이 필요합니다.");
+        setOptions(options.filter((_, i) => i !== index));
+    };
+
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        if (!board.userId.trim()) return alert("작성자를 입력해주세요.");
+        if (!board.title.trim()) return alert("제목을 입력해주세요.");
 
         const formData = new FormData();
-        // 1. 모든 텍스트 데이터 추가
-        Object.keys(board).forEach(key => {
-            formData.append(key, board[key]);
-        });
+        formData.append('userId', board.userId);
+        formData.append('title', board.title);
+        formData.append('type', board.type);
 
-        // 2. 파일 추가 (백엔드 설정에 따라 'images' 또는 'image' 확인 필요)
-        if (image) {
+        if (board.type === 'survey') {
+            const filtered = options.filter(o => o.trim() !== '');
+            if (filtered.length < 2) return alert("설문 옵션을 최소 2개 입력해주세요.");
+            // JSON 배열로 저장 (파싱 시 양방향 호환)
+            formData.append('subject', JSON.stringify(filtered));
+        } else {
+            if (!board.subject.trim()) return alert("내용을 입력해주세요.");
+            formData.append('subject', board.subject);
+        }
+
+        if (board.type === 'image' && image) {
             formData.append('images', image);
         }
 
         try {
             await BoardService.addMat(formData);
-            alert("게시글이 성공적으로 등록되었습니다.");
-            onAdd(); 
+            alert("게시글이 등록되었습니다!");
+            onAdd();
         } catch (err) {
-            console.error("서버 에러 상세:", err.response?.data || err.message);
-            alert("등록 중 오류가 발생했습니다. 서버 터미널의 에러 로그를 확인해주세요.");
+            alert("서버 오류: 등록에 실패했습니다.");
         }
     };
 
     return (
-        <form onSubmit={onSubmit} encType="multipart/form-data">
-            <table className="write-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <form onSubmit={onSubmit} className="write-form">
+            <h3 className="form-title">✏️ 맛집 게시글 작성</h3>
+
+            <table className="write-table">
                 <tbody>
                     <tr>
-                        <td style={{ padding: '10px', backgroundColor: '#f4f4f4' }}>
-                            <strong>Logo</strong> 맛집 게시글 작성
+                        <th>작성자</th>
+                        <td>
+                            <input
+                                name="userId"
+                                value={board.userId}
+                                onChange={changeInput}
+                                placeholder="아이디 입력"
+                                required
+                            />
                         </td>
                     </tr>
                     <tr>
-                        <td style={{ padding: '10px' }}>
-                            글쓴이: <input type='text' name='userId' value={userId} onChange={changeInput} placeholder="ID 입력" />
+                        <th>제목</th>
+                        <td>
+                            <input
+                                name="title"
+                                value={board.title}
+                                onChange={changeInput}
+                                placeholder="제목 입력"
+                                required
+                            />
                         </td>
                     </tr>
                     <tr>
-                        <td style={{ padding: '10px' }}>
-                            지역: <input type='text' name='region' value={region} onChange={changeInput} placeholder="예: 서울" />
-                            시/구: <input type='text' name='cityName' value={cityName} onChange={changeInput} placeholder="예: 강남구" />
+                        <th>유형</th>
+                        <td>
+                            <div className="type-select">
+                                {['text', 'image', 'survey'].map(t => (
+                                    <label key={t} className={`type-label ${board.type === t ? 'active' : ''}`}>
+                                        <input
+                                            type="radio"
+                                            name="type"
+                                            value={t}
+                                            checked={board.type === t}
+                                            onChange={() => setBoard({ ...board, type: t })}
+                                        />
+                                        {t === 'text' ? '📝 텍스트' : t === 'image' ? '🖼 이미지' : '📊 설문'}
+                                    </label>
+                                ))}
+                            </div>
                         </td>
                     </tr>
                     <tr>
-                        <td style={{ padding: '10px' }}>
-                            맛집이름: <input type='text' name='matName' value={matName} onChange={changeInput} style={{ width: '50%' }} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style={{ padding: '10px' }}>
-                            제목: <input type='text' name='title' value={title} onChange={changeInput} ref={titleRef} style={{ width: '80%' }} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style={{ padding: '10px' }}>
-                            <label><input type="radio" checked={isShow === 'text'} onChange={() => setIsShow('text')} /> 텍스트작성</label>
-                            <label style={{ marginLeft: '10px' }}><input type="radio" checked={isShow === 'survey'} onChange={() => setIsShow('survey')} /> 설문조사</label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style={{ padding: '10px' }}>
-                            {isShow === 'text' ? (
-                                <textarea name='subject' value={subject} onChange={changeInput} placeholder="내용을 입력하세요" style={{ width: '100%', height: '150px' }} />
-                            ) : (
-                                <div>
-                                    <p>설문 옵션을 입력하세요</p>
-                                    <input type='text' name='opt1' onChange={changeInput} placeholder="옵션 1" /><br/>
-                                    <input type='text' name='opt2' onChange={changeInput} placeholder="옵션 2" />
+                        <th>내용</th>
+                        <td>
+                            {board.type === 'survey' ? (
+                                <div className="survey-box">
+                                    <p className="survey-hint">📊 설문 항목을 입력하세요 (최소 2개)</p>
+                                    {options.map((opt, i) => (
+                                        <div key={i} className="survey-option-row">
+                                            <span className="option-num">{i + 1}.</span>
+                                            <input
+                                                value={opt}
+                                                onChange={(e) => handleOptionChange(i, e.target.value)}
+                                                placeholder={`옵션 ${i + 1}`}
+                                            />
+                                            <button
+                                                type="button"
+                                                className="btn-remove-opt"
+                                                onClick={() => removeOption(i)}
+                                            >✕</button>
+                                        </div>
+                                    ))}
+                                    <button type="button" className="btn-add-opt" onClick={addOption}>
+                                        + 항목 추가
+                                    </button>
                                 </div>
                             ) : (
                                 <>
@@ -127,18 +155,7 @@ const BoardWrite = ({ onAdd, onCancel }) => {
                                         </div>
                                     )}
                                 </>
-                            )
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style={{ padding: '10px' }}>
-                            파일첨부: <input type='file' name="images" onChange={changeFile} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style={{ padding: '20px', textAlign: 'center' }}>
-                            <button type='submit' style={{ backgroundColor: '#2d5a3d', color: '#fff', padding: '10px 30px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>올리기</button>
-                            <button type="button" onClick={onCancel} style={{ marginLeft: '10px', padding: '10px 30px' }}>취소</button>
+                            )}
                         </td>
                     </tr>
                 </tbody>
