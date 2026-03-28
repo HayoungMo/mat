@@ -31,6 +31,7 @@ mongoose.connect('mongodb://localhost:27017/matDB')
 require('./models/ArticleSchema.js')
 require('./models/UserSchema.js')
 require('./models/UpgradeRequestSchema.js')
+require('./models/BookmarkSchema.js')
 
 
 

@@ -1,9 +1,9 @@
-const exprres = require("express")
-const router = exprres.Router();
+const express = require("express")
+const router = express.Router();
 const path = require('path');
 const controller  = require('../controller/bookmarkController');
 
-
+console.log("bookmarkRoutes 로드됨");
 
 router.get('/', controller.getBookmarks);
 
@@ -15,6 +15,4 @@ router.get('/check', controller.checkBookmark);
 
 module.exports = (app) => {
     app.use('/api/bookmarks', router);
-
-
 };
