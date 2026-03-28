@@ -44,14 +44,7 @@ const CityHome = () => {
     const onEdit=(item)=>{
         navigate(`/city/${cityName}/article/edit/${item._id}`)
     }
-    const onUpdate= async (id,formData)=>{
-        setIsEdit(false)
-        console.log("id:",id)
-        console.log("data:",formData)
-        await articleService.updateArticle(id,formData)
-        await onData()
-        onShow('수정완료')
-    }
+
 
     const onShow =(msg)=>{
         setMsg(msg)
@@ -60,7 +53,7 @@ const CityHome = () => {
     return (
         <div>
             <h1>개인 블로그</h1>
-            <CityAdd/>
+            <CityAdd onAdd={onAdd}/>
             {
                 isShow && <CityMessage msg={msg} isShow={isShow} setIsShow={setIsShow}/>
             }

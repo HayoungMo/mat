@@ -5,6 +5,7 @@ import axios from 'axios';
 const CityEdit = ({onUpdate,setIsEdit}) => {
 
     const {id} =useParams()
+    const {cityName} =useParams()
     const navigate = useNavigate()
 
     const [article,setArticle] = useState(null) 
@@ -38,7 +39,6 @@ const CityEdit = ({onUpdate,setIsEdit}) => {
 
     const {
     userId = '',
-    cityName = '',
     title = '',
     subject = '',
     region = '',
@@ -53,6 +53,15 @@ const CityEdit = ({onUpdate,setIsEdit}) => {
             ...article,
             [name]:value
         })
+    }
+
+    // 블로그 이름(이라고 쓰고 지역구, 데이터 처리용)
+    const cityMap = {
+        Gangnam: '강남구',
+        Yongsan: '용산구',
+        Dongjak: '동작구',
+        Mapo: '마포구',
+        Jung: '중구'
     }
 
     const changeImage=(evt)=>{
@@ -94,7 +103,7 @@ const CityEdit = ({onUpdate,setIsEdit}) => {
         onUpdate(article._id,formData)
 
         setArticle({
-            userId:'',cityName:'',title:'',subject:'',region:'',matName:'',matTel:'',matAddr:''
+            userId:'',title:'',subject:'',region:'',matName:'',matTel:'',matAddr:''
         })
 
         navigate(`/city/${cityName}`)
@@ -109,8 +118,8 @@ const CityEdit = ({onUpdate,setIsEdit}) => {
                 <input type='text' value={userId} name='userId' onChange={changeInput}></input>
             </p>
             <p>
-                <label>홈 이름</label>
-                <input type='text' value={cityName} name='cityName' onChange={changeInput}></input>
+                <label>구</label>
+                &nbsp; {cityMap[cityName]}
             </p>
             <p>
                 <label>제목</label>

@@ -1,15 +1,26 @@
 import React, { useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 const CityAdd = ({onAdd}) => {
 
     const nameRef = useRef()
+ 
+    const {cityName} = useParams()
 
     const [article,setArticle] = useState({
         //userId는 나중에 삭제
         userId:'',cityName:'',title:'',subject:'',region:'',matName:'',matTel:'',matAddr:''
     })
 
-    const {userId,cityName,title,subject,region,matName,matTel,matAddr}=article
+    const cityMap = {
+        Gangnam: '강남구',
+        Yongsan: '용산구',
+        Dongjak: '동작구',
+        Mapo: '마포구',
+        Jung: '중구'
+    }
+
+    const {userId,title,subject,region,matName,matTel,matAddr}=article
 
     const [images,setImages]=useState([])
 
@@ -47,12 +58,8 @@ const CityAdd = ({onAdd}) => {
                 <input type='text' value={userId} name='userId' onChange={changeInput} ref={nameRef}></input>
             </p>
             <p>
-                <label>구역</label>
-                <input type='radio' value='Gangnam' name='cityName' onChange={changeInput} checked={cityName==="Gangnam"}/>강남구
-                <input type='radio' value='Yongsan' name='cityName' onChange={changeInput} checked={cityName==="Yongsan"}/>용산구
-                <input type='radio' value='Dongjak' name='cityName' onChange={changeInput} checked={cityName==="Dongjak"}/>동작구
-                <input type='radio' value='Mapo' name='cityName' onChange={changeInput} checked={cityName==="Mapo"}/>마포구
-                <input type='radio' value='Jung' name='cityName' onChange={changeInput} checked={cityName==="Jung"}/>중구
+                <label>구</label>
+                &nbsp;&nbsp; {cityMap[cityName]}
             </p>
             <p>
                 <label>제목</label>

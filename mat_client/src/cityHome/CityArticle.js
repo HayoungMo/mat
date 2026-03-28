@@ -8,6 +8,7 @@ const CityArticle = () => {
 
     const navigate = useNavigate()
     const {id} = useParams()
+    const {cityName} =useParams()
     const [data,setData] = useState(null)
 
     useEffect(()=>{
@@ -28,7 +29,15 @@ const CityArticle = () => {
 
     if(!data) return <div>로딩중... </div>
 
-    const {title,subject,userId,cityName,matAddr,matName,matTel} = data
+    const {title,subject,userId,matAddr,matName,matTel} = data
+
+     const cityMap = {
+        Gangnam: '강남구',
+        Yongsan: '용산구',
+        Dongjak: '동작구',
+        Mapo: '마포구',
+        Jung: '중구'
+    }
 
     const onDel = async ()=>{
         try{
@@ -50,7 +59,7 @@ const CityArticle = () => {
             <p>{subject}</p>
 
             <p>작성자: {userId}</p>       
-            <p>지역: {cityName}</p>
+            <p>지역: {cityMap[cityName]}</p>
             <p>맛집: {matName}</p>       
             <p>Tel: {matTel}</p>       
             <p>주소: {matAddr}</p>    
