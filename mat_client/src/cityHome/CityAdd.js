@@ -1,15 +1,21 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const CityAdd = ({onAdd}) => {
+const CityAdd = ({onAdd,loginUser}) => {
 
-    const nameRef = useRef()
  
     const {cityName} = useParams()
 
     const [article,setArticle] = useState({
         //userId는 나중에 삭제
-        userId:'',cityName:'',title:'',subject:'',region:'',matName:'',matTel:'',matAddr:''
+        userId:loginUser,
+        cityName:cityName,
+        title:'',
+        subject:'',
+        region:'',
+        matName:'',
+        matTel:'',
+        matAddr:''
     })
 
     const cityMap = {
@@ -20,7 +26,7 @@ const CityAdd = ({onAdd}) => {
         Jung: '중구'
     }
 
-    const {userId,title,subject,region,matName,matTel,matAddr}=article
+    const {title,subject,region,matName,matTel,matAddr}=article
 
     const [images,setImages]=useState([])
 
@@ -39,15 +45,21 @@ const CityAdd = ({onAdd}) => {
 
     const onSubmit =(evt)=>{
         evt.preventDefault()
-        if(!userId || !cityName ||!title || !subject || !region) return
+        if(!loginUser || !cityName ||!title || !subject || !region) return
 
         onAdd(article,images)
 
         setArticle({
-            userId:'',cityName:'',title:'',subject:'',region:'',matName:'',matTel:'',matAddr:''
+            userId:loginUser,
+            cityName:cityName,
+            title:'',
+            subject:'',
+            region:'',
+            matName:'',
+            matTel:'',
+            matAddr:''
         })
 
-        nameRef.current.focus()
     }
 
     return (
@@ -55,11 +67,11 @@ const CityAdd = ({onAdd}) => {
             <h2>글 쓰기</h2>
             <p>
                 <label>아이디</label>
-                <input type='text' value={userId} name='userId' onChange={changeInput} ref={nameRef}></input>
+                <span>{loginUser}</span>
             </p>
             <p>
                 <label>구</label>
-                &nbsp;&nbsp; {cityMap[cityName]}
+                <span>{cityMap[cityName]}</span>
             </p>
             <p>
                 <label>제목</label>

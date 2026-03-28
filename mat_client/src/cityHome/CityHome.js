@@ -6,13 +6,14 @@ import CityAdd from './CityAdd';
 import CityEdit from './CityEdit';
 import { useParams,useNavigate } from 'react-router-dom';
 
-const CityHome = () => {
+const CityHome = ({loginUser}) => {
 
     const {cityName} = useParams()
+
+    console.log('param cityName',cityName)
     const navigate = useNavigate()
 
     const [articles,setArticles] = useState([])
-    const [isEdit,setIsEdit] = useState(false)
     const [msg,setMsg] = useState('')
     const [isShow,setIsShow] = useState(false)
 
@@ -53,7 +54,7 @@ const CityHome = () => {
     return (
         <div>
             <h1>개인 블로그</h1>
-            <CityAdd onAdd={onAdd}/>
+            <CityAdd onAdd={onAdd} loginUser={loginUser}/>
             {
                 isShow && <CityMessage msg={msg} isShow={isShow} setIsShow={setIsShow}/>
             }

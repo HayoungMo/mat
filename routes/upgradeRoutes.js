@@ -8,8 +8,13 @@ const Upgrade = mongoose.model('upgradeRequests')
 module.exports= (app)=>{
     // 조회
     app.get('/api/upgrade',async(req,res)=>{
+        try{
         const upgradeUser = await Upgrade.find()
         return res.status(200).send(upgradeUser)
+        }catch(error){
+            console.log('upgrade 조회 에러:',error)
+            return res.status(500).send({error:true,message: error.message})
+        }
     })
 
     app.get('/api/upgrade/id',async(req,res)=>{

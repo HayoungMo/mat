@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const CityEdit = ({onUpdate,setIsEdit}) => {
+const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
 
     const {id} =useParams()
     const {cityName} =useParams()
@@ -38,7 +38,7 @@ const CityEdit = ({onUpdate,setIsEdit}) => {
     if(!article) return <div> 로딩중... </div>;
 
     const {
-    userId = '',
+    userId = loginUser,
     title = '',
     subject = '',
     region = '',
@@ -111,15 +111,15 @@ const CityEdit = ({onUpdate,setIsEdit}) => {
 
 
     return (
-                <form onSubmit={onSubmit}>
+            <form onSubmit={onSubmit}>
             <h2>수정: {title} </h2>
             <p>
                 <label>아이디</label>
-                <input type='text' value={userId} name='userId' onChange={changeInput}></input>
+                <span>{loginUser}</span>
             </p>
             <p>
                 <label>구</label>
-                &nbsp; {cityMap[cityName]}
+                <span>{cityMap[cityName]}</span>
             </p>
             <p>
                 <label>제목</label>

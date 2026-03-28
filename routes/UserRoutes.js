@@ -27,7 +27,7 @@ module.exports = (app) => {
 
       if (user.password === password) {
           console.log('로그인 성공:', user.userId);
-          res.send({ success: true, userId: user.userId }); // 리액트가 기다리는 형식
+          res.send({ success: true, userId: user.userId, user:user }); // 리액트가 기다리는 형식
       } else {
           res.send({ success: false, message: "비밀번호가 일치하지 않습니다." });
       }
