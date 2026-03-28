@@ -62,8 +62,16 @@ const MapPage = ({setAddress, setList, externalKeyword}) => {
     }
 
     const handleBookmarkToggle = async(place) => {
+
+        
+        console.log("userId:", userId);
+        console.log("place 객체:", place);  // ← 이게 뭐가 찍히나요?
+        console.log("place.id:", place?.id);
+        console.log("place.y:", place?.y);
+        console.log("place.x:", place?.x);
         try {
         const data = await toggleBookmark(userId, place); // ← fetch 대신
+        console.log("결과:", data);
         setMarkedIds(prev => ({
             ...prev,
             [place.id]: data.bookmarked

@@ -1,6 +1,9 @@
 import axios from 'axios';
 
+
+
 export const toggleBookmark = async (userId, place) => {
+    
     const res = await axios.post('/api/bookmarks/toggle', {
         userId,
         kakaoId: place.id,
@@ -8,8 +11,9 @@ export const toggleBookmark = async (userId, place) => {
         matTel:  place.phone,
         matAddr: place.address_name,
         lat:     place.y,
-        lng:     place.x,
+        lng:     place.x
     });
+    console.log(res);
     return res.data;
 };
 
