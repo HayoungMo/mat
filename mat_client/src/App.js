@@ -7,14 +7,17 @@ import MyPage from './myPage/MyPage';
 import Board from './board/boardList/Board';
 import React, { useState,useEffect } from 'react'; // ★ React와 useState 추가
 import CityAll from './cityHome/CityAll';
+import axios from 'axios';
 
 function App() {
 
-  // 추가된 코드: 로그인 유저 상태 (세션 유지용)
+  // 추가된 코드: 로그인 유저 상태 (세션 유지용), localStorage는 브라우저에 영구 저장되는것.
   const [loginUser, setLoginUser] = useState(localStorage.getItem('userId'));
 
   //모하영: loginUser 상태가 바뀔 때마다 로컬 스토리지와 동기화 되는 코드 입니다
   useEffect(()=>{
+    axios.get('/api/session',{withCredentials:true})
+    .then(res => {
     if (loginUser){
       //로그인을 하거나 변경되면 스토리지에도 덮어쓰게 끔
       localStorage.setItem('userId',loginUser);
@@ -22,7 +25,12 @@ function App() {
       //로그아웃 시(setLoginUser(null) 등) 스토리지에서도 삭제 하게함
       localStorage.removeItem('userId');
     }
- }, [loginUser]);
+    })
+    .catch(()=>{
+      setLoginUser(null);
+      localStorage.removeItem('userId')
+    });
+ }, []);
 
   return (
     <div>
