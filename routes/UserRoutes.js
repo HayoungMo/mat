@@ -37,6 +37,35 @@ module.exports = (app) => {
       res.status(500).send({ success: false, message: "서버 오류 발생" });
     }
   });
+   // 프로필 조회
+  app.get('/api/profile/:userId', async (req, res) => {
+    try {
+      const {userId} = req.params
+      console.log('받은 userId:',userId)
+      const user = await User.findOne({userId:userId})
+      console.log('조회된 user: ', user)
+      res.send(user)
+    } catch (err) {
+      console.error('프로필 조회 실패:', err)
+      res.status(500).send({ success: false, message: '조회 실패' })
+    }
+  });
+  //프로필 수정
+     app.put('/api/profile', async (req, res) => {
+    try {
+      console.log('받은 데이터:',req.body)
+        const user = await User.findOneAndUpdate(
+            {_id:req.body.id},
+            { tel: req.body.tel, email: req.body.email },
+            { new: true }
+        )
+        console.log('수정된 유저:',user)
+        return res.status(200).send({ error: false, user })
+    } catch (err) {
+        console.error('프로필 수정 실패:', err)
+        res.status(500).send({ success: false, message: '수정 실패' })
+    }
+})
 };
 
 

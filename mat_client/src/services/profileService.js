@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const getProfile = async() => {
-    const res = await axios.get('/api/profile') 
+const getProfile = async(userId) => {
+    const res = await axios.get(`/api/profile/${userId}`) 
     return res.data // 전체 조회
 }
 
@@ -22,9 +22,9 @@ const addProfile = async(user) => {
 const updateProfile = async (user) => {
     try {
         const res = await axios.put('/api/profile', {
-            id: user.id,
-            content: user.content,
-            rating: user.rating
+           id: user._id, 
+            tel: user.tel,
+            email: user.email
         });
         return res.data;
     } catch (err) {

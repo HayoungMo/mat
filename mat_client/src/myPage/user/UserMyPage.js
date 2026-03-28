@@ -6,6 +6,7 @@ import UserMyPageProfile from './UserMyPageProfile';
 import reviewService from '../../services/reviewService';
 import profileService from '../../services/profileService';
 import UserProfileUpdate from './UserProfileUpdate';
+import UserMyPageBookmark from './UserMyPageBookmark';
 
 const UserMyPage = ({loginUser}) => {
 
@@ -19,12 +20,11 @@ const UserMyPage = ({loginUser}) => {
     
         useEffect(() => {
             onData()
+             onProfile()
          },[])
         
 
-         useEffect(() => {
-            onProfile()
-         },[])
+         
         
          const onEdit = (user) => {
             console.log('onEdit 받은 데이터:',user)
@@ -39,13 +39,10 @@ const UserMyPage = ({loginUser}) => {
             onProfile()
             alert('프로필 수정 완료.')
         }
-
-
-
     
     const onData = async () => {
         try {
-            const res = await reviewService.getReview()
+            const res = await reviewService.getReview(loginUser)
             console.log('응답 확인:', res)  // 응답이 되는지 확인하기 위한 코딩임 필요는 없음
             setUsers(res) 
         } catch(err) {
@@ -54,12 +51,19 @@ const UserMyPage = ({loginUser}) => {
             }
         }
 
+        const onDel=async (item) => {
+        await reviewService.deleteReview(item._id)
+        onData()
+        alert('리뷰가 삭제되었습니다.')
+    }
+
         const onProfile = async () => {
            try {
         const res = await profileService.getProfile(loginUser)
         console.log('getProfile 응답:',res)
-        // 배열로 오면 첫 번째 요소만, 객체로 오면 그대로
-        setProfile(Array.isArray(res) ? res[0] : res.data?.[0] ?? res.data ?? res)
+        if(res){
+        setProfile(res)
+        }
     } catch(err) {
         console.error(err)
         setProfile({})
@@ -95,12 +99,12 @@ const UserMyPage = ({loginUser}) => {
         }
             
             <div>
-            <UserMyPageList users={users}/>
+            <UserMyPageList users={users} onDel={onDel}/>
             </div>
             
             
-            <h4>북마크</h4>
-            {/*<UserMyPageBookmark/>*/}
+            <h1>북마크</h1>
+            <UserMyPageBookmark loginUser={loginUser}/>
         </div>
     );
 };

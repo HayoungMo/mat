@@ -2,8 +2,8 @@ import axios from 'axios'
 
 //조회
 
-const getReview = async() => {
-    const res = await axios.get('api/review') 
+const getReview = async(userId) => {
+    const res = await axios.get(`/api/review/${userId}`) 
     return res.data // 전체 조회
 }
 
@@ -21,9 +21,9 @@ const addReview = async(user) => {
 }
 
 //수정
-const updateReview = async (user) => {
+const updateReview = async (user,userId) => {
     try {
-        const res = await axios.put('/api/review', {
+        const res = await axios.put(`/api/review/${userId}`, {
             id: user.id,
             content: user.content,
             rating: user.rating
@@ -36,8 +36,8 @@ const updateReview = async (user) => {
 
 //삭제
 const deleteReview = async(id) => {
-    axios.delete('/api/review',{
-        data:{id:id} //{data:{key:value}}
+    await axios.delete('/api/review',{
+        data:{id:id}
     }).then(res => {
         console.log(res)
     }).catch(error => {
