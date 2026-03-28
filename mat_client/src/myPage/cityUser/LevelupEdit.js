@@ -17,7 +17,7 @@ const LevelupAdd = () => {
             </p>
 
             <p>
-                <button>신청</button>
+                <button>수정</button>
                 <button>취소</button>
             </p>
         </div>

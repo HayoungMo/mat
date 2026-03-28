@@ -5,13 +5,30 @@ const getUpgrade = async()=>{
     return res.data
 }
 
+const getIdUpgrade = async()=>{
+    const res = await axios.get('/api/upgrade/id')
+    return res.data
+}
+
 const addUpgrade = async(upgradeUser)=>{
     axios.post('/api/upgrade',{
         userId: upgradeUser.userId,
         cityName: upgradeUser.cityName,
         reason:upgradeUser.reason,
-        status: upgradeUser.status || '',
+        status: upgradeUser.status || 'pending',
         createdAt: upgradeUser.createdAt || new Date()
+    }).then(res=>{
+        console.log(res)
+    }).catch(error=>{
+        console.log(error)
+    })
+}
+
+const updateUpgrade = async(upgradeUser)=>{
+    axios.put('/api/upgrade',{
+        userId: upgradeUser.userId,
+        cityName: upgradeUser.cityName,
+        reason:upgradeUser.reason
     }).then(res=>{
         console.log(res)
     }).catch(error=>{
@@ -29,8 +46,10 @@ const deleteUpgrade = async(userId)=>{
     )
 }
 
-export default{
+export default {
     getUpgrade:getUpgrade,
+    getIdUpgrade:getIdUpgrade,
     addUpgrade:addUpgrade,
+    updateUpgrade:updateUpgrade,
     deleteUpgrade:deleteUpgrade
 }

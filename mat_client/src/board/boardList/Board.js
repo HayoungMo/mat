@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import BoardList from './BoardList';
 import BoardWrite from './BoardWrite';
 import BoardItem from './BoardItem';
@@ -17,6 +17,18 @@ const Board = () => {
         } catch (e) { 
             console.error("데이터 로드 실패", e); 
         }
+    }
+
+    useEffect(() => { fetchList(); }, [fetchList]);
+
+    // [U] 북마크 토글
+    const onBookmark = async (id) => {
+        try {
+            await BoardService.updateBookmark(id);
+            fetchList();
+        } catch (e) {
+            alert("북마크 처리 실패");
+        }
     };
 
     useEffect(() => { 
@@ -24,6 +36,12 @@ const Board = () => {
     }, []);
 
     const onDetail = (item) => {
+        setSelected(item);
+        setView('detail');
+    };
+
+    // 상세 보기 이동 + selected 갱신
+    const goDetail = (item) => {
         setSelected(item);
         setView('detail');
     };

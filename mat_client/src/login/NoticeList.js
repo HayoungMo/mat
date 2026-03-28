@@ -19,8 +19,8 @@ const NoticeList = ({ Notices, onLike, onOpen, onDel }) => {
                 <tbody>
                     {
                         Notices && Notices.map(item => (
-                            <NoticeItem key={item.id} Notice={item} onLike={onLike} 
-                                onOpen={onOpen}onDel={onDel} />
+                            <NoticeItem key={item._id} Notice={item} onLike={onLike} 
+                                onOpen={() => onOpen(item._id)} onDel={() => onDel(item._id)} />
                         ))
                     }
                 </tbody>
