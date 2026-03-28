@@ -2,6 +2,14 @@ const mongoose = require('mongoose');
 const User = mongoose.model('users'); 
 
 module.exports = (app) => {
+
+  app.get('/api/session',(req,res) => {
+    if(req.session.userId) {
+      res.send({ loggedIn: true, userId:req.session.userId});
+    } else {
+      res.send({ loggedIn: false});
+    }
+  });
   
   app.post('/api/register', async (req, res) => {
     try {
@@ -25,7 +33,9 @@ module.exports = (app) => {
         return res.send({ success: false, message: "존재하지 않는 아이디입니다." });
       }
 
+      //로그인 성공할 때 서버 세션에도 저장해줘야한다.
       if (user.password === password) {
+          req.session.userId = user.userId;
           console.log('로그인 성공:', user.userId);
           res.send({ success: true, userId: user.userId }); // 리액트가 기다리는 형식
       } else {
