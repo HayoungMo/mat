@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import UserMyPageProfile from './UserMyPageProfile';
 import reviewService from '../../services/reviewService';
 import profileService from '../../services/profileService';
+import bookmarkService from '../../services/bookmarkService';
 import UserProfileUpdate from './UserProfileUpdate';
 import UserMyPageBookmark from './UserMyPageBookmark';
 
@@ -14,6 +15,7 @@ const UserMyPage = ({loginUser}) => {
      const [profile,setProfile] = useState({})
      const [isEdit,setIsEdit] = useState(false)
      const [current,setCurrent] =useState({})
+     const [bookmark,setBookmark] = useState([])
 
      console.log('loginUser 확인',loginUser)
 
@@ -70,6 +72,20 @@ const UserMyPage = ({loginUser}) => {
             }
         }
 
+        const onBookmark = async () => {
+           try {
+        const res = await bookmarkService.getBookmarks(loginUser)
+        console.log('getbookmark 응답:',res)
+        if(res){
+        setBookmark(res)
+        }
+    } catch(err) {
+        console.error(err)
+        setBookmark({})
+            }
+        }
+
+
         const changeInput = (evt) => {
     const { value, name } = evt.target
     setProfile({ ...profile, [name]: value })
@@ -104,7 +120,7 @@ const UserMyPage = ({loginUser}) => {
             
             
             <h1>북마크</h1>
-            <UserMyPageBookmark loginUser={loginUser}/>
+            <UserMyPageBookmark onDel={onDel} loginUser={loginUser}/>
         </div>
     );
 };

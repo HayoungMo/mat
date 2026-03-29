@@ -1,6 +1,6 @@
 import React from 'react';
 
-const UserMyPageBookmarkItem = ({item}) => {
+const UserMyPageBookmarkItem = ({item,loginUser,onDel}) => {
     const {_id,matName,matTel,matAddr,createAt} = item
     return (
         <div>
@@ -9,6 +9,7 @@ const UserMyPageBookmarkItem = ({item}) => {
             <td>{matAddr}</td>
             <td>{createAt}</td>
             <td>
+                <button onClick={()=>onDel(item)}>삭제</button>
             </td>
         </div>
     );
