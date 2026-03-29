@@ -13,9 +13,9 @@ const MyPage = ({loginUser,loginInfo}) => {
             case 'admin':
                 return <AdminPage/>
             case 'city':
-                return <CityPage/>
+                return <CityPage loginInfo={loginInfo} loginUser={loginUser}/>
             default:
-                return <UserPage loginInfo={loginInfo}/>
+                return <UserPage loginInfo={loginInfo} loginUser={loginUser}/>
         }
    }
 

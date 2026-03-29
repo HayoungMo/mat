@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const CityAdd = ({onAdd,loginUser}) => {
+const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
 
- 
-    const {cityName} = useParams()
+    const {cityName: cityNameParam} = useParams()
+    const cityName = cityNameProp || cityNameParam 
 
     const [article,setArticle] = useState({
         //userId는 나중에 삭제

@@ -1,54 +1,52 @@
 const mongoose = require('mongoose')
-
-//DB 작명
 const Upgrade = mongoose.model('upgradeRequests')
 
-//미들 웨어 생성하기
-
-module.exports= (app)=>{
+module.exports = (app) => {
+    
     // 조회
-    app.get('/api/upgrade',async(req,res)=>{
-        try{
-        const upgradeUser = await Upgrade.find()
-        return res.status(200).send(upgradeUser)
-        }catch(error){
-            console.log('upgrade 조회 에러:',error)
-            return res.status(500).send({error:true,message: error.message})
+    app.get('/api/upgrade', async(req, res) => {
+        try {
+            const upgradeUser = await Upgrade.find()
+            return res.status(200).send(upgradeUser)
+        } catch(error) {
+            console.log('upgrade 조회 에러:', error)
+            return res.status(500).send({ error: true, message: error.message })
         }
     })
 
-    app.get('/api/upgrade/id',async(req,res)=>{
-        const userId = req.body.userId
-        const upgradeUser = await Upgrade.findOne({userId})
-        return res.status(200).send(upgradeUser)
+    // 신청 등록
+    app.post('/api/upgrade', async(req, res) => {
+        try {
+            const upgradeUser = await Upgrade.create(req.body)
+            return res.status(200).send({ error: false, upgradeUser })
+        } catch(error) {
+            console.log('upgrade 등록 에러:', error)
+            return res.status(500).send({ error: true, message: error.message })
+        }
     })
 
-    // 데이터 입력
-    app.post('/api/upgrade',async(req,res)=>{
-        const upgradeUser = await Upgrade.create(req.body)
-        return res.status(200).send({
-            error:false,
-            upgradeUser
-        })
+    // 상태 수정 (수락/반려)
+    app.put('/api/upgrade/:id', async(req, res) => {
+        try {
+            const upgraded = await Upgrade.findByIdAndUpdate(
+                req.params.id,
+                { status: req.body.status },
+                { new: true }
+            )
+            res.status(200).send({ error: false, upgraded })
+        } catch(error) {
+            console.log('upgrade 수정 에러:', error)
+            res.status(500).send({ error: true, message: error.message })
+        }
     })
 
-    // 데이터 수정
-    app.put('/api/upgrade',async(req,res)=>{
-        const userId = req.body.userId
-        const upgradeUser = await Upgrade.findByIdAndUpdate(userId)
-        return res.status(200).send({
-            error:false,
-            upgradeUser
-        })
-    })
-    
-    // 데이터 삭제
-    app.delete('/api/upgrade',async(req,res)=>{
-        const userId = req.body.userId
-        const upgradeUser = await Upgrade.findByIdAndDelete(userId)
-        return res.status(200).send({
-            error:false,
-            upgradeUser
-        })
+    // 삭제
+    app.delete('/api/upgrade', async(req, res) => {
+        try {
+            const upgradeUser = await Upgrade.deleteMany({userId: req.body.userId})
+            return res.status(200).send({ error: false, upgradeUser })
+        } catch(error) {
+            return res.status(500).send({ error: true, message: error.message })
+        }
     })
 }

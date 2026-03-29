@@ -37,6 +37,21 @@ module.exports = (app) => {
       res.status(500).send({ success: false, message: "서버 오류 발생" });
     }
   });
+
+  app.put('/api/users/:userId/role',async(req,res)=>{
+      try{
+        const user = await User.findOneAndUpdate(
+          {userId: req.params.userId},
+          {role: req.body.role},
+          {new:true}
+        )
+
+        res.send(200).send({error:false,user})
+        
+      }catch(error){
+        res.status(500).send({error : true, message: error.message})
+      }
+  })
 };
 
 
