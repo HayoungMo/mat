@@ -1,55 +1,81 @@
 const mongoose = require('mongoose');
-const User = mongoose.model('users');
+const User = mongoose.model('users'); 
 
 module.exports = (app) => {
 
-    // 회원가입
-    app.post('/api/register', async (req, res) => {
-        try {
-            const user = await User.create(req.body);
-            console.log('회원가입 성공:', user.userId);
-            res.send({ success: true, user });
-        } catch (err) {
-            console.error('회원가입 실패:', err);
-            res.status(500).send({ success: false, message: "저장 실패" });
-        }
-    });
+  app.get('/api/session',(req,res) => {
+    if(req.session.userId) {
+      res.send({ loggedIn: true, userId:req.session.userId});
+    } else {
+      res.send({ loggedIn: false});
+    }
+  });
+  
+  app.post('/api/register', async (req, res) => {
+    try {
+      const user = await User.create(req.body); // 
+      console.log('회원가입 성공:', user.userId);
+      res.send({ success: true, user });
+    } catch (err) {
+      console.error('회원가입 실패:', err);
+      res.status(500).send({ success: false, message: "저장 실패" });
+    }
+  });
 
-    // 로그인 - 세션 저장
-    app.post('/api/login', async (req, res) => {
-        try {
-            const { userId, password } = req.body;
-            const user = await User.findOne({ userId });
+  app.post('/api/login', async (req, res) => {
+    try {
+      const { userId, password } = req.body; 
 
-            if (!user) return res.send({ success: false, message: "존재하지 않는 아이디입니다." });
+      const user = await User.findOne({ userId: userId });
 
-            if (user.password === password) {
-                // 세션에 저장
-                req.session.user = { userId: user.userId };
-                console.log('로그인 성공 - 세션 저장:', user.userId);
-                res.send({ success: true, userId: user.userId });
-            } else {
-                res.send({ success: false, message: "비밀번호가 일치하지 않습니다." });
-            }
-        } catch (err) {
-            console.error('로그인 서버 에러:', err);
-            res.status(500).send({ success: false, message: "서버 오류 발생" });
-        }
-    });
+      if (!user) {
+        
+        return res.send({ success: false, message: "존재하지 않는 아이디입니다." });
+      }
 
-    // 로그아웃 - 세션 제거
-    app.post('/api/logout', (req, res) => {
-        req.session.destroy(() => {
-            res.send({ success: true });
-        });
-    });
+      //로그인 성공할 때 서버 세션에도 저장해줘야한다.
+      if (user.password === password) {
+          req.session.userId = user.userId;
+          console.log('로그인 성공:', user.userId);
+          res.send({ success: true, userId: user.userId }); // 리액트가 기다리는 형식
+      } else {
+          res.send({ success: false, message: "비밀번호가 일치하지 않습니다." });
+      }
 
-    // 현재 로그인 유저 확인
-    app.get('/api/me', (req, res) => {
-        if (req.session.user) {
-            res.send({ success: true, userId: req.session.user.userId });
-        } else {
-            res.send({ success: false, userId: null });
-        }
-    });
+    } catch (err) {
+      console.error('로그인 서버 에러:', err);
+      res.status(500).send({ success: false, message: "서버 오류 발생" });
+    }
+  });
+   // 프로필 조회
+  app.get('/api/profile/:userId', async (req, res) => {
+    try {
+      const {userId} = req.params
+      console.log('받은 userId:',userId)
+      const user = await User.findOne({userId:userId})
+      console.log('조회된 user: ', user)
+      res.send(user)
+    } catch (err) {
+      console.error('프로필 조회 실패:', err)
+      res.status(500).send({ success: false, message: '조회 실패' })
+    }
+  });
+  //프로필 수정
+     app.put('/api/profile', async (req, res) => {
+    try {
+      console.log('받은 데이터:',req.body)
+        const user = await User.findOneAndUpdate(
+            {_id:req.body.id},
+            { tel: req.body.tel, email: req.body.email },
+            { new: true }
+        )
+        console.log('수정된 유저:',user)
+        return res.status(200).send({ error: false, user })
+    } catch (err) {
+        console.error('프로필 수정 실패:', err)
+        res.status(500).send({ success: false, message: '수정 실패' })
+    }
+})
 };
+
+

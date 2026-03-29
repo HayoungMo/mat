@@ -5,28 +5,22 @@ const NoticeForm = ({onSearch}) => {
     const [search,setSearch] = useState('')
 
     const changeInput = (evt) => {
-        const {value} = evt.target
-        setSearch(value)
+        setSearch(evt.target.value)
     }
-
-    useEffect(()=>{
-        onSearch(search)
-    },[search])
 
     const onSubmit = (evt) => {
         evt.preventDefault()
 
-        if(!search) return
-
-        onSearch(search)
-
-        setSearch('')
+       onSearch(search)
     }
 
     return (
         <form className='NoticeForm' onSubmit={onSubmit}>
             <input type='text' placeholder='제목 및 내용 검색'
-            value={search} onChange={changeInput}/>
+            value={search} onChange={changeInput}  style={{flex:1,padding:'10px'}}/>
+            <button type="submit"  style={{padding:'10px',cursor:'pointer'}}>
+                검색
+            </button>
         </form>
     );
 };

@@ -4,14 +4,33 @@ import MapPage from './map/MapPage';
 import SearchPage from './totSearch/SearchPage';
 import LoginPage from './login/LoginPage';
 import MyPage from './myPage/MyPage';
-//import CityHome from './myPage/cityUser/CityPage';
 import Board from './board/boardList/Board';
-import React, { useState } from 'react'; // ★ React와 useState 추가
+import React, { useState,useEffect } from 'react'; // ★ React와 useState 추가
+import CityAll from './cityHome/CityAll';
+import axios from 'axios';
 
 function App() {
 
-  // 추가된 코드: 로그인 유저 상태 (세션 유지용)
+  // 추가된 코드: 로그인 유저 상태 (세션 유지용), localStorage는 브라우저에 영구 저장되는것.
   const [loginUser, setLoginUser] = useState(localStorage.getItem('userId'));
+
+  //모하영: loginUser 상태가 바뀔 때마다 로컬 스토리지와 동기화 되는 코드 입니다
+  useEffect(()=>{
+    axios.get('/api/session',{withCredentials:true})
+    .then(res => {
+    if (loginUser){
+      //로그인을 하거나 변경되면 스토리지에도 덮어쓰게 끔
+      localStorage.setItem('userId',loginUser);
+    }else{
+      //로그아웃 시(setLoginUser(null) 등) 스토리지에서도 삭제 하게함
+      localStorage.removeItem('userId');
+    }
+    })
+    .catch(()=>{
+      setLoginUser(null);
+      localStorage.removeItem('userId')
+    });
+ }, []);
 
   return (
     <div>
@@ -22,19 +41,18 @@ function App() {
         {/* 추가된코드 */}
         <Link to='/login'><button>{loginUser ? `${loginUser}님` : '로그인'}</button></Link>
         <Link to='/mypage'><button>마이 페이지</button></Link>
-        {/* <Link to='/cityhome'><button>지역 모음</button></Link> */}
+        <Link to='/city'><button>블로그 홈</button></Link>
         <Link to='/board'><button>게시판</button></Link>
       </p>
 
       <Routes>
-        <Route path="/" element={<MainPage/>} exact></Route>
-        <Route path="/map" element={<MapPage/>} ></Route>
-        <Route path="/search" element={<SearchPage/>} ></Route>
+        <Route path="/" element={<MainPage loginUser={loginUser} setLoginUser={setLoginUser}/>} exact></Route>
+        <Route path="/map" element={<MapPage loginUser={loginUser} setLoginUser={setLoginUser}/>} ></Route>
+        <Route path="/search" element={<SearchPage loginUser={loginUser} setLoginUser={setLoginUser}/>} ></Route>
         <Route path="/login" element={<LoginPage loginUser={loginUser} setLoginUser={setLoginUser} />} ></Route>
         {/* 팀원 로그인정보 전달코드 */}
-        <Route path="/mypage" element={<MyPage loginUser={loginUser} />} ></Route>
-        {/* <Route path="/cityhome" element={<CityHome/>} ></Route> */}
-        <Route path="/board" element={<Board loginUser={loginUser} />} ></Route>
+        <Route path="/mypage" element={<MyPage loginUser={loginUser} setLoginUser={setLoginUser} />} ></Route> <Route path="/city/*" element={<CityAll/>} ></Route>
+        <Route path="/board" element={<Board loginUser={loginUser} setLoginUser={setLoginUser} />} ></Route>
       </Routes>
     </div>
   );

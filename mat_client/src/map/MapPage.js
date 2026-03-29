@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { toggleBookmark, getBookmarks } from '../services/bookmarkService'; // ← 추가
 
-const MapPage = ({setAddress}) => {
+const MapPage = ({setAddress, setList, externalKeyword}) => {
 
     const [keyword, setKeyword] = useState('');
     const [filteredPlaces, setFilteredPlaces] = useState([]);
@@ -11,20 +11,26 @@ const MapPage = ({setAddress}) => {
     const mapInstance = useRef(null);     // 생성된 카카오맵 객체 참조
     const markersRef = useRef([]);        // 마커들을 담을 배열
     const infowindowRef = useRef(null);   // 인포윈도우 객체 참조
+    const [mapReady, setMapReady] = useState(false);
 
     const userId = "user1";
 
 
     // 1. 지도 초기화 (최초 1회 실행)
     useEffect(() => {
+        console.log("4. externalKeyword useEffect 실행:", externalKeyword, "mapReady:", mapReady);
+        
         window.kakao.maps.load(async () => {
             const container = mapRef.current;
+           
             const options = {
                 center: new window.kakao.maps.LatLng(37.566826, 126.9786567), // 기본 위치 (서울시청)
                 level: 3,
             };
             mapInstance.current = new window.kakao.maps.Map(container, options);
+            setMapReady(true);
             infowindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
+            setKeyword(externalKeyword);
 
             try {
             //북마크 불러오기
@@ -56,8 +62,16 @@ const MapPage = ({setAddress}) => {
     }
 
     const handleBookmarkToggle = async(place) => {
+
+        
+        console.log("userId:", userId);
+        console.log("place 객체:", place);  // ← 이게 뭐가 찍히나요?
+        console.log("place.id:", place?.id);
+        console.log("place.y:", place?.y);
+        console.log("place.x:", place?.x);
         try {
         const data = await toggleBookmark(userId, place); // ← fetch 대신
+        console.log("결과:", data);
         setMarkedIds(prev => ({
             ...prev,
             [place.id]: data.bookmarked
@@ -122,6 +136,7 @@ const MapPage = ({setAddress}) => {
             alert('키워드를 입력해주세요!');
             return;
         }
+       
         const ps = new window.kakao.maps.services.Places();
         ps.keywordSearch(keyword, placesSearchCB);
     };
@@ -154,11 +169,24 @@ const MapPage = ({setAddress}) => {
 
             bounds.extend(placePosition);
         }
+
+        if(setList) {
+            setList(places);
+        }
         
         // 검색된 모든 마커가 보이도록 지도 범위 조정
         mapInstance.current.setBounds(bounds);
         setFilteredPlaces(places); // 리스트 UI 업데이트용
     };
+
+    // 외부에서 키워드 받았을 때 자동 검색
+    useEffect(() => {
+    if (!externalKeyword || !mapReady) return;
+        setKeyword(externalKeyword);       // input에도 반영
+        const ps = new window.kakao.maps.services.Places();
+        ps.keywordSearch(externalKeyword, placesSearchCB);
+
+    }, [externalKeyword, mapReady]);
 
 
     
@@ -178,12 +206,13 @@ const MapPage = ({setAddress}) => {
             }}></div>
 
             {/* 2. 검색창 UI (지도 위에 둥둥 떠 있음) */}
+            {/* 임시 css */}
             <div id="menu_wrap" style={{
                 position: 'absolute', // 부모 내부에서 위치 고정
                 top: '10px',          // 위에서 10px
                 left: '10px',         // 왼쪽에서 10px (여기서 결정됨!)
                 width: '300px',       // 너비 조절
-                maxHeight: '480px',   // 지도 높이를 넘지 않게 조절
+                maxHeight: '500px',   // 지도 높이를 넘지 않게 조절
                 overflowY: 'auto', 
                 background: 'rgba(255, 255, 255, 0.9)', // 살짝 투명한 흰색
                 padding: '15px',
@@ -215,9 +244,10 @@ const MapPage = ({setAddress}) => {
                             {/* 정보 영역 */}
                             <div className="info" style={{ flex: 1 }} onClick={() => {const moveLatLon = new window.kakao.maps.LatLng(place.y, place.x);
                                 mapInstance.current.panTo(moveLatLon);
-                                displayInfowindow(markersRef.current[index], place.place_name);}}>
+                                displayInfowindow(markersRef.current[index], place.place_name, place.phone, place.address_name);}}>
                                 <strong>{place.place_name}</strong>
                                 <div>{place.address_name}</div>
+                                <div>{place.phone}</div>
                             </div>
 
                             {/* 북마크 버튼 */}
@@ -228,6 +258,7 @@ const MapPage = ({setAddress}) => {
                                     // 토글 로직: 기존 객체를 복사하고 현재 ID 값만 반전
                                     handleBookmarkToggle(place);
                                 }}
+                                // 임시 css
                                 style={{
                                     height: '35px',
                                     width: '35px',      // 너비 고정으로 원형/정사각형 유지
