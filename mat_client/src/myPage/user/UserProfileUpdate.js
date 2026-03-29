@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const UserProfileUpdate = ({users,current,onUpdate,setIsEdit,loginUser}) => {
     const [user,setUser] = useState(current)
-    const {userId,tel,email} =user
+    const {userId,password,tel,email} =user
 
     const changeInput =(evt)=>{
         const{value,name}=evt.target
@@ -18,7 +18,7 @@ const UserProfileUpdate = ({users,current,onUpdate,setIsEdit,loginUser}) => {
         onUpdate(user)
 
         setUser({
-            userId:'',tel:'',email:''
+            userId:'',password:'',tel:'',email:''
         })
     }
 
@@ -28,6 +28,10 @@ const UserProfileUpdate = ({users,current,onUpdate,setIsEdit,loginUser}) => {
 
     return (
         <form onSubmit={onSubmit}>
+            <p>
+                <label>비밀번호</label>
+                <input type='text' value={password} name='password' onChange={changeInput}/>
+            </p>
             <p>
                 <label>전화번호</label>
                 <input type='text' value={tel} name='tel' onChange={changeInput}/>

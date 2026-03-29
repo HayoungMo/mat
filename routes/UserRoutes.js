@@ -66,7 +66,7 @@ module.exports = (app) => {
       console.log('받은 데이터:',req.body)
         const user = await User.findOneAndUpdate(
             {_id:req.body.id},
-            { tel: req.body.tel, email: req.body.email },
+            { password:req.body.password, tel: req.body.tel, email: req.body.email },
             { new: true }
         )
         console.log('수정된 유저:',user)

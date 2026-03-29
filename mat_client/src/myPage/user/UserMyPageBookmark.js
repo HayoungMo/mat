@@ -4,7 +4,7 @@ import { useState } from 'react';
 import UserMyPageBookmarkList from './UserMyPageBookmarkList';
 import * as bookmarkService from '../../services/bookmarkService';
 
-const UserMyPageBookmark = ({loginUser}) => {
+const UserMyPageBookmark = ({loginUser,onDel}) => {
    const [users,setUsers] = useState([])
     const [isEdit,setIsEdit] = useState(false)
     const [currnet,setCurrent] =useState({})
@@ -21,7 +21,7 @@ const UserMyPageBookmark = ({loginUser}) => {
        
     return (
         <div className='Customer'>            
-            <UserMyPageBookmarkList users={users}/>
+            <UserMyPageBookmarkList onDel={onDel} users={users}/>
         </div>
     );
 };

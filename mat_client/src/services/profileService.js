@@ -22,7 +22,8 @@ const addProfile = async(user) => {
 const updateProfile = async (user) => {
     try {
         const res = await axios.put('/api/profile', {
-           id: user._id, 
+           id: user._id,
+            password: user.password,
             tel: user.tel,
             email: user.email
         });
