@@ -7,7 +7,7 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
     const [isUpdating, setIsUpdating] = useState(false);
     const [relatedPosts, setRelatedPosts] = useState({ prev: [], next: [] });
 
-    // 1. 상세 데이터 로드
+    // 1. 상세 데이터 로드 (최신 상태 동기화)
     useEffect(() => {
         if (!item?._id) return;
         setLoadingDetail(true);
@@ -17,23 +17,25 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
             .finally(() => setLoadingDetail(false));
     }, [item?._id]);
 
-    // 2. 연관 게시글 추출
+    // 2. 연관 게시글 추출 (이전글 2개, 다음글 2개)
     useEffect(() => {
         if (!detail?._id) return;
         BoardService.getMatList().then(data => {
             if (!Array.isArray(data)) return;
+            // 같은 타입의 게시글만 필터링하여 정렬
             const sameTypePosts = data
                 .filter(p => p.type === detail.type)
                 .sort((a, b) => new Date(a.sysdate) - new Date(b.sysdate));
+            
             const currentIndex = sameTypePosts.findIndex(p => p._id === detail._id);
             setRelatedPosts({
                 prev: sameTypePosts.slice(Math.max(0, currentIndex - 2), currentIndex),
                 next: sameTypePosts.slice(currentIndex + 1, currentIndex + 3)
             });
         });
-    }, [detail]);
+    }, [detail?._id, detail?.type]);
 
-    // ✅ 설문 파싱
+    // ✅ 설문 데이터 파싱 로직
     let options = [];
     if (detail?.type === 'survey') {
         try {
@@ -62,6 +64,7 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
         }
     };
 
+    // ✅ 북마크 여부 확인 (사용자 ID 기반)
     const isMyBookmark = Boolean(
         loginUser && 
         Array.isArray(detail?.isBookmarked) && 
@@ -141,7 +144,6 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
                                     display: 'flex', alignItems: 'center', gap: '15px', transition: 'all 0.2s'
                                 }}
                             >
-                                {/* ✅ 체크박스 원형 아이콘 추가 */}
                                 <div style={{ 
                                     width: '20px', height: '20px', borderRadius: '50%', border: '2px solid #ff6b6b', 
                                     background: loginUser ? '#fff' : '#f0f0f0', flexShrink: 0 

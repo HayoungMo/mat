@@ -37,9 +37,9 @@ const BoardService = {
         return await axiosWithCreds.delete(`${API_URL}/${id}`);
     },
 
-    // BoardService.js
+
     updateBookmark: async (id, userId) => {
-        // 괄호 안에 userId를 담아서 PATCH 요청을 보냄
+       
         return await axiosWithCreds.patch(`${API_URL}/${id}/bookmark`, { userId });
     },
 
