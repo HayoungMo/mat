@@ -71,7 +71,7 @@ const CityHome = ({loginUser,loginInfo}) => {
                 isShow && <CityMessage msg={msg} isShow={isShow} setIsShow={setIsShow}/>
             }
             
-            <CityList articles={articles} onEdit={onEdit} onDel={onDel}/>
+            <CityList articles={articles} onEdit={onEdit} onDel={onDel} loginUser={loginUser} loginInfo={loginInfo}/>
             <hr/>
         </div>
     );

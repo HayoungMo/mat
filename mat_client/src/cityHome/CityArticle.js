@@ -5,13 +5,53 @@ import articleServices from '../services/articleServices';
 import { useNavigate } from 'react-router-dom';
 import { toggleBookmark} from '../services/bookmarkService';
 
-const CityArticle = () => {
+const CityArticle = ({loginUser,loginInfo}) => {
 
     const navigate = useNavigate()
     const {id} = useParams()
     const {cityName} =useParams()
     const [data,setData] = useState(null)
     const [bookmarked, setBookmarked] = useState(false);
+    const [reviews, setReviews] =useState([])
+    const [reviewForm, setReviewForm] =useState({content: '',rating:5})
+
+    useEffect(()=>{
+        if(data?.no){
+            fetchReviews()
+        }
+    },[data])
+
+    const fetchReviews = async()=>{
+        const res = await axios.get(`/api/review/article/${data.no}`)
+        setReviews(res.data)
+    }
+
+    const onReviewSubmit = async()=>{
+        if(!loginUser){
+            alert('로그인이 필요합니다')
+            return
+        }
+        if(!reviewForm.content){
+            alert('내용을 입력해주세요!')
+            return
+        }
+
+        await axios.post(`/api/review/${loginUser}`,{
+            userId: loginUser,
+            aNo: data.no,
+            content: reviewForm.content,
+            rating: reviewForm.rating
+        })
+
+        setReviewForm({content:'', rating:5})
+        fetchReviews()
+    }
+
+    const onReviewDel = async(reviewId)=>{
+        if(!window.confirm('삭제하시겠습니까?')) return
+        await axios.delete('/api/review',{data:{id:reviewId}})
+        fetchReviews()
+    }
 
     useEffect(()=>{
         const fetchData = async ()=>{
@@ -32,6 +72,10 @@ const CityArticle = () => {
     if(!data) return <div>로딩중... </div>
 
     const {no,title,subject,userId,matAddr,matName,matTel} = data
+
+    const canEdit = loginInfo?.role === 'city' && loginUser === userId
+    const alreadyReviewed = reviews.some(r=>r.userId === loginUser)
+    const canReview = loginInfo?.role === 'user' && !alreadyReviewed
 
      const cityMap = {
         Gangnam: '강남구',
@@ -105,10 +149,55 @@ const CityArticle = () => {
             }   
 
             <p>
-                <button onClick={onEdit}>수정</button>
-                <button onClick={onDel}>삭제</button>
-                
+                {canEdit && <button onClick={onEdit}>수정</button>}
+                {canEdit && <button onClick={onDel}>삭제</button>}
+                                
             </p>
+
+            <hr/>
+            <h3>리뷰</h3>
+
+        {
+            canReview? (
+            <div>
+                <select value={reviewForm.rating} onChange={e => setReviewForm({...reviewForm, rating: Number(e.target.value)})}>
+                    <option value={5}>⭐⭐⭐⭐⭐</option>
+                    <option value={4}>⭐⭐⭐⭐</option>
+                    <option value={3}>⭐⭐⭐</option>
+                    <option value={2}>⭐⭐</option>
+                    <option value={1}>⭐</option>
+                </select>
+            <input 
+            value={reviewForm.content} 
+            onChange={e => setReviewForm({...reviewForm, content: e.target.value})}
+            placeholder='리뷰를 작성해주세요'
+            />
+            <button onClick={onReviewSubmit}>등록</button>
+            </div>
+            )
+            :
+            (
+            <p>
+            {!loginUser && '로그인 후 리뷰를 작성할 수 있습니다.'}
+            {loginUser && loginInfo?.role !== 'user' && '일반 회원만 리뷰를 작성할 수 있습니다.'}
+            {alreadyReviewed && '이미 리뷰를 작성하셨습니다.'}
+            </p>
+            )
+        }
+            <ul>
+                {reviews.map(review => (
+                <li key={review._id}>
+                <span>{'⭐'.repeat(review.rating)}</span>
+                <span>{review.userId}</span>
+                <span>{review.content}</span>
+                <span>{new Date(review.createdAt).toLocaleDateString()}</span>
+                {loginUser === review.userId && 
+                    <button onClick={()=> onReviewDel(review._id)}>삭제</button>
+                }
+                </li>
+                ))}
+            </ul>
+
         </div>
     );
 };
