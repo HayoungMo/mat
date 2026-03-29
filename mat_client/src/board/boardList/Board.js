@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import BoardList from './BoardList';
 import BoardWrite from './BoardWrite';
 import BoardItem from './BoardItem';
@@ -12,57 +11,55 @@ const Board = ({ loginUser }) => {
     const [matList, setMatList] = useState([]);
     const [selected, setSelected] = useState(null);
     const [viewType, setViewType] = useState('card');
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    
+    // ✅ 지역 필터 상태 추가
+    const [selectedCity, setSelectedCity] = useState("전체");
+    const cities = ["전체", "강남구", "용산구", "동작구", "마포구", "중구"];
 
     const fetchList = useCallback(async (keyword = "") => {
+        setLoading(true);
         try {
             const data = await BoardService.getMatList(keyword);
-            // isHidden 필터링 (숨김 처리된 글 제외)
-            setMatList(data.filter(item => !item.isHidden));
+            setMatList(Array.isArray(data) ? data.filter(item => !item.isHidden) : []);
         } catch (e) {
             console.error("데이터 로드 실패", e);
+            setMatList([]);
+        } finally {
+            setLoading(false);
         }
     }, []);
 
-    useEffect(() => { fetchList(); }, [fetchList]);
+    useEffect(() => {
+        fetchList();
+    }, [fetchList]);
 
-    // 북마크 토글
-    // Board.js 내부의 onBookmark 함수
+  
+    const onBookmark = async (id) => {
+        // 1. 로그인 여부 확인
+        if (!loginUser) {
+            alert("로그인이 필요한 서비스입니다. 로그인 후 이용해주세요! 😊");
+            return;
+        }
 
-        const onBookmark = async (id) => {
-            // [추가] 로그인 체크: 이게 없으면 서버 통신 전에 막을 수 없어
-            if (!loginUser) {
-                alert("로그인한 사용자만 북마크를 이용할 수 있습니다.");
-                return;
-            }
-
-            try {
-                const res = await BoardService.updateBookmark(id);
-                
-                // 목록 새로고침 (이게 돌아야 DB 상태가 반영된 ⭐ 노란 별이 보임)
-                fetchList();
-
-                const isBookmarked = res.data?.isBookmarked;
-                if (isBookmarked) {
-                    console.log("북마크 추가됨");
-                    // alert("⭐ 북마크에 추가되었습니다."); // 원하면 알림 추가
-                } else {
-                    console.log("북마크 해제됨");
-                }
-                
-            } catch (e) {
-                console.error("북마크 처리 실패", e);
-                alert("북마크 처리 중 오류가 발생했습니다.");
-            }
-        };
-    // 삭제
+        try {
+            // 2. 서버에 게시글 ID와 현재 로그인한 유저 ID를 같이 보냄
+            await BoardService.updateBookmark(id, loginUser);
+            
+            // 3. 목록 새로고침
+            fetchList(); 
+        } catch (e) {
+            console.error("북마크 처리 실패:", e);
+            alert("북마크 처리 중 오류가 발생했습니다.");
+        }
+    };
     const onDelete = async (id) => {
-        if (!window.confirm("정말로 삭제하시겠습니까?")) return;
+        if (!window.confirm("정말 삭제하시겠습니까?")) return;
         try {
             await BoardService.deleteMat(id);
             alert("삭제되었습니다.");
-            fetchList();
             setView('list');
+            fetchList();
         } catch (e) {
             alert("삭제 실패");
         }
@@ -75,43 +72,46 @@ const Board = ({ loginUser }) => {
 
     return (
         <div className="board-container">
-            <div className="board-header">
-                <h2>🍽️ 맛집 게시판</h2>
+            <header className="board-header">
+                <h2>🍴 맛집 커뮤니티</h2>
+                
                 {view === 'list' && (
-                    <button onClick={() => setView('write')} className="btn-submit">
-                        ✏️ 글쓰기
-                    </button>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
+                        <button className="btn-submit" onClick={() => setView('write')}>
+                            ✍️ 글쓰기
+                        </button>
+                    </div>
                 )}
-                {view !== 'list' && (
-                    <button onClick={() => setView('list')} className="btn-back">
-                        ← 목록으로
-                    </button>
-                )}
-            </div>
+            </header>
 
             {view === 'list' && (
                 <BoardList
                     list={matList}
                     viewType={viewType}
-                    setViewType={setViewType} 
+                    setViewType={setViewType}
                     onSearch={fetchList}
                     onBookmark={onBookmark}
                     loginUser={loginUser}
-                    
-                    onDetail={goDetail} 
+                    onDetail={goDetail}
+                    cities={cities}
+                    selectedCity={selectedCity}
+                    setSelectedCity={setSelectedCity}
                 />
             )}
+
             {view === 'write' && (
                 <BoardWrite
-                    loginUser={loginUser} // 로그인 유저 전달
+                    loginUser={loginUser}
                     onAdd={() => { fetchList(); setView('list'); }}
                     onCancel={() => setView('list')}
                 />
             )}
-            {view === 'detail' && (
+
+            {view === 'detail' && selected && (
                 <BoardItem
                     item={selected}
                     loginUser={loginUser}
+                    viewType={viewType} 
                     onBookmark={onBookmark}
                     onBack={() => setView('list')}
                     onEdit={() => setView('edit')}
@@ -119,14 +119,11 @@ const Board = ({ loginUser }) => {
                     onVoteSuccess={fetchList}
                 />
             )}
-            {view === 'edit' && (
+
+            {view === 'edit' && selected && (
                 <BoardEdit
                     item={selected}
-                    onUpdate={(updatedItem) => {
-                        if (updatedItem) setSelected(updatedItem);
-                        fetchList();
-                        setView('list');
-                    }}
+                    onUpdate={() => { fetchList(); setView('list'); }}
                     onCancel={() => setView('detail')}
                 />
             )}
