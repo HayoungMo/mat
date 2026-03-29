@@ -27,6 +27,23 @@ exports.toggleBookmark = async(req, res) => {
     }
 }
 
+exports.toggleArticleBookmark = async(req, res) => {
+    const {userId, articleNo, title, matName} = req.body;
+
+    console.log("req.body:", req.body);
+    try {
+        const exists = await Bookmark.findOne({userId, articleNo});
+        if(exists) {
+            await Bookmark.deleteOne({userId, articleNo});
+            return res.json({bookmarked: false});
+        }
+        await Bookmark.create({userId, articleNo, title, matName});
+        res.json({bookmarked: true});
+    } catch (err) {
+        res.status(500).json({message: err.message});
+    }
+}
+
 //전체 조회
 exports.getBookmarks = async(req,res) => {
      console.log('getBookmarks 요청:', req.query); // ← 추가
