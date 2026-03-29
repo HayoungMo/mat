@@ -1,10 +1,10 @@
 import React from 'react';
 import CityMyhome from './CityMyhome';
 
-const CityPage = () => {
+const CityPage = ({loginUser,loginInfo}) => {
     return (
         <div>
-           <CityMyhome/> 
+           <CityMyhome loginInfo={loginInfo} loginUser={loginUser}/> 
         </div>
     );
 };
