@@ -3,12 +3,14 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import articleServices from '../services/articleServices';
 import { useNavigate } from 'react-router-dom';
+import { toggleBookmark} from '../services/bookmarkService';
 
 const CityArticle = () => {
 
     const navigate = useNavigate()
     const {id} = useParams()
     const [data,setData] = useState(null)
+    const [bookmarked, setBookmarked] = useState(false);
 
     useEffect(()=>{
         const fetchData = async ()=>{
@@ -28,7 +30,7 @@ const CityArticle = () => {
 
     if(!data) return <div>로딩중... </div>
 
-    const {title,subject,userId,cityName,matAddr,matName,matTel} = data
+    const {no, title,subject,userId,cityName,matAddr,matName,matTel} = data
 
     const onDel = async ()=>{
         try{
@@ -44,9 +46,35 @@ const CityArticle = () => {
     const onEdit = async ()=>{
         navigate(`/city/${cityName}/article/edit/${id}`)
     }
+
+    
+    
+         const handleBookmarkToggle = async(Article) => {
+                console.log("place 객체:", Article); 
+                try {
+                const data = await toggleBookmark(userId, Article, no); 
+                console.log("결과:", data);
+                setBookmarked(data.bookmarked);
+                } catch (err) {
+                    console.error('북마크 저장 실패', err);
+                }
+            }
     return (
         <div>
             <h2>{title}</h2> 
+            <div
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        // 토글 로직: 기존 객체를 복사하고 현재 ID 값만 반전
+                        handleBookmarkToggle(data);
+                    }}>
+                    
+                        <span style={{ color: bookmarked ? '#ffc107' : '#ccc',
+                            cursor:'pointer'
+                         }}>
+                            {data ? "★" : "☆"}
+                        </span>
+                </div>
             <p>{subject}</p>
 
             <p>작성자: {userId}</p>       
@@ -70,6 +98,7 @@ const CityArticle = () => {
             <p>
                 <button onClick={onEdit}>수정</button>
                 <button onClick={onDel}>삭제</button>
+                
             </p>
         </div>
     );

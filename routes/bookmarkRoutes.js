@@ -10,6 +10,8 @@ router.get('/', controller.getBookmarks);
 // 북마크 토글
 router.post('/toggle', controller.toggleBookmark);
 
+router.post('/toggleArticle', controller.toggleArticleBookmark);
+
 // 북마크 여부 확인
 router.get('/check', controller.checkBookmark);
 

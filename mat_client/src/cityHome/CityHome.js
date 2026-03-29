@@ -60,7 +60,7 @@ const CityHome = () => {
     return (
         <div>
             <h1>개인 블로그</h1>
-            <CityAdd/>
+            <CityAdd onAdd={onAdd}/>
             {
                 isShow && <CityMessage msg={msg} isShow={isShow} setIsShow={setIsShow}/>
             }
