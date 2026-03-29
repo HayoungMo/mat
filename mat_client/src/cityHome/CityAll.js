@@ -5,7 +5,7 @@ import CityArticle from './CityArticle';
 import CityEdit from './CityEdit';
 import articleServices from '../services/articleServices';
 
-const CityAll = ({loginUser}) => {
+const CityAll = ({loginUser,loginInfo}) => {
 
         const onUpdate= async (id,formData)=>{
         await articleServices.updateArticle(id,formData)
@@ -22,8 +22,8 @@ const CityAll = ({loginUser}) => {
 
 
             <Routes>
-                <Route path=':cityName' element={<CityHome loginUser={loginUser}/>} />
-                <Route path=':cityName/article/:id' element={<CityArticle loginUser={loginUser}/>}/>
+                <Route path=':cityName' element={<CityHome loginUser={loginUser} loginInfo={loginInfo}/>} />
+                <Route path=':cityName/article/:id' element={<CityArticle loginUser={loginUser} loginInfo={loginInfo}/>}/>
                 <Route path=':cityName/article/edit/:id' element={<CityEdit onUpdate={onUpdate} loginUser={loginUser}/>}/>
             </Routes>
         </div>

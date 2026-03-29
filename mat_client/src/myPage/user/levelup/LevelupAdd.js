@@ -15,7 +15,7 @@ const LevelupAdd = ({loginUser}) => {
     },[loginUser])
 
     const [form,setForm] = useState({
-        userId: loginUser?.userId,
+        userId: loginUser,
         cityName: '',
         reason:''
     })
@@ -41,6 +41,12 @@ const LevelupAdd = ({loginUser}) => {
         }
 
         await fetch('/api/upgrade',{
+            method:'DELETE',
+            headers:{'Content-Type': 'application/json'},
+            body: JSON.stringify({userId: loginUser})
+        })
+        
+        await fetch('/api/upgrade',{
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(form)
@@ -48,14 +54,14 @@ const LevelupAdd = ({loginUser}) => {
 
         alert('신청 완료!')
 
-        navigate('/mypage',{ state : {refresh:true}})
+        navigate('/mypage/',{ state : {refresh:true}})
     }
 
     return (
         <div>
             <p>
                 <label>아이디</label>
-                <span>{form.userId}</span>
+                <span>{loginUser}</span>
             </p>
             <p>
                 <label>지역</label>

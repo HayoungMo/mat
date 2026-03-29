@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {searchKeyword} from '../services/SearchMapService.js';
 
@@ -6,6 +6,18 @@ const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
 
     const {cityName: cityNameParam} = useParams()
     const cityName = cityNameProp || cityNameParam 
+    console.log('cityNameProp:', cityNameProp)
+    console.log('cityNameParam:', cityNameParam)
+    console.log('cityName:', cityName)
+    
+    useEffect(()=>{
+        if(cityName){
+            setArticle(prev=>({
+                ...prev,
+                cityName: cityName
+            }))
+        }
+    },[cityName])
 
     const [article,setArticle] = useState({
         //userId는 나중에 삭제

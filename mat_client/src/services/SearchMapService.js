@@ -1,4 +1,11 @@
 export const searchKeyword = async(keyword, callback) =>{
+    if (!window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
+        window.kakao.maps.load(() => {
+            const ps = new window.kakao.maps.services.Places();  
+        });
+        return;
+    }
+    
     const ps = new window.kakao.maps.services.Places();
     
     if (!window.kakao || !window.kakao.maps || !window.kakao.maps.services) {

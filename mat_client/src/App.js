@@ -24,29 +24,19 @@ function App() {
   }
   )
 
-  //모하영: loginUser 상태가 바뀔 때마다 로컬 스토리지와 동기화 되는 코드 입니다
+     //모하영: loginUser 상태가 바뀔 때마다 로컬 스토리지와 동기화 되는 코드 입니다
   useEffect(()=>{
-    axios.get('/api/session',{withCredentials:true})
-    .then(res => {
     if (loginUser){
-      //로그인을 하거나 변경되면 스토리지에도 덮어쓰게 끔
-      localStorage.setItem('userId',loginUser);
-    }else{
-      //로그아웃 시(setLoginUser(null) 등) 스토리지에서도 삭제 하게함
-      localStorage.removeItem('userId');
+        localStorage.setItem('userId', loginUser);
+    } else {
+        localStorage.removeItem('userId');
     }
-
     if (loginInfo){
-      localStorage.setItem('user',JSON.stringify(loginInfo))
-    }else{
-      localStorage.removeItem('user')
+        localStorage.setItem('user', JSON.stringify(loginInfo))
+    } else {
+        localStorage.removeItem('user')
     }
- }, [loginUser,loginInfo]);
-    })
-    .catch(()=>{
-      setLoginUser(null);
-      localStorage.removeItem('userId')
-    });
+}, [loginUser, loginInfo]);
 
   return (
     <div>
@@ -71,7 +61,7 @@ function App() {
         <MyPage loginUser={loginUser} setLoginUser={setLoginUser} loginInfo={loginInfo}/> :
         <LoginPage setLoginUser={setLoginUser}/>
         } ></Route> 
-        <Route path="/city/*" element={<CityAll loginUser={loginUser}/>} ></Route>
+        <Route path="/city/*" element={<CityAll loginUser={loginUser} loginInfo={loginInfo}/>} ></Route>
         <Route path="/board" element={<Board loginUser={loginUser} setLoginUser={setLoginUser} />} ></Route>
       </Routes>
     </div>

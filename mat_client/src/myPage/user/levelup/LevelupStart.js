@@ -8,6 +8,8 @@ const LevelupStart = ({ugUsers,loginInfo}) => {
     const request = ugUsers[0]
 
     useEffect(()=>{
+        console.log('ugUsers:',ugUsers)
+        console.log('request:',request)
         if (!request){
          navigate('/mypage/levelup')
         } else if(request.status === 'pending') {
@@ -17,7 +19,7 @@ const LevelupStart = ({ugUsers,loginInfo}) => {
         } else {
              navigate('/mypage/rejected')
         }
-    },[request, navigate])
+    },[request, navigate, ugUsers])
     
     return (
         <div>

@@ -5,9 +5,10 @@ import CityMessage from './CityMessage';
 import CityAdd from './CityAdd';
 import { useParams,useNavigate } from 'react-router-dom';
 
-const CityHome = ({loginUser}) => {
+const CityHome = ({loginUser,loginInfo}) => {
 
     const {cityName} = useParams()
+    const [myCityName,setMyCityName] = useState('')
 
     console.log('param cityName',cityName)
     const navigate = useNavigate()
@@ -19,6 +20,16 @@ const CityHome = ({loginUser}) => {
     useEffect(()=>{
         onData()
     },[cityName])
+
+    useEffect(()=>{
+        const fetchCity = async()=>{
+            const res = await fetch('/api/upgrade')
+            const data = await res.json()
+            const approved = data.find(item=> item.userId === loginUser && item.status === 'approved')
+            if(approved) setMyCityName(approved.cityName)
+        }
+    if(loginUser) fetchCity()
+    },[loginUser])
 
     const onData = async()=>{
         const res = await articleService.getArticle()
@@ -53,8 +64,9 @@ const CityHome = ({loginUser}) => {
     return (
         <div>
             <h1>개인 블로그</h1>
-            <CityAdd onAdd={onAdd} loginUser={loginUser}/>
-            <CityAdd onAdd={onAdd}/>
+            {myCityName === cityName &&
+                <CityAdd onAdd={onAdd} loginUser={loginUser}/>
+            }
             {
                 isShow && <CityMessage msg={msg} isShow={isShow} setIsShow={setIsShow}/>
             }
