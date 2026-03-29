@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import {searchKeyword} from '../services/SearchMapService.js';
 
 const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
 
@@ -27,6 +28,9 @@ const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
     }
 
     const {title,subject,region,matName,matTel,matAddr}=article
+    const [res, setResult] = useState([]);//검색 결과
+    const [selected, setSelected] = useState(null); //선택된 항목
+
 
     const [images,setImages]=useState([])
 
@@ -34,14 +38,37 @@ const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
         const files = Array.from(evt.target.files)
         setImages(files)
     }
-
+    
     const changeInput=(evt)=>{
         const {value,name}=evt.target
         setArticle({
             ...article,
             [name]:value
         })
+        
+        if (name === 'matName') {
+            if (!value) {
+                setResult([]);
+                return;
+            }
+            searchKeyword(value, (data) => { //추가된 로직
+                console.log("콜백 data", data);         // 전체 구조 확인
+                console.log("배열?:", Array.isArray(data)); // true/false 확인
+                setResult(data); //serachKeyword 찾아가서 data 가져옴
+            });
+        }
     }
+
+    const handleSelect = (item) => {
+        setSelected(item);
+        setResult([]);
+        setArticle({
+            ...article,
+            matName: item.place_name
+        });
+    };
+    
+
 
     const onSubmit =(evt)=>{
         evt.preventDefault()
@@ -87,18 +114,39 @@ const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
             </p>
             <p>
                 <label>맛집 이름</label>
-                <input type='text' value={matName} name='matName' onChange={changeInput}></input>
+                <input type='text' value={matName} name='matName' onChange={changeInput} autoComplete='off'></input>
+                <div>
+                    <ul>
+                        
+                        {res.length === 0 && !selected &&(
+                            <div>
+                               <p>검색결과 없음</p>
+                            </div>
+                        )}
+                        
+                        {res.map((item, index)=> (
+                            <li key={index} onClick={()=>handleSelect(item)}>
+                            <div>{item.place_name}</div>
+                            <div>{item.address_name}</div>
+                            <div>{item.phone}</div>
+                            </li>
+                        ))}
+                          
+                    </ul>
+
+                    {selected && (
+                        <div>
+                            <p>가게 이름: {selected.place_name}</p>
+                            <p>📍 주소: {selected.address_name}</p>
+                            <p>📞 전화번호: {selected.phone || '정보 없음'}</p>
+                        </div>
+                    )}
+                </div>
             </p>
             
-            <p>
-                <label>맛집 전화번호</label>
-                <input type='text' value={matTel} name='matTel' onChange={changeInput}></input>
-            </p>
             
-            <p>
-                <label>맛집 주소</label>
-                <input type='text' value={matAddr} name='matAddr' onChange={changeInput}></input>
-            </p>
+            
+            
             
             <p>
                 <label>사진</label>

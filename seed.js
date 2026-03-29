@@ -4,6 +4,7 @@ const Article = require('./models/ArticleSchema');
 const Bookmark = require('./models/BookmarkSchema');
 const Review = require('./models/ReviewSchema');
 const UpgradeRequest = require('./models/UpgradeRequestSchema');
+const FreeBoard = require('./models/FreeBoardSchema');
 
 //터미널에 node seed.js 입력하면 더미데이터가 들어갑니다.
 
@@ -18,6 +19,7 @@ mongoose.connect('mongodb://localhost:27017/matDB')
     await Bookmark.deleteMany({});
     await Review.deleteMany({});
     await UpgradeRequest.deleteMany({});
+    await FreeBoard.deleteMany({});
     console.log('기존 데이터 삭제 완료');
 
     // =============================================
@@ -125,6 +127,64 @@ mongoose.connect('mongodb://localhost:27017/matDB')
       { userId: 'user02', cityName: '강남구', reason: '강남 지역 맛집을 소개하고 싶어요', status: 'approved' }
     ]);
     console.log('등업신청 데이터 입력 완료');
+    // =============================================
+    // 6. 자유게시판(FreeBoard) 더미데이터
+    // =============================================
+    await FreeBoard.create([
+      {
+        userId: 'user01', title: '오늘 점심 메뉴 추천받아요!', type: '글', 
+        subject: '수원역 근처에서 혼밥하기 좋은 곳 있을까요? 너무 배고프네요.',
+        readCount: 15, like: 3, isBookmarked: ['user02'], sysdate: new Date()
+      },
+      {
+        userId: 'user02', title: '이번 주말 마포구 맛집 투어 가실 분?', type: '글', 
+        subject: '연남동 쪽 새로 생긴 카페 가보고 싶은데 같이 가실 분 구합니다!',
+        readCount: 20, like: 5, isBookmarked: ['user01', 'user03'], sysdate: new Date()
+      },
+      {
+        userId: 'admin01', title: '[공지] 게시판 이용 수칙 안내', type: '글', 
+        subject: '깨끗한 커뮤니티를 위해 비방이나 광고성 글은 삼가 부탁드립니다.',
+        readCount: 100, like: 10, isBookmarked: [], sysdate: new Date()
+      },
+      {
+        userId: 'user03', title: '최고의 면 요리는?', type: '설문', 
+        subject: '칼국수 vs 냉면 vs 파스타 여러분의 선택은?',
+        votedCount: 45, readCount: 50, like: 2, isBookmarked: [], sysdate: new Date()
+      },
+      {
+        userId: 'city_mapo', title: '마포구 축제 현장 사진입니다', type: '이미지', 
+        subject: '오늘 날씨가 너무 좋아서 축제 현장 찍어봤어요. 다들 놀러오세요!',
+        saveFileName: ['fest1.jpg', 'fest2.jpg'], originalFileName: ['축제1.jpg', '축제2.jpg'],
+        readCount: 35, like: 12, isBookmarked: ['user02'], sysdate: new Date()
+      },
+      {
+        userId: 'user01', title: '코딩 공부하기 좋은 카페 찾음', type: '글', 
+        subject: '조용하고 콘센트 많아서 작업하기 딱 좋네요. 공유합니다.',
+        readCount: 42, like: 8, isBookmarked: ['user02', 'user03'], sysdate: new Date()
+      },
+      {
+        userId: 'user02', title: '민초단 다들 모여보세요 (설문)', type: '설문', 
+        subject: '민트초코 호불호 조사합니다.',
+        votedCount: 88, readCount: 90, like: 15, isBookmarked: ['user01'], sysdate: new Date()
+      },
+      {
+        userId: 'city_gangnam', title: '강남역 퇴근길 현황', type: '이미지', 
+        subject: '사람이 정말 많네요. 다들 안전 귀가하세요!',
+        saveFileName: ['subway.jpg'], originalFileName: ['지하철.jpg'],
+        readCount: 28, like: 4, isBookmarked: [], sysdate: new Date()
+      },
+      {
+        userId: 'user03', title: '도서관에서 공부 중인데 너무 졸려요', type: '글', 
+        subject: '졸음 깨는 법 좀 알려주세요. 커피 세 잔째입니다...',
+        readCount: 12, like: 1, isBookmarked: [], sysdate: new Date()
+      },
+      {
+        userId: 'admin01', title: '서비스 점검 안내 (2026-04-01)', type: '글', 
+        subject: '안정적인 서비스 제공을 위해 새벽 2시부터 4시까지 점검이 진행됩니다.',
+        readCount: 200, like: 0, isBookmarked: [], sysdate: new Date()
+      }
+    ]);
+    console.log('자유게시판 데이터 입력 완료');
 
     // =============================================
     console.log('=============================');

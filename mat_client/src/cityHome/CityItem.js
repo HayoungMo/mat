@@ -1,11 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Link,Route,Routes} from 'react-router-dom'
+import { toggleBookmark} from '../services/bookmarkService';
 
 const CityItem = ({item,onDel,onEdit}) => {
 
     console.log('item 전체',item)
     console.log('이미지',item.images)
     const {no,title,matName} = item
+
+    const userId = "user"; //임시아이디
+
+     const [bookmarked, setBookmarked] = useState(false);
+
+     const handleBookmarkToggle = async(Article) => {
+            console.log("place 객체:", Article); 
+            try {
+            const data = await toggleBookmark(userId, Article, no); 
+            console.log("결과:", data);
+            setBookmarked(data.bookmarked);
+            } catch (err) {
+                console.error('북마크 저장 실패', err);
+            }
+        }
 
     return (
         <tr>
@@ -20,6 +36,22 @@ const CityItem = ({item,onDel,onEdit}) => {
             <td>
                 <button onClick={()=>onEdit(item)}>수정</button>
                 <button onClick={()=>onDel(item)}>삭제</button>
+
+                <div
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        // 토글 로직: 기존 객체를 복사하고 현재 ID 값만 반전
+                        handleBookmarkToggle(item);
+                    }}>
+                    
+                        <span style={{ color: bookmarked ? '#ffc107' : '#ccc',
+                            cursor:'pointer'
+                         }}>
+                            {item ? "★" : "☆"}
+                        </span>
+                </div>
+                                
+                
             </td>
             <hr/>
         </tr>

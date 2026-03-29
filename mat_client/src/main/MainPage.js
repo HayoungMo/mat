@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Seoul from '../asset/Test2.js'
+import Seoul from '../asset/SeoulMap.js'
 import data from '../asset/matRestaurant.json'
 import MapPage from '../map/MapPage.js';
 

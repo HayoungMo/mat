@@ -31,6 +31,7 @@ mongoose.connect('mongodb://localhost:27017/matDB')
 require('./models/ArticleSchema.js')
 require('./models/UserSchema.js')
 require('./models/UpgradeRequestSchema.js')
+require('./models/BookmarkSchema.js')
 
 
 
@@ -39,6 +40,23 @@ require('./routes/matRoutes')(app)
 require('./routes/UserRoutes.js')(app)
 require('./routes/bookmarkRoutes.js')(app)
 require('./routes/upgradeRoutes.js')(app)
+
+//3. 리뷰(Review)
+require('./models/ReviewSchema.js')
+require('./routes/reviewRoutes.js')(app)
+
+app.get('/',(req,res) => {
+    res.json({message: 'Mat 서버 작동중입니다'});
+});
+
+//4. 프로필(Profile)
+require('./models/UserSchema.js')
+require('./routes/UserRoutes.js')(app)
+
+app.listen(PORT, () => {
+    console.log(`서버 실행중입니다: http://localhost:${PORT}`)
+});
+
 
 app.get('/',(req,res) => {
     res.json({message: 'Mat 서버 작동중입니다'});

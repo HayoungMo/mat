@@ -62,8 +62,16 @@ const MapPage = ({setAddress, setList, externalKeyword}) => {
     }
 
     const handleBookmarkToggle = async(place) => {
+
+        
+        console.log("userId:", userId);
+        console.log("place 객체:", place);  // ← 이게 뭐가 찍히나요?
+        console.log("place.id:", place?.id);
+        console.log("place.y:", place?.y);
+        console.log("place.x:", place?.x);
         try {
         const data = await toggleBookmark(userId, place); // ← fetch 대신
+        console.log("결과:", data);
         setMarkedIds(prev => ({
             ...prev,
             [place.id]: data.bookmarked
@@ -174,7 +182,7 @@ const MapPage = ({setAddress, setList, externalKeyword}) => {
     // 외부에서 키워드 받았을 때 자동 검색
     useEffect(() => {
     if (!externalKeyword || !mapReady) return;
-    setKeyword(externalKeyword);       // input에도 반영
+        setKeyword(externalKeyword);       // input에도 반영
         const ps = new window.kakao.maps.services.Places();
         ps.keywordSearch(externalKeyword, placesSearchCB);
 
@@ -198,6 +206,7 @@ const MapPage = ({setAddress, setList, externalKeyword}) => {
             }}></div>
 
             {/* 2. 검색창 UI (지도 위에 둥둥 떠 있음) */}
+            {/* 임시 css */}
             <div id="menu_wrap" style={{
                 position: 'absolute', // 부모 내부에서 위치 고정
                 top: '10px',          // 위에서 10px
@@ -249,6 +258,7 @@ const MapPage = ({setAddress, setList, externalKeyword}) => {
                                     // 토글 로직: 기존 객체를 복사하고 현재 ID 값만 반전
                                     handleBookmarkToggle(place);
                                 }}
+                                // 임시 css
                                 style={{
                                     height: '35px',
                                     width: '35px',      // 너비 고정으로 원형/정사각형 유지

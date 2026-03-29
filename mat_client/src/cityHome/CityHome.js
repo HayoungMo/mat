@@ -54,6 +54,7 @@ const CityHome = ({loginUser}) => {
         <div>
             <h1>개인 블로그</h1>
             <CityAdd onAdd={onAdd} loginUser={loginUser}/>
+            <CityAdd onAdd={onAdd}/>
             {
                 isShow && <CityMessage msg={msg} isShow={isShow} setIsShow={setIsShow}/>
             }
