@@ -24,7 +24,7 @@ const CityAll = ({loginUser,loginInfo}) => {
             <Routes>
                 <Route path=':cityName' element={<CityHome loginUser={loginUser} loginInfo={loginInfo}/>} />
                 <Route path=':cityName/article/:id' element={<CityArticle loginUser={loginUser} loginInfo={loginInfo}/>}/>
-                <Route path=':cityName/article/edit/:id' element={<CityEdit onUpdate={onUpdate} loginUser={loginUser}/>}/>
+                <Route path=':cityName/article/edit/:id' element={<CityEdit onUpdate={onUpdate} loginUser={loginUser} loginInfo={loginInfo}/>}/>
             </Routes>
         </div>
     );

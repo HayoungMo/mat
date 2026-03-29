@@ -4,6 +4,16 @@ const path = require('path')
 const Review = require('../models/ReviewSchema')
 
 module.exports = (app) => {
+
+    //데이터 일부 조회(article no사용)
+    app.get('/api/review/article/:aNo', async(req, res) => {
+    try {
+        const list = await Review.find({ aNo: Number(req.params.aNo) }).sort({ createdAt: -1 })
+        res.send(list)
+    } catch(error) {
+        res.status(500).send({ error: true, message: error.message })
+    }
+    })
     //데이터 조회 //리액트한테 이 주소를 보낸다.
     app.get('/api/review/:userId', async (req, res) => {
         const {userId} = req.params
