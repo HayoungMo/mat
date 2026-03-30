@@ -21,6 +21,7 @@ const UserMyPage = ({loginUser, className}) => {
      const [selectedPlace, setSelectedPlace] = useState(null);
 
      console.log('loginUser 확인',loginUser)
+     console.log(selectedPlace);
 
     
         useEffect(() => {

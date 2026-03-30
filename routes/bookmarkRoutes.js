@@ -17,6 +17,8 @@ router.delete('/:id', controller.deleteBookmark);
 // 북마크 여부 확인
 router.get('/check', controller.checkBookmark);
 
+router.get('/checkArticle', controller.checkArticleBookmark);
+
 
 
 module.exports = (app) => {

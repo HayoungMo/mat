@@ -11,6 +11,10 @@ export const toggleBookmark = async (userId, place, articleNo) => {
             articleNo,
             title: place.title,
             matName: place.matName,
+            matTel:  place.matTel,
+            matAddr: place.matAddr,
+            lat: place.lat,
+            lng: place.lng
             
              
         });

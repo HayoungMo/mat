@@ -5,6 +5,7 @@ export const searchKeyword = async (keyword, callback) => {
     const ps = new window.kakao.maps.services.Places();
 
     if (!window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
+        alert("지도가 아직 로드되지 않았습니다. 잠시 후 다시 시도해주세요.");
         window.kakao.maps.load(() => {
             const ps = new window.kakao.maps.services.Places();
             ps.keywordSearch(keyword, (data, status) => {
