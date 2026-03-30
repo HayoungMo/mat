@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import UserMyPageItem from './UserMyPageItem';
 import UserMyPageList from './UserMyPageList';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import UserMyPageProfile from './UserMyPageProfile';
 import reviewService from '../../services/reviewService';
 import profileService from '../../services/profileService';
@@ -11,8 +11,9 @@ import UserMyPageBookmark from './UserMyPageBookmark';
 import MapPage from '../../map/MapPage';
 import { BookmarkProvider } from '../../contexts/BookmarkContext';
 
-const UserMyPage = ({loginUser, className}) => {
+const UserMyPage = ({loginUser, className, ugUsers}) => {
 
+     const navigate = useNavigate()
      const [users,setUsers] = useState([])
      const [profile,setProfile] = useState({})
      const [isEdit,setIsEdit] = useState(false)
@@ -100,12 +101,12 @@ const UserMyPage = ({loginUser, className}) => {
         <div>
             <h2><a href='/'>로고</a></h2>
             <h2>상단바 메뉴</h2>
-            <Link to="/login">
+            {/* <Link to="/login">
             <button>로그인</button>
             </Link>
             <Link to="/board">
             <button>자유게시판</button>
-            </Link>
+            </Link> */}
 
             <h3>프로필</h3>
             <UserMyPageProfile profile={profile} onEdit={onEdit} isEdit={isEdit} changeInput={changeInput} loginUser={loginUser}/>
@@ -116,6 +117,18 @@ const UserMyPage = ({loginUser, className}) => {
               </>
             : <button onClick={() => setIsEdit(true)}>정보 수정</button>
         }
+        {/* 등업 상태에 따라서 실시간으로 버튼 상태 변경이 되는것  */}
+        {Request?.status === 'pending' ? (
+            <button onClick={()=> navigate('/mypage/levelup-check')}>등업 확인하기</button>
+        ) : Request?.status === 'rejected' ? (
+            <button onClick={()=> navigate('/mypage/levelup-check')}>등업 확인하기</button>
+        ) : Request?.status === 'approved' ? (
+            <span>등업 완료! 재로그인 시 반영됩니다.</span>
+        ) : (
+            <button onClick={() => navigate('/mypage/levelup-check')}>등업 신청</button>
+        )}
+
+
             
             <div>
             <UserMyPageList users={users} onDel={onDel}/>
