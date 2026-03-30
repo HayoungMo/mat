@@ -1,10 +1,14 @@
 import React from 'react';
 
+
 const UserMyPageItem = ({item,loginUser,onEdit,onDel}) => {
   
     const {_id,userId,aNo,content,rating,createdAt} =item
 
+    
+
     return (
+        <div>
         <tr>
             <td>{content}</td>
             <td>{rating}</td>
@@ -13,6 +17,9 @@ const UserMyPageItem = ({item,loginUser,onEdit,onDel}) => {
                 <button onClick={()=>onDel(item)}>삭제</button>
             </td>
         </tr>
+        
+        </div>
+        
     );
 };
 

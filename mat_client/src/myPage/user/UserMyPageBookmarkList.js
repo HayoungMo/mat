@@ -1,7 +1,10 @@
 import React from 'react';
 import UserMyPageBookmarkItem from './UserMyPageBookmarkItem';
+import { useBookmark } from '../../contexts/BookmarkContext';
 
-const UserMyPageBookmarkList = ({users,onDel}) => {
+const UserMyPageBookmarkList = ({onSelectPlace}) => {
+    const {bookmarks, onDel} = useBookmark();
+   
     return (
         <div>
             <h2 className='users'></h2>
@@ -24,10 +27,11 @@ const UserMyPageBookmarkList = ({users,onDel}) => {
 
                     
                     {
-                        users.length === 0
+                        bookmarks.length === 0
                         ? <tr><td colSpan='3'>저장된 북마크가 없습니다.</td></tr>
                         :
-                        users.map(item=><UserMyPageBookmarkItem key={item._id} item={item} onDel={onDel}/>)
+                        bookmarks.map(item=><UserMyPageBookmarkItem key={item._id} item={item}
+                         onSelectPlace={onSelectPlace}/>)
                     }
                 </tbody>
             </table>

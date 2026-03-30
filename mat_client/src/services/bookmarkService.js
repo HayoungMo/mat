@@ -38,6 +38,11 @@ export const getBookmarks = async (userId) => {
     return res.data;
 };
 
+export const deleteBookmark = async(id) =>{
+    const res = await axios.delete(`/api/bookmarks/${id}`);
+    return res.data
+}
+
 export const checkBookmark = async (userId, kakaoId) => {
     const res = await axios.get(`/api/bookmarks/check?userId=${userId}&kakaoId=${kakaoId}`);
     return res.data;

@@ -1,16 +1,28 @@
-import React from 'react';
+import { useBookmark } from "../../contexts/BookmarkContext";
 
-const UserMyPageBookmarkItem = ({item,loginUser,onDel}) => {
-    const {_id,matName,matTel,matAddr,createAt} = item
+
+
+
+const UserMyPageBookmarkItem = ({item, onSelectPlace}) => {
+    const {onDel} = useBookmark();
+    const {matName, matTel, matAddr, lat, lng} = item;
+
+   
+
     return (
         <div>
-            <td>{matName}</td>
-            <td>{matTel}</td>
-            <td>{matAddr}</td>
-            <td>{createAt}</td>
-            <td>
-                <button onClick={()=>onDel(item)}>삭제</button>
-            </td>
+            <div onClick={() => onSelectPlace({matName, matTel, matAddr, lat,   lng})} 
+                style={{cursor:'pointer'}}>
+                <td>{matName}</td>
+                <td>{matTel}</td>
+                <td>{matAddr}</td>
+            </div>
+                <td>
+                    <button onClick={(e) => {
+                    e.stopPropagation(); // 👈 tr 클릭 방지
+                    onDel(item);
+                    }}>삭제</button>
+                </td>
         </div>
     );
 };

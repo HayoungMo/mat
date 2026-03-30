@@ -58,6 +58,17 @@ exports.getBookmarks = async(req,res) => {
     }
 }
 
+exports.deleteBookmark = async (req, res) => {
+    const {id} = req.params;
+
+    try {
+        await Bookmark.findByIdAndDelete(id);
+        res.json({message: '삭제 완료'});
+
+    } catch (err) {
+        res.status(500),json({message:err.message});
+    }
+};
 //북마크 여부 확인
 exports.checkBookmark = async (req, res)=> {
     const {userId, kakaoId} = req.query;
