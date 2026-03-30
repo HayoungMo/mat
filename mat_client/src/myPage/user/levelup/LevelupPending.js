@@ -9,6 +9,9 @@ const LevelupPending = () => {
 
                 
             </p>
+            <p>
+                관리자 승인 이후 재로그인 시 반영됩니다.
+            </p>
         </div>
     );
 };

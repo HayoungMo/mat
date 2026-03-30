@@ -3,22 +3,33 @@ import CityList from './CityList';
 import articleService from '../services/articleServices'
 import CityMessage from './CityMessage';
 import CityAdd from './CityAdd';
-import CityEdit from './CityEdit';
 import { useParams,useNavigate } from 'react-router-dom';
 
-const CityHome = () => {
+const CityHome = ({loginUser,loginInfo}) => {
 
     const {cityName} = useParams()
+    const [myCityName,setMyCityName] = useState('')
+
+    console.log('param cityName',cityName)
     const navigate = useNavigate()
 
     const [articles,setArticles] = useState([])
-    const [isEdit,setIsEdit] = useState(false)
     const [msg,setMsg] = useState('')
     const [isShow,setIsShow] = useState(false)
 
     useEffect(()=>{
         onData()
     },[cityName])
+
+    useEffect(()=>{
+        const fetchCity = async()=>{
+            const res = await fetch('/api/upgrade')
+            const data = await res.json()
+            const approved = data.find(item=> item.userId === loginUser && item.status === 'approved')
+            if(approved) setMyCityName(approved.cityName)
+        }
+    if(loginUser) fetchCity()
+    },[loginUser])
 
     const onData = async()=>{
         const res = await articleService.getArticle()
@@ -44,14 +55,7 @@ const CityHome = () => {
     const onEdit=(item)=>{
         navigate(`/city/${cityName}/article/edit/${item._id}`)
     }
-    const onUpdate= async (id,formData)=>{
-        setIsEdit(false)
-        console.log("id:",id)
-        console.log("data:",formData)
-        await articleService.updateArticle(id,formData)
-        await onData()
-        onShow('수정완료')
-    }
+
 
     const onShow =(msg)=>{
         setMsg(msg)
@@ -60,12 +64,14 @@ const CityHome = () => {
     return (
         <div>
             <h1>개인 블로그</h1>
-            <CityAdd onAdd={onAdd}/>
+            {myCityName === cityName &&
+                <CityAdd onAdd={onAdd} loginUser={loginUser}/>
+            }
             {
                 isShow && <CityMessage msg={msg} isShow={isShow} setIsShow={setIsShow}/>
             }
             
-            <CityList articles={articles} onEdit={onEdit} onDel={onDel}/>
+            <CityList articles={articles} onEdit={onEdit} onDel={onDel} loginUser={loginUser} loginInfo={loginInfo}/>
             <hr/>
         </div>
     );

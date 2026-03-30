@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const CityEdit = ({onUpdate,setIsEdit}) => {
+const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
 
     const {id} =useParams()
+    const {cityName} =useParams()
     const navigate = useNavigate()
 
     const [article,setArticle] = useState(null) 
@@ -37,8 +38,7 @@ const CityEdit = ({onUpdate,setIsEdit}) => {
     if(!article) return <div> 로딩중... </div>;
 
     const {
-    userId = '',
-    cityName = '',
+    userId = loginUser,
     title = '',
     subject = '',
     region = '',
@@ -53,6 +53,15 @@ const CityEdit = ({onUpdate,setIsEdit}) => {
             ...article,
             [name]:value
         })
+    }
+
+    // 블로그 이름(이라고 쓰고 지역구, 데이터 처리용)
+    const cityMap = {
+        Gangnam: '강남구',
+        Yongsan: '용산구',
+        Dongjak: '동작구',
+        Mapo: '마포구',
+        Jung: '중구'
     }
 
     const changeImage=(evt)=>{
@@ -94,7 +103,7 @@ const CityEdit = ({onUpdate,setIsEdit}) => {
         onUpdate(article._id,formData)
 
         setArticle({
-            userId:'',cityName:'',title:'',subject:'',region:'',matName:'',matTel:'',matAddr:''
+            userId:'',title:'',subject:'',region:'',matName:'',matTel:'',matAddr:''
         })
 
         navigate(`/city/${cityName}`)
@@ -102,15 +111,15 @@ const CityEdit = ({onUpdate,setIsEdit}) => {
 
 
     return (
-                <form onSubmit={onSubmit}>
+            <form onSubmit={onSubmit}>
             <h2>수정: {title} </h2>
             <p>
                 <label>아이디</label>
-                <input type='text' value={userId} name='userId' onChange={changeInput}></input>
+                <span>{loginUser}</span>
             </p>
             <p>
-                <label>홈 이름</label>
-                <input type='text' value={cityName} name='cityName' onChange={changeInput}></input>
+                <label>구</label>
+                <span>{cityMap[cityName]}</span>
             </p>
             <p>
                 <label>제목</label>

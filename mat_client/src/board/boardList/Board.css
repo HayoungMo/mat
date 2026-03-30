@@ -367,7 +367,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .survey-option-label:hover { background: #f0f4f1; }
 .survey-option-label input { accent-color: #2d5a3d; }
 .survey-results { display: flex; flex-direction: column; gap: 12px; }
-.result-row {}
+/* .result-row {} */
 .result-label {
     display: flex;
     justify-content: space-between;
@@ -542,3 +542,15 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* ── 로딩 ── */
 .loading { text-align: center; padding: 40px; color: #aaa; }
+
+/* [ITEM] 상세보기 페이지 내 이미지 수정 */
+.detail-image {
+    width: 100%;        /* 부모 너비에 맞춤 */
+    max-width: 600px;   /* 너무 커지지 않게 최대 너비 제한 (수치 조절 가능) */
+    height: 450px;      /* 고정 높이 설정 */
+    object-fit: cover;  /* 비율 유지하며 꽉 채움 */
+    border-radius: 8px;
+    display: block;
+    margin: 20px auto;  /* 상하 여백 및 중앙 정렬 */
+    border: 1px solid #eee;
+}

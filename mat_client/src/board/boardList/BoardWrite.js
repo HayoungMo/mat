@@ -1,15 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BoardService from './BoardService';
 
-const BoardWrite = ({ onAdd, onCancel }) => {
+const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
     const [board, setBoard] = useState({
         userId: '',
         title: '',
         subject: '',
         type: 'text',
     });
-    const [options, setOptions] = useState(['', '']); // 설문 옵션 배열 (최소 2개)
+    const [options, setOptions] = useState(['', '']);
     const [image, setImage] = useState(null);
+    const [nextNo, setNextNo] = useState('...');
+
+    // 로그인 유저면 자동입력
+    useEffect(() => {
+        if (loginUser) {
+            setBoard(prev => ({ ...prev, userId: loginUser }));
+        }
+    }, [loginUser]);
+
+    // 다음 글번호 가져오기 (현재 목록 수 + 1)
+    useEffect(() => {
+        BoardService.getMatList()
+            .then(data => setNextNo(data.length + 1))
+            .catch(() => setNextNo('-'));
+    }, []);
 
     const changeInput = (e) => {
         const { name, value } = e.target;
@@ -30,20 +45,22 @@ const BoardWrite = ({ onAdd, onCancel }) => {
     };
 
     const onSubmit = async (e) => {
-        e.preventDefault();
-        if (!board.userId.trim()) return alert("작성자를 입력해주세요.");
+    e.preventDefault();
+
+        // 1. 작성자 결정: 
+        const finalUserId = board.userId.trim() || `쓰니${nextNo}`;
+
         if (!board.title.trim()) return alert("제목을 입력해주세요.");
 
         const formData = new FormData();
-        formData.append('userId', board.userId);
+        formData.append('userId', finalUserId);
         formData.append('title', board.title);
         formData.append('type', board.type);
 
         if (board.type === 'survey') {
             const filtered = options.filter(o => o.trim() !== '');
             if (filtered.length < 2) return alert("설문 옵션을 최소 2개 입력해주세요.");
-            // JSON 배열로 저장 (파싱 시 양방향 호환)
-            formData.append('subject', JSON.stringify(filtered));
+            formData.append('subject', filtered.join('^')); // ^ 구분자로 저장
         } else {
             if (!board.subject.trim()) return alert("내용을 입력해주세요.");
             formData.append('subject', board.subject);
@@ -54,12 +71,14 @@ const BoardWrite = ({ onAdd, onCancel }) => {
         }
 
         try {
-            await BoardService.addMat(formData);
-            alert("게시글이 등록되었습니다!");
-            onAdd();
-        } catch (err) {
-            alert("서버 오류: 등록에 실패했습니다.");
-        }
+                await BoardService.addMat(formData);
+               
+                alert(`게시글이 등록되었습니다! (작성자: ${finalUserId})`); 
+                onAdd();
+            } catch (err) {
+                console.error(err); 
+                alert("서버 오류: 등록에 실패했습니다.");
+            }
     };
 
     return (
@@ -68,18 +87,35 @@ const BoardWrite = ({ onAdd, onCancel }) => {
 
             <table className="write-table">
                 <tbody>
+                   
+                    <tr>
+                        <th>NO</th>
+                        <td>
+                            <span className="no-text">#{nextNo}</span>
+                        </td>
+                    </tr>
+
+                    {/* 작성자 - 로그인 유저면 고정, 아니면 입력 */}
                     <tr>
                         <th>작성자</th>
                         <td>
-                            <input
-                                name="userId"
-                                value={board.userId}
-                                onChange={changeInput}
-                                placeholder="아이디 입력"
-                                required
-                            />
+                            {loginUser ? (
+                                <span className="userId-fixed">
+                                    {loginUser}
+                                    <span className="userId-badge"></span>
+                                </span>
+                            ) : (
+                                <input
+                                    name="userId"
+                                    value={board.userId}
+                                    onChange={changeInput}
+                                    placeholder={!loginUser ? `미입력 시 '쓰니${nextNo}'` : ""}
+                                    required={false}
+                                />
+                            )}
                         </td>
                     </tr>
+
                     <tr>
                         <th>제목</th>
                         <td>
@@ -125,16 +161,10 @@ const BoardWrite = ({ onAdd, onCancel }) => {
                                                 onChange={(e) => handleOptionChange(i, e.target.value)}
                                                 placeholder={`옵션 ${i + 1}`}
                                             />
-                                            <button
-                                                type="button"
-                                                className="btn-remove-opt"
-                                                onClick={() => removeOption(i)}
-                                            >✕</button>
+                                            <button type="button" className="btn-remove-opt" onClick={() => removeOption(i)}>✕</button>
                                         </div>
                                     ))}
-                                    <button type="button" className="btn-add-opt" onClick={addOption}>
-                                        + 항목 추가
-                                    </button>
+                                    <button type="button" className="btn-add-opt" onClick={addOption}>+ 항목 추가</button>
                                 </div>
                             ) : (
                                 <>
@@ -147,11 +177,7 @@ const BoardWrite = ({ onAdd, onCancel }) => {
                                     {board.type === 'image' && (
                                         <div className="file-row">
                                             <label>📎 파일 첨부</label>
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={(e) => setImage(e.target.files[0])}
-                                            />
+                                            <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} />
                                         </div>
                                     )}
                                 </>

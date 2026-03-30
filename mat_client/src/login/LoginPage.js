@@ -11,7 +11,7 @@ const EMAIL_OPTION = [
 ]
 
 //수정한 부분(세션관련)
-const LoginPage = ({loginUser,setLoginUser}) => {
+const LoginPage = ({loginUser,setLoginUser,loginInfo, setLoginInfo}) => {
     const [step, setStep] = useState(0);
     //const [loginUser, setLoginUser] = useState(localStorage.getItem('userId'));
     const [form, setForm] = useState({
@@ -66,7 +66,9 @@ const LoginPage = ({loginUser,setLoginUser}) => {
 
             if (response.data.success) {
                 localStorage.setItem('userId',response.data.userId)
+                localStorage.setItem('user',JSON.stringify(response.data.user))
                 setLoginUser(response.data.userId);
+                setLoginInfo(response.data.user);
                 setStep(0); 
                 alert(response.data.userId + "님 환영합니다");
             } else {

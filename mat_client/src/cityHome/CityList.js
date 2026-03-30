@@ -1,7 +1,7 @@
 import React from 'react';
 import CityItem from './CityItem';
 
-const CityList = ({articles,onDel,onEdit}) => {
+const CityList = ({articles,onDel,onEdit,loginUser,loginInfo}) => {
     return (
         <div>
             <h2>칼럼 리스트</h2>
@@ -21,7 +21,7 @@ const CityList = ({articles,onDel,onEdit}) => {
             </thead>
             <tbody>
             {
-                articles.map(item=><CityItem key={item.id} item={item} onDel={onDel} onEdit={onEdit}/>)
+                articles.map(item=><CityItem key={item.id} item={item} onDel={onDel} onEdit={onEdit} loginUser={loginUser} loginInfo={loginInfo}/>)
             }
             </tbody>
             </table>
