@@ -4,7 +4,7 @@ const Article = require('./models/ArticleSchema');
 const Bookmark = require('./models/BookmarkSchema');
 const Review = require('./models/ReviewSchema');
 const UpgradeRequest = require('./models/UpgradeRequestSchema');
-
+const Notice = require('./models/NoticeSchema');
 //터미널에 node seed.js 입력하면 더미데이터가 들어갑니다.
 
 
@@ -18,6 +18,7 @@ mongoose.connect('mongodb://localhost:27017/matDB')
     await Bookmark.deleteMany({});
     await Review.deleteMany({});
     await UpgradeRequest.deleteMany({});
+    await Notice.deleteMany({});
     console.log('기존 데이터 삭제 완료');
 
     // =============================================
@@ -37,6 +38,13 @@ mongoose.connect('mongodb://localhost:27017/matDB')
       { userId: 'user02', password: '1234', tel: '010-5555-5555', email: 'user02@gmail.com', role: 'user', createdAt: new Date() },
       { userId: 'user03', password: '1234', tel: '010-6666-6666', role: 'user', createdAt: new Date() }
     ]);
+    
+      //공지(Notice) 게시판
+      await Notice.create([
+      { title: '맛.ZIP 서비스 오픈 안내', writer: 'admin01', content: '전국 맛집 지도를 완성하는 맛.ZIP이 오픈했습니다!', category: '공지' },
+      { title: '지역 담당자(City) 모집 공고', writer: 'admin01', content: '각 지역의 맛집을 소개해줄 담당자를 모집합니다.', category: '채용' }
+      ]);
+
     console.log('유저 데이터 입력 완료');
 
     // =============================================

@@ -29,7 +29,7 @@ mongoose.connect('mongodb://localhost:27017/matDB')
 require('./models/ArticleSchema.js')
 require('./models/UserSchema.js')
 require('./models/UpgradeRequestSchema.js')
-
+require('./models/NoticeSchema.js')
 
 
 //2. 등업(UpgradeRequest)
@@ -38,6 +38,7 @@ require('./routes/matRoutes')(app)
 require('./routes/UserRoutes.js')(app)
 require('./routes/bookmarkRoutes.js')(app)
 require('./routes/upgradeRoutes.js')(app)
+require('./routes/noticeRouter.js')(app)
 
 app.get('/',(req,res) => {
     res.json({message: 'Mat 서버 작동중입니다'});
