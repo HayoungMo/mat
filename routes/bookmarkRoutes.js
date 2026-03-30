@@ -12,8 +12,12 @@ router.post('/toggle', controller.toggleBookmark);
 
 router.post('/toggleArticle', controller.toggleArticleBookmark);
 
+router.delete('/:id', controller.deleteBookmark);
+
 // 북마크 여부 확인
 router.get('/check', controller.checkBookmark);
+
+
 
 module.exports = (app) => {
     app.use('/api/bookmarks', router);

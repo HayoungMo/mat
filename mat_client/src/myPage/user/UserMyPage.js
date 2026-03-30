@@ -5,17 +5,20 @@ import { Link } from 'react-router-dom';
 import UserMyPageProfile from './UserMyPageProfile';
 import reviewService from '../../services/reviewService';
 import profileService from '../../services/profileService';
-import bookmarkService from '../../services/bookmarkService';
+import * as bookmarkService from '../../services/bookmarkService';
 import UserProfileUpdate from './UserProfileUpdate';
 import UserMyPageBookmark from './UserMyPageBookmark';
+import MapPage from '../../map/MapPage';
+import { BookmarkProvider } from '../../contexts/BookmarkContext';
 
-const UserMyPage = ({loginUser}) => {
+const UserMyPage = ({loginUser, className}) => {
 
      const [users,setUsers] = useState([])
      const [profile,setProfile] = useState({})
      const [isEdit,setIsEdit] = useState(false)
      const [current,setCurrent] =useState({})
      const [bookmark,setBookmark] = useState([])
+     const [selectedPlace, setSelectedPlace] = useState(null);
 
      console.log('loginUser 확인',loginUser)
 
@@ -117,11 +120,28 @@ const UserMyPage = ({loginUser}) => {
             <div>
             <UserMyPageList users={users} onDel={onDel}/>
             </div>
-            
-            
+            <div>
+            <BookmarkProvider loginUser={loginUser}>
             <h1>북마크</h1>
-            <UserMyPageBookmark onDel={onDel} loginUser={loginUser}/>
+                <div style={{ width:"300px", height:"500px", marginRight: "50px"
+                    ,display:"flex", alignItems: "flex-start", gap: "20px", padding: "20px"
+                }}>
+                
+                <div style={{minWidth: "400px" , flexShrink: 0}}>
+                    <UserMyPageBookmark onDel={onDel} loginUser={loginUser}
+                    onSelectPlace = {setSelectedPlace}
+                />
+                </div>   
+                <div style={{width: '300px', height: '500px', 
+                    position:'relative'
+                }}>
+                    <MapPage selectedPlace={selectedPlace}/>
+                </div>
+            </div>
+            </BookmarkProvider>
+            </div>
         </div>
+        
     );
 };
 
