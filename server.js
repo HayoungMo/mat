@@ -33,13 +33,14 @@ require('./models/UserSchema.js')
 require('./models/UpgradeRequestSchema.js')
 require('./models/BookmarkSchema.js')
 
-
+require('./models/FreeBoardSchema.js');
 
 //2. 라우터
 require('./routes/matRoutes')(app)
 require('./routes/UserRoutes.js')(app)
 require('./routes/bookmarkRoutes.js')(app)
 require('./routes/upgradeRoutes.js')(app)
+require('./routes/freeboardRoutes.js')(app);
 
 //3. 리뷰(Review)
 require('./models/ReviewSchema.js')
@@ -52,6 +53,8 @@ app.get('/',(req,res) => {
 //4. 프로필(Profile)
 require('./models/UserSchema.js')
 require('./routes/UserRoutes.js')(app)
+
+
 
 app.listen(PORT, () => {
     console.log(`서버 실행중입니다: http://localhost:${PORT}`)
