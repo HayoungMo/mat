@@ -46,7 +46,7 @@ const LoginPage = ({loginUser,setLoginUser,loginInfo, setLoginInfo}) => {
 
     const onNext = async () => {
         try {
-            const response = await axios.post('http://localhost:4000/api/register', form);
+            const response = await axios.post('/api/register', form);
             if (response.data.success) {
                 setStep(2); // 가입 완료 페이지로
             }
@@ -59,7 +59,7 @@ const LoginPage = ({loginUser,setLoginUser,loginInfo, setLoginInfo}) => {
     //수정한부분(세션관련)
     const onLogin = async () => {
         try {
-            const response = await axios.post('http://localhost:4000/api/login', {
+            const response = await axios.post('/api/login', {
                 userId,
                 password
             },{withCredentials:true})

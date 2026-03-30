@@ -236,7 +236,7 @@ const BoardList = ({
                             {viewType === 'card' && (
                                 <div style={{ width: '100%', height: '170px', background: '#f5f5f5', flexShrink: 0 }}>
                                     <img
-                                        src={item.saveFileName ? `http://localhost:4000/uploads/${item.saveFileName}` : '/no-image.png'}
+                                        src={item.saveFileName ? `/uploads/${item.saveFileName}` : '/no-image.png'}
                                         alt="thumb"
                                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                     />

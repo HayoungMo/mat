@@ -6,9 +6,10 @@ const app = express();
 const PORT = 4000;
 
 const cors = require('cors');
-
+//다른 곳에서 제(모하영) 컴퓨터로 들어올수 있게 하는 주소
 app.use(cors({
-    origin: 'http://localhost:3000', 
+    // origin: 'http://localhost:3000',
+    origin: true, //개발단계에서 괜찮습니다. 
     credentials: true
 }))
 app.use(express.json());
@@ -43,6 +44,6 @@ app.get('/', (req, res) => {
     res.json({ message: 'Mat 서버 작동중입니다' });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0',() => {
     console.log(`서버 실행중입니다: http://localhost:${PORT}`)
 });

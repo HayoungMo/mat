@@ -141,7 +141,7 @@ const CityArticle = ({loginUser,loginInfo}) => {
                 data.images?.map((image,index)=>(
                     <img
                         key={index}
-                        src={`http://localhost:4000/uploads/${image.saveFileName}`}
+                        src={`/uploads/${image.saveFileName}`}
                         width={200}
                         alt={title}
                     />

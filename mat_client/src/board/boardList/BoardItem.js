@@ -166,7 +166,7 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
                     <>
                         {detail.type === 'image' && detail.saveFileName && (
                             <div className="image-box" style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px' }}>
-                                <img src={`http://localhost:4000/uploads/${detail.saveFileName}`} alt="맛집 사진" style={{ maxWidth: '100%', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                                <img src={`/uploads/${detail.saveFileName}`} alt="맛집 사진" style={{ maxWidth: '100%', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                             </div>
                         )}
                         <div className="detail-subject" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8', fontSize: '16px' }}>{detail.subject}</div>

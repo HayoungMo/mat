@@ -28,7 +28,7 @@ const CityItem = ({item,onDel,onEdit,loginUser, loginInfo}) => {
             {console.log("이미지")}
             <td>{no}</td>
             <td>
-                <Link to={`/city/${item.cityName}/article/${item._id}`}><img src={`http://localhost:4000/uploads/${item.images[0]?.saveFileName}`} width='100' alt={matName}/>
+                <Link to={`/city/${item.cityName}/article/${item._id}`}><img src={`/uploads/${item.images[0]?.saveFileName}`} width='100' alt={matName}/>
             </Link>
             </td>
             <td><Link to={`/city/${item.cityName}/article/${item._id}`}>{title}</Link></td>

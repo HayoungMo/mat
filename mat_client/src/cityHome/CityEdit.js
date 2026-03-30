@@ -158,7 +158,7 @@ const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
             {existingImages.map((image,index)=>(
                 <div key={index}>
                     <img 
-                    src={`http://localhost:4000/uploads/${image.saveFileName}`} width='100'
+                    src={`/uploads/${image.saveFileName}`} width='100'
                     />
                     <button onClick={()=>deleteExist(image)}>삭제</button>
                 </div>
