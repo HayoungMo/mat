@@ -3,25 +3,23 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import UserMyPageBookmarkList from './UserMyPageBookmarkList';
 import * as bookmarkService from '../../services/bookmarkService';
+import { useBookmark } from '../../contexts/BookmarkContext';
 
-const UserMyPageBookmark = ({loginUser,onDel}) => {
-   const [users,setUsers] = useState([])
+const UserMyPageBookmark = ({onSelectPlace}) => {
+   
     const [isEdit,setIsEdit] = useState(false)
     const [currnet,setCurrent] =useState({})
     const [isShow,setIsShow] =useState(false)
 
-    useEffect(() => {
-        onData()
-    },[])
+    const {bookmarks, onDel} = useBookmark();
 
-    const onData = async() => {
-        const res = await bookmarkService.getBookmarks(loginUser)
-        setUsers(res)
-    }
+    
+
+ 
        
     return (
         <div className='Customer'>            
-            <UserMyPageBookmarkList onDel={onDel} users={users}/>
+            <UserMyPageBookmarkList onDel={onDel} users={bookmarks}  onSelectPlace = {onSelectPlace}/>
         </div>
     );
 };

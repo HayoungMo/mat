@@ -3,8 +3,14 @@ import {Link,Route,Routes} from 'react-router-dom';
 import CityHome from './CityHome';
 import CityArticle from './CityArticle';
 import CityEdit from './CityEdit';
+import articleServices from '../services/articleServices';
 
-const CityAll = () => {
+const CityAll = ({loginUser,loginInfo}) => {
+
+        const onUpdate= async (id,formData)=>{
+        await articleServices.updateArticle(id,formData)
+    }
+
     return (
         <div>
             <h1>블로그 모음</h1>
@@ -16,9 +22,9 @@ const CityAll = () => {
 
 
             <Routes>
-                <Route path=':cityName' element={<CityHome/>} />
-                <Route path=':cityName/article/:id' element={<CityArticle/>}/>
-                <Route path=':cityName/article/edit/:id' element={<CityEdit/>}/>
+                <Route path=':cityName' element={<CityHome loginUser={loginUser} loginInfo={loginInfo}/>} />
+                <Route path=':cityName/article/:id' element={<CityArticle loginUser={loginUser} loginInfo={loginInfo}/>}/>
+                <Route path=':cityName/article/edit/:id' element={<CityEdit onUpdate={onUpdate} loginUser={loginUser} loginInfo={loginInfo}/>}/>
             </Routes>
         </div>
     );

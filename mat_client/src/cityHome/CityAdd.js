@@ -1,19 +1,48 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {searchKeyword} from '../services/SearchMapService.js';
 
-const CityAdd = ({onAdd}) => {
+const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
 
-    const nameRef = useRef()
+    const {cityName: cityNameParam} = useParams()
+    const cityName = cityNameProp || cityNameParam 
+    console.log('cityNameProp:', cityNameProp)
+    console.log('cityNameParam:', cityNameParam)
+    console.log('cityName:', cityName)
+    
+    useEffect(()=>{
+        if(cityName){
+            setArticle(prev=>({
+                ...prev,
+                cityName: cityName
+            }))
+        }
+    },[cityName])
 
     const [article,setArticle] = useState({
         //userId는 나중에 삭제
-        userId:'',cityName:'',title:'',subject:'',region:'',matName:'',matTel:'',matAddr:''
+        userId:loginUser,
+        cityName:cityName,
+        title:'',
+        subject:'',
+        region:'',
+        matName:'',
+        matTel:'',
+        matAddr:''
     })
 
+    const cityMap = {
+        Gangnam: '강남구',
+        Yongsan: '용산구',
+        Dongjak: '동작구',
+        Mapo: '마포구',
+        Jung: '중구'
+    }
+
+    const {title,subject,region,matName,matTel,matAddr}=article
     const [res, setResult] = useState([]);//검색 결과
     const [selected, setSelected] = useState(null); //선택된 항목
 
-    const {userId,cityName,title,subject,region,matName,matTel,matAddr}=article
 
     const [images,setImages]=useState([])
 
@@ -55,15 +84,21 @@ const CityAdd = ({onAdd}) => {
 
     const onSubmit =(evt)=>{
         evt.preventDefault()
-        if(!userId || !cityName ||!title || !subject || !region) return
+        if(!loginUser || !cityName ||!title || !subject || !region) return
 
         onAdd(article,images)
 
         setArticle({
-            userId:'',cityName:'',title:'',subject:'',region:'',matName:'',matTel:'',matAddr:''
+            userId:loginUser,
+            cityName:cityName,
+            title:'',
+            subject:'',
+            region:'',
+            matName:'',
+            matTel:'',
+            matAddr:''
         })
 
-        nameRef.current.focus()
     }
 
     return (
@@ -71,15 +106,11 @@ const CityAdd = ({onAdd}) => {
             <h2>글 쓰기</h2>
             <p>
                 <label>아이디</label>
-                <input type='text' value={userId} name='userId' onChange={changeInput} ref={nameRef}></input>
+                <span>{loginUser}</span>
             </p>
             <p>
-                <label>구역</label>
-                <input type='radio' value='Gangnam' name='cityName' onChange={changeInput} checked={cityName==="Gangnam"}/>강남구
-                <input type='radio' value='Yongsan' name='cityName' onChange={changeInput} checked={cityName==="Yongsan"}/>용산구
-                <input type='radio' value='Dongjak' name='cityName' onChange={changeInput} checked={cityName==="Dongjak"}/>동작구
-                <input type='radio' value='Mapo' name='cityName' onChange={changeInput} checked={cityName==="Mapo"}/>마포구
-                <input type='radio' value='Jung' name='cityName' onChange={changeInput} checked={cityName==="Jung"}/>중구
+                <label>구</label>
+                <span>{cityMap[cityName]}</span>
             </p>
             <p>
                 <label>제목</label>
