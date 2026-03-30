@@ -226,10 +226,11 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
         mapInstance.current.setBounds(bounds);
         setFilteredPlaces(places); // 리스트 UI 업데이트용
     };
-
+    const prevKeywordRef = useRef('');
     // 외부에서 키워드 받았을 때 자동 검색
     useEffect(() => {
     if (!externalKeyword || !mapReady) return;
+    if (prevKeywordRef.current === externalKeyword) return;
         setKeyword(externalKeyword);       // input에도 반영
         const ps = new window.kakao.maps.services.Places();
         ps.keywordSearch(externalKeyword, placesSearchCB);

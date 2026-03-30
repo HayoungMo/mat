@@ -1,11 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Seoul from '../asset/SeoulMap.js'
-import data from '../asset/matRestaurant.json'
 import MapPage from '../map/MapPage.js';
+import { useNavigate } from 'react-router-dom';
+import articleServices from '../services/articleServices.js';
 
 const MainPage = () => {
 
   const [selectedGu, setSelectedGu] = useState("");
+  const navigate = useNavigate();
+  const [articles, setArticles] = useState([]); //아티클 객체 정보를 담을 배열
 
   const handleGuSelect = (guName) => {
     console.log("1. 버튼 클릭됨:", guName);
@@ -13,11 +16,42 @@ const MainPage = () => {
   }
 
   //선택된 구를 데이터에서 가져와서 리스트에 담기
-  const externalKeyword = selectedGu ? `${selectedGu} 맛집` : "";
+const externalKeyword = useMemo(() => 
+    selectedGu ? `${selectedGu} 맛집` : ""
+, [selectedGu]);
   const [list, setList] = useState([]);
   
  
   console.log("3. externalKeyword:", externalKeyword);
+
+  useEffect(() => {
+    const fetchArticles = async()=> {
+      const res = await articleServices.getArticle();
+      setArticles(res);
+    }
+    fetchArticles();
+  })
+
+ 
+
+  const moveArticle =(place) =>{
+
+    if (!place || !articles) return;
+
+     const found = articles.find(a =>
+        a.matName === place.place_name &&
+        a.matAddr === place.address_name
+    );
+          alert("아티클로 이동");
+        
+        if(found){
+          navigate(`/city/${found.cityName}/article/${found._id || found.id}`);
+          return;
+          
+          }else{
+            alert("해당 맛집의 아티클이 없습니다");
+          }
+  }
 
 
   //25개의 구 데이터
@@ -107,7 +141,8 @@ const MainPage = () => {
                   {/* 리스트 반복해서 데이터 출력 */}
             {list.map((item, index) =>(
               <div key={index}>
-                <div>{item.place_name}</div>
+                <div onClick={() => moveArticle(item)}>
+                  {item.place_name}</div>
                 <div>{item.category_name}</div>
                 <div>{item.address_name}</div>
                 <span style={{color: "#888" }}>{item.phone}</span>
