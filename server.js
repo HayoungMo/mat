@@ -32,6 +32,7 @@ require('./models/UserSchema.js')
 require('./models/UpgradeRequestSchema.js')
 require('./models/BookmarkSchema.js')
 require('./models/ReviewSchema.js')
+require('./models/FreeBoardSchema.js')
 
 // 라우터
 require('./routes/matRoutes')(app)
@@ -39,6 +40,7 @@ require('./routes/UserRoutes.js')(app)
 require('./routes/bookmarkRoutes.js')(app)
 require('./routes/upgradeRoutes.js')(app)
 require('./routes/reviewRoutes.js')(app)
+require('./routes/freeboardRoutes.js')(app)
 
 app.get('/', (req, res) => {
     res.json({ message: 'Mat 서버 작동중입니다' });

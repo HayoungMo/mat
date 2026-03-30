@@ -112,10 +112,15 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
         }
 
 
-        const changeInput = (evt) => {
-    const { value, name } = evt.target
+    const changeInput = (evt) => {
+        //이메일에 한글 입력 방지
+    const { value, name } = evt.target;
+    if(name === 'email' && /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value)){
+        alert('이메일에 한글은 입력할 수 없습니다');
+        return;
+    }
     setProfile({ ...profile, [name]: value })
-}
+};
 
         
         

@@ -98,11 +98,11 @@ const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
         evt.preventDefault()
         if(!loginUser || !cityName ||!title || !subject || !region) return
 
-        try{
-            await axios.post("/api/article", article)
-        }catch(e){
-            console.log(e)
-        }
+        // try{
+        //     await axios.post("/api/article", article)
+        // }catch(e){
+        //     console.log(e)
+        // }
         console.log(article)
         
         onAdd(article,images)

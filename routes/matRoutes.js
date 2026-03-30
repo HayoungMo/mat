@@ -51,6 +51,7 @@ module.exports = (app) => {
       res.send(list);
     }
   });
+  // no. 아티클 조회 (리뷰 -> 아티클 이동용.)
 
   // 1-1 cityhome 아티클을 위한 기능
   app.get('/api/article/:id',async (req,res)=>{

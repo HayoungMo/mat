@@ -42,7 +42,7 @@ const externalKeyword = useMemo(() =>
         a.matName === place.place_name &&
         a.matAddr === place.address_name
     );
-          alert("아티클로 이동");
+          
         
         if(found){
           navigate(`/city/${found.cityName}/article/${found._id || found.id}`);
