@@ -2,46 +2,127 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import SearchBar from './SearchBar';
 import SearchItem from './SearchItem';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
 const SearchPage = () => {
 
-//사용자가 입력한 검색어
-const [keyword,setKeyword] = useState('');
-//API에서 받아온 목록
+//주소 창의 파라미터를 읽고 쓰기 위한 도구
+const navigate = useNavigate();
+const [searchParams, setSearchParams] = useSearchParams();
+
+//사용자가 입력한 검색어,주소창에서 'q'라는 이름의 값 (예: ?q=자연)
+const urlKeyword = searchParams.get('q') || '';
+
+//상태 관리 (한글입력 방해 금지를 위한것)
+const [inputText, setInputText] = useState(urlKeyword);
 const [list, setList] = useState([]);
+//페이징 처리
+const [currentPage, setCurrentPage] = useState(1);
+const itemsPerPage = 5; // 한 페이지에 5개씩
 
 
-const onSearch = async () => {
+const onSearch = async (query) => {
+        if (!query.trim()) {
+            setList([]);
+            return;
+        }
+        try {
+            const res = await axios.get(`/api/article?keyword=${query}`);
+            setList(res.data || []); ;//배열에 담아서 넘기는거, list가 안오면 에러가 나지 않게 방어를 해주는 역할 뒤가 || []
+        } catch (err) {
+            console.error("검색 에러:", err);
+            setList([]);
+        }
+    };
     
-    if(!keyword.trim()) {
-        setList([]);
-        return;
-    }
-    const res = await axios.get(`/api/article?keyword=${keyword}`);
-    console.log(res.data);
-    setList(res.data);
-};
 
-//keyword가 바뀔 때마다 실시간 검색
+// 주소창의 keyword가 바뀔 때마다 자동으로 검색 실행
+// 뒤로 가기를 해서 주소가 바뀌면 이 useEffect가 작동하여 결과를 복구
+   useEffect(() => {
+        setInputText(urlKeyword);
+        onSearch(urlKeyword);
+        setCurrentPage(1);
+    }, [urlKeyword]);
+
+    //실시간 검색 및 주소창 업데이트
     useEffect(() => {
-    
-    if(!keyword.trim()) {
-        setList([]);
-        return;
-    }
-        //타이핑 멈추고 300ms 후에 검색
-        const timer = setTimeout(onSearch, 300);
+
+        if (inputText === urlKeyword) return;
+
+        const timer = setTimeout(() => {
+            setSearchParams({ q: inputText });
+        }, 300);// 300ms 후에 주소창 딱 한 번 업데이트
+
         return () => clearTimeout(timer);
-        
-    }, [keyword]);
+    }, [inputText, setSearchParams, urlKeyword]);
+//페이징 데이터 자르는 로직
+const indexOfLastItem = currentPage * itemsPerPage;
+const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+const currentItems = list.slice(indexOfFirstItem, indexOfLastItem);
+
+//잘라낸 데이터에서 제목/ 본문 분류하기
+//제목에 키워드가 포함된 걸 빼기
+const titleMatches = currentItems.filter(item => 
+        item.title.toLowerCase().includes(urlKeyword.toLowerCase())
+);
+//본문에만 키워드가 포함된걸 빼기(중복방지)
+const subjectMatches = currentItems.filter(item => 
+        !item.title.toLowerCase().includes(urlKeyword.toLowerCase()) && 
+        item.subject.toLowerCase().includes(urlKeyword.toLowerCase())
+);
+
+const totalPages = Math.ceil(list.length / itemsPerPage);
 
 return (
     <div>
-            <SearchBar keyword={keyword} setKeyword={setKeyword} onSearch={onSearch}/>
 
-            {list.map(item => (
-                <SearchItem key={item._id} item={item}></SearchItem>
-            ))}
+        <SearchBar keyword={inputText} setKeyword={setInputText} onSearch={onSearch(inputText)}/>
+            {/* 검색 결과 출력 */}
+           {urlKeyword && list.length > 0 ? (
+                <>
+                    {/* 제목 검색 결과 */}
+                    {titleMatches.length > 0 && (
+                        <div className="section">
+                            <h3>"{urlKeyword}" 제목 포함 결과</h3>
+                            {titleMatches.map(item => (
+                                <SearchItem key={item._id} item={item} keyword={urlKeyword}/>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* 본문 검색 결과 */}
+                    {subjectMatches.length > 0 && (
+                        <div className="section" style={{marginTop: '30px'}}>
+                            <h3>"{urlKeyword}" 본문 포함 결과</h3>
+                            {subjectMatches.map(item => (
+                                <SearchItem key={item._id} item={item} keyword={urlKeyword}/>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* 페이징 버튼 UI */}
+                    {totalPages > 1 && (
+                        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '5px' }}>
+                            <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>이전</button>
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <button 
+                                    key={i + 1} 
+                                    onClick={() => setCurrentPage(i + 1)}
+                                    style={{ 
+                                        fontWeight: currentPage === i + 1 ? 'bold' : 'normal',
+                                        backgroundColor: currentPage === i + 1 ? '#eee' : '#fff'
+                                    }}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+                            <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>다음</button>
+                        </div>
+                    )}
+                </>
+            ) : (
+                urlKeyword && <p style={{marginTop: '20px'}}>검색 결과가 없습니다.</p>
+            )}
         </div>
     );
 };

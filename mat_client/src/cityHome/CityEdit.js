@@ -160,7 +160,8 @@ const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
                     <img 
                     src={`/uploads/${image.saveFileName}`} width='100'
                     />
-                    <button onClick={()=>deleteExist(image)}>삭제</button>
+                    <button type='button' onClick={()=>deleteExist(image)}>삭제</button>
+                    {/*      ^^^^^^^^ 추가됨 */}
                 </div>
             ))}
         </div>

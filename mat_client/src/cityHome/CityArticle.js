@@ -75,7 +75,7 @@ const CityArticle = ({loginUser,loginInfo}) => {
             const checkBookmarked = async () => {
                 if (!loginUser || !data?.no) return;
                 try {
-                    const res = await axios.get(`/api/bookmarks/checkArticle?userId=${loginUser}&articleNo=${no}`);
+                    const res = await axios.get(`/api/bookmarks/checkArticle?userId=${loginUser}&articleNo=${data.no}`);
                     setBookmarked(res.data.bookmarked);
                 } catch (err) {
                     console.error('북마크 확인 실패', err);
@@ -151,19 +151,13 @@ const CityArticle = ({loginUser,loginInfo}) => {
     return (
         <div>
             <h2>{title}</h2> 
-            <div
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        // 토글 로직: 기존 객체를 복사하고 현재 ID 값만 반전
-                        handleBookmarkToggle(data);
-                    }}>
-                    
-                        <span style={{ color: bookmarked ? '#ffc107' : '#ccc',
-                            cursor:'pointer'
-                         }}>
-                            {data ? "★" : "☆"}
-                        </span>
+            {loginInfo?.role !== 'city' && (
+                <div onClick={(e) => { e.stopPropagation(); handleBookmarkToggle(data); }}>
+                    <span style={{ color: bookmarked ? '#ffc107' : '#ccc', cursor:'pointer' }}>
+                        {bookmarked ? "★" : "☆"}
+                    </span>
                 </div>
+            )}
             <p>{subject}</p>
 
             <p>작성자: {userId}</p>       

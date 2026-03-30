@@ -1,7 +1,7 @@
 import React from 'react';
 import CityItem from './CityItem';
 
-const CityList = ({articles,onDel,onEdit,loginUser,loginInfo}) => {
+const CityList = ({articles, onDel, onEdit, loginUser, loginInfo, currentPage, itemsPerPage}) => {
     return (
         <div>
             <h2>칼럼 리스트</h2>
@@ -21,7 +21,14 @@ const CityList = ({articles,onDel,onEdit,loginUser,loginInfo}) => {
             </thead>
             <tbody>
             {
-                articles.map(item=><CityItem key={item.id} item={item} onDel={onDel} onEdit={onEdit} loginUser={loginUser} loginInfo={loginInfo}/>)
+            articles.map((item, index) => {
+                const globalIndex = (currentPage - 1) * itemsPerPage + index + 1;
+            
+            return(
+                <CityItem key={item._id} item={item} displayNo={globalIndex}
+                onDel={onDel} onEdit={onEdit} loginUser={loginUser} loginInfo={loginInfo}/>
+                  );
+                })
             }
             </tbody>
             </table>

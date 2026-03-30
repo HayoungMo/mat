@@ -83,7 +83,7 @@ const { userId, password, tel, emailId, emailDomain, addr, birth } = form;
             const domain = emailDomain || (form.emailCustomDomain ? '@' + form.emailCustomDomain : '');
             const email = emailId ? emailId + emailDomain : '';
             const {emailId: _eid, emailDomain: _edom, ...rest} = form;
-            const response = await axios.post('/api/register', {rest,email});
+            const response = await axios.post('/api/register', { ...rest, email });
             if(response.data.success) {
                 setStep(2); //가입 완료  페이지
             }
@@ -99,6 +99,7 @@ const { userId, password, tel, emailId, emailDomain, addr, birth } = form;
 
     //연도와 월이 모두 선택되면 해당 달의 마지막 날을 구하고 아니면 31을 기본으로 사용한다
     const lastDay = (year && month) ? new Date(year, month, 0).getDate() : 31;
+    
     // const onNext = async () => {
     //     try {
     //         const response = await axios.post('/api/register', form);
@@ -254,6 +255,13 @@ const { userId, password, tel, emailId, emailDomain, addr, birth } = form;
                     <p>
                         <button onClick={onNext}>가입완료</button>
                         <button onClick={onReset}>취소</button>
+                    </p>
+                    <p style={{marginTop:'10px',textAlign:'center'}}>
+                        이미 계정이 있으신가요?
+                        <span onClick={() => {onReset(); setStep(3);}}
+                        style={{color:'blue', cursor:'pointer', textDecoration:'underline', marginLeft:'5px'}}>
+                            로그인 하기
+                        </span>
                     </p>
                 </div>
             )}
