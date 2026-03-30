@@ -28,19 +28,27 @@ exports.toggleBookmark = async(req, res) => {
 }
 
 exports.toggleArticleBookmark = async(req, res) => {
-    const {userId, articleNo, title, matName} = req.body;
 
-    console.log("req.body:", req.body);
+    console.log("=== toggleArticle req.body ===", req.body); 
+    const {userId, articleNo, title, matName,matTel, matAddr, lat, lng} = req.body;
+
+    
     try {
         const exists = await Bookmark.findOne({userId, articleNo});
+         console.log("기존 북마크 존재?", exists);
         if(exists) {
-            await Bookmark.deleteOne({userId, articleNo});
+            await Bookmark.deleteOne({userId, articleNo: Number(articleNo)});
             return res.json({bookmarked: false});
         }
-        await Bookmark.create({userId, articleNo, title, matName});
+        await Bookmark.create({userId, articleNo, title, matName, matTel, matAddr, lat, lng});
         res.json({bookmarked: true});
+         console.log("생성된 북마크:", created);
+        return res.json({bookmarked: true});
+       
     } catch (err) {
-        res.status(500).json({message: err.message});
+         if (!res.headersSent) { // ✅ 이미 응답 보낸 경우 무시
+            return res.status(500).json({message: err.message});
+        }
     }
 }
 
@@ -50,7 +58,7 @@ exports.getBookmarks = async(req,res) => {
     const {userId} = req.query;
     try{
         const bookmarks = await Bookmark.find({userId});
-        console.log('조회 결과:', bookmarks); // ← 추가
+        
         res.json(bookmarks);
     }catch(err){
         console.log('에러:', err.message);
@@ -74,6 +82,18 @@ exports.checkBookmark = async (req, res)=> {
     const {userId, kakaoId} = req.query;
     try {
         const exists = await Bookmark.findOne({userId});
+        res.json({ bookmarked: !!exists });
+    } catch (err) {
+        res.status(500).json({message: err.message});
+    }
+}
+
+exports.checkArticleBookmark = async (req, res) => {
+    const {userId, articleNo} = req.query;
+    
+    try {
+        const exists = await Bookmark.findOne({userId, articleNo: Number(articleNo)});
+         
         res.json({ bookmarked: !!exists });
     } catch (err) {
         res.status(500).json({message: err.message});
