@@ -43,7 +43,7 @@ const Board = ({ loginUser }) => {
         }
 
         try {
-            // 2. 서버에 게시글 ID와 현재 로그인한 유저 ID를 같이 보냄
+         
             await BoardService.updateBookmark(id, loginUser);
             
             // 3. 목록 새로고침
