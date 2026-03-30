@@ -13,7 +13,7 @@ const BoardForm = ({ onSearch }) => {
             clearTimeout(debounceRef.current);
         }
 
-        // 2. 500ms(0.5초) 후에 onSearch를 실행하도록 예약
+      
         debounceRef.current = setTimeout(() => {
             onSearch(val);
             console.log("실시간 검색 실행:", val);
