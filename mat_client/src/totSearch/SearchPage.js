@@ -55,6 +55,7 @@ const onSearch = async (query) => {
 
         return () => clearTimeout(timer);
     }, [inputText, setSearchParams, urlKeyword]);
+
 //페이징 데이터 자르는 로직
 const indexOfLastItem = currentPage * itemsPerPage;
 const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -76,7 +77,7 @@ const totalPages = Math.ceil(list.length / itemsPerPage);
 return (
     <div>
 
-        <SearchBar keyword={inputText} setKeyword={setInputText} onSearch={onSearch(inputText)}/>
+        <SearchBar keyword={inputText} setKeyword={setInputText} onSearch={() => onSearch(inputText)}/>
             {/* 검색 결과 출력 */}
            {urlKeyword && list.length > 0 ? (
                 <>
