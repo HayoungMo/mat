@@ -1,7 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { toggleBookmark, getBookmarks } from '../services/bookmarkService'; // ← 추가
+import { useNavigate } from 'react-router-dom';
+import {searchKeyword} from '../services/SearchMapService.js';
 
-const MapPage = ({setAddress}) => {
+const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace,
+    className}) => {
+
+    
 
     const [keyword, setKeyword] = useState('');
     const [filteredPlaces, setFilteredPlaces] = useState([]);
@@ -11,24 +16,43 @@ const MapPage = ({setAddress}) => {
     const mapInstance = useRef(null);     // 생성된 카카오맵 객체 참조
     const markersRef = useRef([]);        // 마커들을 담을 배열
     const infowindowRef = useRef(null);   // 인포윈도우 객체 참조
+    const [mapReady, setMapReady] = useState(false);
+    const loginPath = "/login";
 
-    const userId = "user1";
-
+    
+    const navigate = useNavigate();
 
     // 1. 지도 초기화 (최초 1회 실행)
     useEffect(() => {
+
+        // if (!window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
+        // console.error("카카오 SDK 아직 로드 안됨");
+        // return;
+        // }
+
+        
+
+       console.log(selectedPlace);
+        
         window.kakao.maps.load(async () => {
+            if(!mapRef.current) return;
             const container = mapRef.current;
+           
             const options = {
                 center: new window.kakao.maps.LatLng(37.566826, 126.9786567), // 기본 위치 (서울시청)
                 level: 3,
             };
             mapInstance.current = new window.kakao.maps.Map(container, options);
+            setMapReady(true);
             infowindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
+
+            
+                
+            
 
             try {
             //북마크 불러오기
-            const bookmarks = await getBookmarks(userId);
+            const bookmarks = await getBookmarks(loginUser);
             
 
             //kakaoid들을 markedIds state에 반ㅇ영
@@ -44,6 +68,41 @@ const MapPage = ({setAddress}) => {
         
     }, []);
 
+    
+
+    useEffect(() => {
+        if (!selectedPlace || !mapInstance.current) return;
+        console.log("key", keyword);
+        console.log("selectedPlace:", selectedPlace); // 👈
+        console.log("mapInstance:", mapInstance.current); // 👈
+        console.log("mapReady:", mapReady); // 👈
+
+     
+
+        // 1. 기존 마커 제거
+        removeMarker();
+
+        // 2. 선택된 위치로 이동
+        const position = new window.kakao.maps.LatLng(selectedPlace.lat, selectedPlace.lng);
+        mapInstance.current.panTo(position);
+
+        // 3. 마커 추가
+        const marker = addMarker(position, 0);
+
+        // 4. 인포윈도우 표시
+        displayInfowindow(marker, selectedPlace.matName, selectedPlace.matTel, selectedPlace.matAddr);
+
+    }, [selectedPlace, mapReady]); // 👈 mapReady도 의존성에 추가
+
+   
+    const searchPlaces = (e) => {
+        e.preventDefault();
+        if (!keyword.trim() || !mapReady) return;
+        
+        searchKeyword(keyword, (data, status) => {
+            placesSearchCB(data, status);
+        });
+    };
     //추가 북마크 마커 지도에 표시
     const displayBookmarkMarkers = (bookmarks) => {
         bookmarks.forEach((b,i)=>{
@@ -56,8 +115,16 @@ const MapPage = ({setAddress}) => {
     }
 
     const handleBookmarkToggle = async(place) => {
+
+        
+        console.log("userId:", loginUser);
+        console.log("place 객체:", place);  // ← 이게 뭐가 찍히나요?
+        console.log("place.id:", place?.id);
+        console.log("place.y:", place?.y);
+        console.log("place.x:", place?.x);
         try {
-        const data = await toggleBookmark(userId, place); // ← fetch 대신
+        const data = await toggleBookmark(loginUser, place); // ← fetch 대신
+        console.log("결과:", data);
         setMarkedIds(prev => ({
             ...prev,
             [place.id]: data.bookmarked
@@ -66,6 +133,8 @@ const MapPage = ({setAddress}) => {
             console.error('북마크 저장 실패', err);
         }
     }
+
+        
 
     // 2. 마커 제거 함수
     const removeMarker = () => {
@@ -106,6 +175,9 @@ const MapPage = ({setAddress}) => {
 
     // 5. 검색 결과 콜백 함수
     const placesSearchCB = (data, status) => {
+        //status검색 확인용
+        console.log("status:", status);
+        console.log("data:", data);
         if (status === window.kakao.maps.services.Status.OK) {
             displayPlaces(data);
         } else if (status === window.kakao.maps.services.Status.ZERO_RESULT) {
@@ -115,16 +187,7 @@ const MapPage = ({setAddress}) => {
         }
     };
 
-    // 6. 검색 실행 함수
-    const searchPlaces = (e) => {
-        if (e) e.preventDefault();
-        if (!keyword.trim()) {
-            alert('키워드를 입력해주세요!');
-            return;
-        }
-        const ps = new window.kakao.maps.services.Places();
-        ps.keywordSearch(keyword, placesSearchCB);
-    };
+
 
     // 7. 지도에 장소들 뿌려주는 핵심 함수
     const displayPlaces = (places) => {
@@ -154,43 +217,41 @@ const MapPage = ({setAddress}) => {
 
             bounds.extend(placePosition);
         }
+
+        if(setList) {
+            setList(places);
+        }
         
         // 검색된 모든 마커가 보이도록 지도 범위 조정
         mapInstance.current.setBounds(bounds);
         setFilteredPlaces(places); // 리스트 UI 업데이트용
     };
 
+    // 외부에서 키워드 받았을 때 자동 검색
+    useEffect(() => {
+    if (!externalKeyword || !mapReady) return;
+        setKeyword(externalKeyword);       // input에도 반영
+        const ps = new window.kakao.maps.services.Places();
+        ps.keywordSearch(externalKeyword, placesSearchCB);
+
+    }, [externalKeyword, mapReady]);
+
 
     
    return (
-            <div className="map_wrap" style={{ 
-            position: 'relative', // 기준점 설정
-            width: '100%', 
-            height: '1000px' 
-        }}>
-            {/* 1. 지도 영역 (배경처럼 깔림) */}
-            <div ref={mapRef} style={{ 
-                width: '100%', 
-                height: '100%', 
-                position: 'absolute', // 지도를 부모 크기에 꽉 채움
-                top: 0, 
-                left: 0 
-            }}></div>
+        <div className="map_wrap" style={{width:"500px", height:"500px",
+            position: "relative",  
+           display:'flex' }} >
 
-            {/* 2. 검색창 UI (지도 위에 둥둥 떠 있음) */}
-            <div id="menu_wrap" style={{
-                position: 'absolute', // 부모 내부에서 위치 고정
-                top: '10px',          // 위에서 10px
-                left: '10px',         // 왼쪽에서 10px (여기서 결정됨!)
-                width: '300px',       // 너비 조절
-                maxHeight: '480px',   // 지도 높이를 넘지 않게 조절
-                overflowY: 'auto', 
-                background: 'rgba(255, 255, 255, 0.9)', // 살짝 투명한 흰색
-                padding: '15px',
-                borderRadius: '10px',
-                border: '1px solid #ddd',
-                zIndex: 10,           // 지도보다 무조건 위로!
-                boxShadow: '0 2px 5px rgba(0,0,0,0.2)' // 그림자를 주면 더 입체적임
+            {/* 임시 css */}
+            <div id="menu_wrap" style={{width : "300px",
+                position: "absolute", maxHeight: "450px",
+                overflowY: "auto",
+                zIndex: 10,
+                overflowY: "auto",
+                top: "10px",
+            left: "10px",
+             
             }}>
                 <div className="option">
                     <form onSubmit={searchPlaces}>
@@ -211,37 +272,36 @@ const MapPage = ({setAddress}) => {
                     const isThisOn = !!markedIds[place.id];
 
                     return (
-                        <li key={place.id || index} style={{ display: 'flex', alignItems: 'center', padding: '10px', borderBottom: '1px solid #eee' }}>
+                        <li key={place.id || index} >
                             {/* 정보 영역 */}
-                            <div className="info" style={{ flex: 1 }} onClick={() => {const moveLatLon = new window.kakao.maps.LatLng(place.y, place.x);
+                            <div className="info"  onClick={() => {const moveLatLon = new window.kakao.maps.LatLng(place.y, place.x);
                                 mapInstance.current.panTo(moveLatLon);
-                                displayInfowindow(markersRef.current[index], place.place_name);}}>
+                                displayInfowindow(markersRef.current[index], place.place_name, place.phone, place.address_name);}}>
                                 <strong>{place.place_name}</strong>
                                 <div>{place.address_name}</div>
+                                <div>{place.phone}</div>
                             </div>
 
                             {/* 북마크 버튼 */}
                             <div 
                                 className={isThisOn ? "on" : "off"} 
                                 onClick={(e) => {
+
+                                    
+
+                                    if(loginUser === null){
+                                        alert("로그인이 필요한 서비스 입니다.");
+                                        
+                                        navigate(loginPath, { replace: true});
+                                        return;
+                                    } 
                                     e.stopPropagation(); // 지도 이동 방지
                                     // 토글 로직: 기존 객체를 복사하고 현재 ID 값만 반전
                                     handleBookmarkToggle(place);
+                                    
                                 }}
-                                style={{
-                                    height: '35px',
-                                    width: '35px',      // 너비 고정으로 원형/정사각형 유지
-                                    marginLeft: '10px',
-                                    display: 'flex',    // 별 중앙 정렬을 위해 flex 사용
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                    borderRadius: '5px',
-                                    border:'none',
-                                    cursor: 'pointer',
-                                    fontSize: '20px',   // 별 크기 크게 고정
-                                    transition: 'all 0.2s'
-                                }}
+                                // 임시 css
+                                
                             >
                                 {/* 별 크기 차이를 없애기 위해 같은 폰트 사이즈 적용 */}
                                 <span style={{ color: isThisOn ? '#ffc107' : '#ccc' }}>
@@ -251,8 +311,14 @@ const MapPage = ({setAddress}) => {
                         </li>
                     );
                 })}
-                </ul>
+                </ul>   
+            
+
+            
+            
             </div>
+            {/* 1. 지도 영역 (배경처럼 깔림) */}
+                <div ref={mapRef}   style={{width:"100%", height:"500px", display:"flex"}}></div>
         </div>
     );
 };

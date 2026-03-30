@@ -5,32 +5,65 @@ const getUpgrade = async()=>{
     return res.data
 }
 
+const getIdUpgrade = async()=>{
+    const res = await axios.get('/api/upgrade/id')
+    return res.data
+}
+
 const addUpgrade = async(upgradeUser)=>{
-    axios.post('/api/upgrade',{
+
+    try{
+        const res = await axios.post('/api/upgrade',{
+            
+            userId: upgradeUser.userId,
+            cityName: upgradeUser.cityName,
+            reason:upgradeUser.reason,
+            status: upgradeUser.status || 'pending',
+            createdAt: upgradeUser.createdAt || new Date()
+        })
+
+        return res.data
+
+    }catch(error){
+        console.log(error)
+    }
+}
+
+const updateUpgrade = async(upgradeUser)=>{
+    
+    try{
+    const res= await axios.put('/api/upgrade',{
         userId: upgradeUser.userId,
         cityName: upgradeUser.cityName,
-        reason:upgradeUser.reason,
-        status: upgradeUser.status || '',
-        createdAt: upgradeUser.createdAt || new Date()
-    }).then(res=>{
-        console.log(res)
-    }).catch(error=>{
-        console.log(error)
+        reason:upgradeUser.reason
     })
+
+    return res.data
+
+    }catch(error){
+        console.log(error)
+    }
+
 }
 
 const deleteUpgrade = async(userId)=>{
-    axios.delete('/api/upgrade',{
+    
+    try{
+        const res= axios.delete('/api/upgrade',{
         data:{userId:userId}
-    }).then(res=>{
-        console.log(res)
-    }).catch(error=>
-        console.log(error)
-    )
+    })
+
+    return res.data
+
+    }catch(error){
+    console.log(error)
+}
 }
 
-export default{
+export default {
     getUpgrade:getUpgrade,
+    getIdUpgrade:getIdUpgrade,
     addUpgrade:addUpgrade,
+    updateUpgrade:updateUpgrade,
     deleteUpgrade:deleteUpgrade
 }

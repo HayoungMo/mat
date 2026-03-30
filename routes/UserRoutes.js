@@ -27,7 +27,7 @@ module.exports = (app) => {
 
       if (user.password === password) {
           console.log('로그인 성공:', user.userId);
-          res.send({ success: true, userId: user.userId }); // 리액트가 기다리는 형식
+          res.send({ success: true, userId: user.userId, user:user }); // 리액트가 기다리는 형식
       } else {
           res.send({ success: false, message: "비밀번호가 일치하지 않습니다." });
       }
@@ -37,6 +37,19 @@ module.exports = (app) => {
       res.status(500).send({ success: false, message: "서버 오류 발생" });
     }
   });
+
+  app.put('/api/users/:userId/role',async(req,res)=>{
+      try{
+        const user = await User.findOneAndUpdate(
+          {userId: req.params.userId},
+          {role: req.body.role},
+          {new:true}
+        )
+
+        res.send(200).send({error:false,user})
+        
+      }catch(error){
+        res.status(500).send({error : true, message: error.message})
+      }
+  })
 };
-
-

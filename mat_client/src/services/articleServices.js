@@ -20,6 +20,7 @@ const addArticle = async (article, images) => {
     formData.append('region', article.region)
     formData.append('matName', article.matName)
     formData.append('matTel', article.matTel)
+    formData.append('matAddr', article.matAddr)
 
     // 이미지 배열 (multer array('images') 대응)
     if (images) {
@@ -28,55 +29,35 @@ const addArticle = async (article, images) => {
         }
     }
 
-    axios.post('/api/article', formData, {
+    const res= await axios.post('/api/article', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     })
-    .then(res => {
-        console.log(res)
-    }).catch(error => {
-        console.log(error)
-    })
+
+    return res.data
 }
 
 
 // 수정 (이미지 추가 포함)
-const updateArticle = async (id, article, images) => {
+const updateArticle = async (id,formData) => {
 
-    const formData = new FormData()
-
-    formData.append('userId', article.userId)
-    formData.append('cityName', article.cityName)
-    formData.append('title', article.title)
-    formData.append('subject', article.subject)
-    formData.append('region', article.region)
-    formData.append('matName', article.matName)
-    formData.append('matTel', article.matTel)
-
-    if (images) {
-        for (let i = 0; i < images.length; i++) {
-            formData.append('images', images[i])
-        }
-    }
-
-    axios.put(`/api/article/${id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+    const res = await axios.put(`/api/article/${id}`,formData, {
+        headers: {'Content-Type': 'multipart/form-data'}
     })
-    .then(res => {
-        console.log(res)
-    }).catch(error => {
-        console.log(error)
-    })
+
+    return res.data
 }
 
 
 // 삭제
 const deleteArticle = async (id) => {
-    axios.delete(`/api/article/${id}`)
-    .then(res => {
+    try{
+        const res = await axios.delete(`/api/article/${id}`)
         console.log(res)
-    }).catch(error => {
-        console.log(error)
-    })
+        return res.data
+    }catch (error){
+        console.error(error)
+        throw error
+    }
 }
 
 
