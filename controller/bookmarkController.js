@@ -54,7 +54,7 @@ exports.toggleArticleBookmark = async(req, res) => {
 
 //전체 조회
 exports.getBookmarks = async(req,res) => {
-     console.log('getBookmarks 요청:', req.query); // ← 추가
+     
     const {userId} = req.query;
     try{
         const bookmarks = await Bookmark.find({userId});

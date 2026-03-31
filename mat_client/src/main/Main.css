@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root{
+
+    --bg-color: #ffffff;          /* 전체 배경: 흰색 */
+  --text-primary: #1a1a1a;      /* 기본 텍스트:  부드러운 다크 그레이가 더 고급스럽습니다 */
+  --text-secondary: #757575;    /* 보조 텍스트 (날짜, 설명 등) */
+  --point-color: #8a2130;       /* 포인트 컬러: 브릭 레드 */
+  --border-color: #e5e5e5; 
+--font-serif: 'Playfair Display', 'Nanum Myeongjo', serif; /* 고급스러운 제목용 */
+  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; /* 깔끔한 본문용 */
+}
+
+
+
+.mainContainer{
+    background-color: #fff;
+}
+
+.mainInner{
+    display: flex;
+}
+.SeoulCont{
+    display: flex;
+    padding-top: 50px;
+}
+
+.divider {
+  border: none;
+  width: 100%;
+  height: 3px;
+  background-color: #093c71;
+  
+ margin: 0 20px 20px 20px;
+}
+
+.listWrap{
+    width: 500px;
+}
+
+.listTitle{
+    font-family: var(--font-serif);
+    color: var(--text-primary);
+    text-align: left;
+    padding: 0 20px;
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+.btnArea{
+   display: flex;
+  justify-content: center;
+  gap: 10px; /* 버튼 사이 간격 */
+  margin-bottom: 20px;
+}
+
+
+.btnArea button{
+    padding: 12px 24px;
+    margin-right: 5px;
+    background-color: #fff;
+    border: 1px solid var(--text-primary);
+    color: #000;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: background-color 0.5s ease;
+}
+.btnArea button:hover{
+    background-color: #8a2130;
+    color: #ffffff;
+}
+
+.listItem{
+    top: 10px;
+    left: 500px;
+    width: 500px;
+    max-height: 500px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgb(221, 221, 221);
+    z-index: 10;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 5px;
+    background-color: #8a2130;
+    border: 1px solid var(--border-color);
+    font-family: var(--font-serif);
+}
+.listItem div{
+    color:#fff;
+    margin-bottom: 15px;
+}
+
+.place-name{
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+
+.place-category, 
+.place-address {
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  color: var(--text-secondary); 
+  margin-bottom: 2px;
+}
+
+.place-phone {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: #1a1a1a;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.empty-msg{
+    display: flex;
+    justify-content: center; /* 가로(좌우) 가운데 정렬 */
+    align-items: center;
+    height: 150px;
+    border: 1px dashed var(--border-color);
+
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+}
