@@ -1,4 +1,4 @@
-/* 1. 전체 레이아웃 */
+/* 1. 전체 레이아웃 및 배경 */
 .login-page-container {
     display: flex; flex-direction: column; min-height: 100vh;
     background: #ffffff; margin: 0; padding: 0;
@@ -13,10 +13,11 @@
 .header-inner { width: 100%; max-width: 1100px; display: flex; justify-content: space-between; align-items: center; }
 .logo-text { color: white; font-size: 24px; font-weight: 800; text-decoration: none; letter-spacing: 1px; }
 .header-right { display: flex; gap: 20px; font-size: 13px; color: rgba(255, 255, 255, 0.8); }
-.header-right span { cursor: pointer; }
+.header-right span { cursor: pointer; transition: 0.2s; }
+.header-right span:hover { color: #fff; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
 .bar { opacity: 0.3; }
 
-/* 3. 중앙 메인 */
+/* 3. 중앙 메인 영역 */
 .auth-main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 80px 20px; }
 .card {
     background: #fdfcf5; padding: 60px 50px; border-radius: 40px;
@@ -27,45 +28,44 @@
 .card-title { display: flex; align-items: baseline; justify-content: center; gap: 10px; font-size: 26px; font-weight: 800; color: #222; margin-bottom: 35px; }
 .title-en { color: #00aaff; font-size: 12px; font-weight: 600; letter-spacing: 1px; }
 
-/* 4. 텍스트 상자(Input) 시각적 대비 극대화 */
+/* 4. 텍스트 상자(Input) 디자인 */
 .input-group label { display: block; font-weight: 800; margin-bottom: 10px; color: #333; font-size: 14px; }
-
 .input-group input, .custom-select {
     display: block; width: 100%; padding: 16px; 
     background: #e9ecef !important; 
     border: 2px solid #ced4da; 
     border-radius: 15px; 
-    font-size: 15px; 
-    font-weight: 500;
-    color: #333;
-    box-sizing: border-box;
-    transition: all 0.2s ease-in-out;
+    font-size: 15px; font-weight: 500; color: #333;
+    box-sizing: border-box; transition: all 0.2s ease-in-out;
 }
-
 .input-group input:focus, .custom-select:focus {
-    background: #ffffff !important; 
-    border-color: #8a2130; 
-    outline: none;
+    background: #ffffff !important; border-color: #8a2130; outline: none;
     box-shadow: 0 0 0 5px rgba(138, 33, 48, 0.15); 
 }
-
-/* 💡 연락처/생년월일 가로 정렬 수정 */
 .flex-row { display: flex; gap: 8px; width: 100%; align-items: center; }
-
-/* select(국번/연도)는 적당히, input(번호)은 넓게 */
 .flex-row .custom-select { flex: 1; min-width: 80px; }
-.flex-row input { flex: 2; } /* 뒷번호 입력칸을 더 넓게 */
-
+.flex-row input { flex: 2; }
 .flex-row input, .flex-row select { padding: 14px; box-sizing: border-box; }
 
-/* 5. 버튼 디자인 */
+/* 5. 버튼 디자인 (가독성 보완) */
 .btn-navy, .btn-wine { border: none; padding: 18px; border-radius: 20px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 12px; transition: 0.2s; }
 .btn-navy { background: #093c71; color: white; }
 .btn-wine { background: #8a2130; color: white; }
 .btn-navy:hover, .btn-wine:hover { opacity: 0.95; transform: translateY(-2px); }
-.btn-gray { background: transparent; color: #bbb; border: none; cursor: pointer; width: 100%; margin-top: 20px; text-decoration: underline; font-size: 13px; }
 
-/* 6. 하단 푸터 */
+/* 💡 뒤로가기 / 취소 버튼 가독성 강화 */
+.btn-gray { 
+    background: transparent; color: #555; /* 💡 더 진한 회색으로 변경 */
+    border: none; cursor: pointer; width: 100%; 
+    margin-top: 25px; font-size: 14px; font-weight: 600;
+    transition: 0.2s; text-decoration: none;
+}
+.btn-gray:hover { 
+    color: #8a2130; /* 💡 마우스 올리면 와인색 포인트 */
+    text-decoration: underline; 
+}
+
+/* 6. 하단 푸터: 단색 와인(#8a2130) + 위쪽 강한 볼륨 */
 .auth-footer {
     width: 100%; background: #8a2130; padding: 60px 20px; text-align: center;
     color: rgba(255, 255, 255, 0.7); font-size: 13px; line-height: 1.8;
@@ -73,7 +73,6 @@
     box-shadow: 0 -12px 25px rgba(138, 33, 48, 0.35); 
 }
 .footer-line { display: none; } 
-
 .footer-inner { max-width: 1100px; margin: 0 auto; }
 .footer-info, .footer-address, .footer-contact { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
 .corp-name, .cs-number { font-weight: 700; color: #fff; }
@@ -83,5 +82,5 @@
 /* 7. 가상 트레이드마크 */
 .card-trademark-container { margin-top: 40px; text-align: center; }
 .trademark-line { width: 30px; height: 2px; background: #093c71; margin: 0 auto 15px; opacity: 0.2; }
-.card-trademark { font-size: 10px; color: #bbb; letter-spacing: 1px; text-transform: uppercase; }
-.card-tagline { font-size: 8px; color: #ccc; letter-spacing: 2px; text-transform: uppercase; }
+.card-trademark { font-size: 10px; color: #555; letter-spacing: 1px; text-transform: uppercase; }
+.card-tagline { font-size: 8px; color: #555; letter-spacing: 2px; text-transform: uppercase; }
