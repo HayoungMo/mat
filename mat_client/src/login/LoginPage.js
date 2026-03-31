@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import LoginPageInfo from './LoginPageInfo';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const EMAIL_OPTION = [
     {value: '', label: '직접입력'},
@@ -14,6 +15,8 @@ const EMAIL_OPTION = [
 //수정한 부분(세션관련)
 const LoginPage = ({loginUser,setLoginUser,loginInfo, setLoginInfo}) => {
     const [step, setStep] = useState(0);
+
+    const navigate = useNavigate();
     //const [loginUser, setLoginUser] = useState(localStorage.getItem('userId'));
     const [form, setForm] = useState({
         userId: '', password: '', telHead: '010', telMid:'', telTail:'', emailId: '',emailDomain:'' , addr: '', birthYear: '',
@@ -29,7 +32,7 @@ const LoginPage = ({loginUser,setLoginUser,loginInfo, setLoginInfo}) => {
         // if (name === 'email' && tagName === 'SELECT') {
             //     newValue = form.email + value;
             // }
-const { userId, password, tel, emailId, emailDomain, addr, birth } = form;
+    const { userId, password, emailId, emailDomain, addr } = form;
             
     const onText = (evt) => {
         const { value, name } = evt.target;
@@ -39,22 +42,21 @@ const { userId, password, tel, emailId, emailDomain, addr, birth } = form;
             alert('숫자만 입력하세요');
             return;
         }
-        if (name === 'tel' && isNaN(value)) {
-            alert('숫자만 입력하세요');
-            return;
-        }
+        // if (name === 'tel' && isNaN(value)) {
+        //     alert('숫자만 입력하세요');
+        //     return;
+        // }
 
         if (name === 'birth' && value.length > 6) {
             alert('6자리만 입력하세요');
             return;
         }
-
-        //이메일 한글 차단
-        if((name === 'emailId' || name === 'email') && /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value)){
-            alert('이메일에 한글은 입력할 수 없습니다');
+       //아이디&이메일 한글 차단 
+        if((name === 'userId' || name === 'emailId') && /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value)){
+            alert('아이디에 한글은 입력할 수 없습니다');
             return;
         }
-
+        
         setForm({
             ...form,
             [name]: newValue
@@ -63,13 +65,21 @@ const { userId, password, tel, emailId, emailDomain, addr, birth } = form;
 
     const onNext = async () => {
 
+        const tel = form.telHead + form.telMid + form.telTail;
         const birth = form.birthYear ?
         String(form.birthYear).slice(2) + form.birthMonth + form.birthDay : '';
+
         //필수항목 검사(email, addr은 선택이라 제외)
         if(!userId.trim()) {alert('아이디를 입력해주세요'); document.querySelector('[name=userId]').focus(); return}
         if(!password.trim()) {alert('비밀번호를 입력해주세요'); document.querySelector('[name=password]').focus(); return}
-        if(!tel.trim()) {alert('전화번호를 입력해주세요'); document.querySelector('[name=tel]').focus(); return}
-        if(!birth.trim()) {alert('생년월일을 입력해주세요'); document.querySelector('[name=birth]').focus(); return}
+        if(!form.telMid.trim() || !form.telTail.trimEnd()) {
+            alert('전화번호를 입력해주세요'); document.querySelector('[name=telMid]').focus(); 
+            return
+        }
+        if(!form.birthYear || !form.birthMonth || !form.birthDay) {
+            alert('생년월일을 입력해주세요'); document.querySelector('[name=birthYear]').focus(); 
+            return
+        }
         
         try{
             //이메일 합쳐서 전송(비어있으면 빈문자열)
@@ -83,7 +93,14 @@ const { userId, password, tel, emailId, emailDomain, addr, birth } = form;
             const domain = emailDomain || (form.emailCustomDomain ? '@' + form.emailCustomDomain : '');
             const email = emailId ? emailId + emailDomain : '';
             const {emailId: _eid, emailDomain: _edom, ...rest} = form;
-            const response = await axios.post('/api/register', { ...rest, email });
+            const response = await axios.post('/api/register', { 
+                userId: form.userId,
+                password: form.password,
+                tel,
+                email,
+                addr: form.addr,
+                birth
+             });
             if(response.data.success) {
                 setStep(2); //가입 완료  페이지
             }
@@ -114,11 +131,17 @@ const { userId, password, tel, emailId, emailDomain, addr, birth } = form;
 
     //수정한부분(세션관련)
     const onLogin = async () => {
+
+        //버튼을 누를때 ' 그 순간' 최신 값을 form에서 꺼낸다
+        const {userId, password} =form;
+
+        console.log("로그인 시도 데이터:", {userId, password})
         try {
             const response = await axios.post('/api/login', {
                 userId,
                 password
-            },{withCredentials:true})
+            });
+            console.log("서버 응답:", response.data);
 
             if (response.data.success) {
                 localStorage.setItem('userId',response.data.userId)
@@ -126,9 +149,12 @@ const { userId, password, tel, emailId, emailDomain, addr, birth } = form;
                 setLoginUser(response.data.userId);
                 setLoginInfo(response.data.user);
                 setStep(0); 
-                alert(response.data.userId + "님 환영합니다");
+
+                //성공 시 메인 페이지로 이동
+                alert(`${response.data.userId}님, 환영합니다!`);
+                navigate('/');
             } else {
-                alert(response.data.message);
+                alert(response.data.message || "아이디 또는 비밀번호가 틀렸습니다");
             }
         } catch (error) {
             //console.log(error.response) //서버가 보내는 오류
