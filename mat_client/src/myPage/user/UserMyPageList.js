@@ -6,8 +6,8 @@ const UserMyPageList = ({users,onDel}) => {
 
    return (
         <div>
-            <h2 className='users'>내가 쓴 글</h2>
-            <table>
+            <h2 className='users'></h2>
+            <table className='mypage-table'>
                 <colgroup>
                 <col className='w1'/>
                 <col className='w2'/>
@@ -18,6 +18,7 @@ const UserMyPageList = ({users,onDel}) => {
                         <th>제목</th>
                         <th>별점</th>
                         <th>게시일</th>
+                        <th>삭제하기</th>
                     </tr>
                 </thead>
                 <tbody>
