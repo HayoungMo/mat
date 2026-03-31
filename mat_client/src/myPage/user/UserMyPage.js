@@ -10,6 +10,7 @@ import UserProfileUpdate from './UserProfileUpdate';
 import UserMyPageBookmark from './UserMyPageBookmark';
 import MapPage from '../../map/MapPage';
 import { BookmarkProvider } from '../../contexts/BookmarkContext';
+import './UserMyPage.css'
 
 
 const UserMyPage = ({loginUser, className, ugUsers}) => {
@@ -125,9 +126,11 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
         
         
     return (
-        <div>
-            <h2><a href='/'>로고</a></h2>
-            <h2>상단바 메뉴</h2>
+        <div className='mypage-wrapper'>
+         
+
+            <div className='mypage-body'>
+            
             {/* <Link to="/login">
             <button>로그인</button>
             </Link>
@@ -135,15 +138,22 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
             <button>자유게시판</button>
             </Link> */}
 
-            <h3>프로필</h3>
+
+            <aside className="mypage-sidebar">
+            <div className="profile-card">    
+            <h3 className='profile-card-title'>프로필</h3>
+            
             <UserMyPageProfile profile={profile} onEdit={onEdit} isEdit={isEdit} changeInput={changeInput} loginUser={loginUser}/>
+            <div className='profile-actions'>
            {isEdit
             ? <>
-                <button onClick={onUpdate}>저장</button>
-                <button onClick={() => setIsEdit(false)}>취소</button>
+                <button className='btn btn-primary' onClick={onUpdate}>저장</button>
+                <button className='btn btn-outline' onClick={() => setIsEdit(false)}>취소</button>
               </>
-            : <button onClick={() => setIsEdit(true)}>정보 수정</button>
+            : <button className='btn btn-primary' onClick={() => setIsEdit(true)}>정보 수정</button>            
         }
+        
+       
         {/* 등업 상태에 따라서 실시간으로 버튼 상태 변경이 되는것  */}
         {request?.status === 'pending' ? (
             <button onClick={()=> navigate('/mypage/levelup-check')}>등업 확인하기</button>
@@ -152,35 +162,41 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
         ) : request?.status === 'approved' ? (
             <span>등업 완료! 재로그인 시 반영됩니다.</span>
         ) : (
-            <button onClick={() => navigate('/mypage/levelup-check')}>등업 신청</button>
+            <button className='btn btn2' onClick={() => navigate('/mypage/levelup-check')}>등업 신청</button>
         )}
+         <button className='btn btn3' onClick={onUserDel}>회원 탈퇴</button>
+
+         </div>
+        </div>
+        </aside>
 
 
-            
-            <div>
+            <main className='mypage-content'>
+            <section className='section-card'>
+                <h2 className='section-title'>내가 쓴 글</h2>
             <UserMyPageList users={users} onDel={onDel}/>
-            </div>
-            <div>
+            </section>
+
+            <section className='section-card'>
+                  <h2 className='section-title'>북마크</h2>
             <BookmarkProvider loginUser={loginUser}>
-            <h1>북마크</h1>
-                <div style={{ width:"300px", height:"500px", marginRight: "50px"
-                    ,display:"flex", alignItems: "flex-start", gap: "20px", padding: "20px"
-                }}>
-                
-                <div style={{minWidth: "400px" , flexShrink: 0}}>
+          
+                <div className="bookmark-section">
+                 <div className="bookmark-list-area">
                     <UserMyPageBookmark onDel={onDel} loginUser={loginUser}
                     onSelectPlace = {setSelectedPlace}
                 />
-                </div>   
-                <div style={{width: '300px', height: '500px', 
-                    position:'relative'
-                }}>
-                    <MapPage selectedPlace={selectedPlace}/>
                 </div>
-            </div>
+               
+                 <div className="bookmark-map-area"> 
+                    <MapPage selectedPlace={selectedPlace}/>
+                    </div>  
+                </div>
+            
             </BookmarkProvider>
-            </div>
-            <button onClick={onUserDel}>회원 탈퇴</button>
+            </section>
+            </main>
+           </div>
         </div>
     );
 };

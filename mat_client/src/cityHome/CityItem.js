@@ -1,95 +1,120 @@
 import React, { useEffect, useState } from 'react';
-import {Link,Route,Routes} from 'react-router-dom'
-import { toggleBookmark} from '../services/bookmarkService';
+import { useNavigate } from 'react-router-dom';
+import { toggleBookmark } from '../services/bookmarkService';
 import { searchKeyword } from '../services/SearchMapService';
 import axios from 'axios';
+import { TiStarOutline, TiStarFullOutline  } from "react-icons/ti";
 
-const CityItem = ({item,displayNo,onDel,onEdit,loginUser, loginInfo}) => {
-
-    console.log('item 전체',item)
-    console.log('이미지',item.images)
-    const {no,title,matName, userId} = item
-
-    const canEdit = loginInfo?.role === 'city' && loginUser === item.userId
+const CityItem = ({ item, displayNo, onDel, onEdit, loginUser, loginInfo }) => {
+    const navigate = useNavigate(); // 페이지 이동을 위해 추가
+    const { no, title, matName, userId } = item;
+    const canEdit = loginInfo?.role === 'city' && loginUser === item.userId;
 
     const [bookmarked, setBookmarked] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
+    // 🌟 북마크 로직 (기존 코드 완벽 유지)
     const handleBookmarkToggle = async(Article) => {
-                    console.log("place 객체:", Article); 
-                    try {
-                        let lat = Article.lat;
-                        let lng = Article.lng;
-    
-                    if ((!lat || !lng) && Article.matName) {
-                        const searchResult = await new Promise((resolve) => {
-                            searchKeyword(Article.matName, (data, status) => {
-                                console.log("검색결과:", data, status);
-                                if (status === window.kakao.maps.services.Status.OK && data.length > 0) {
-                                    resolve(data[0]); // 첫 번째 결과 사용
-                                } else {
-                                    resolve(null);
-                                }
-                        });
-                    });
-                    console.log("searchResult:", searchResult);
-                    if (searchResult) {
-                        lat = searchResult.y; // 카카오는 y가 lat
-                        lng = searchResult.x; // 카카오는 x가 lng
-                       }
-                    }
-                    const bookdata = await toggleBookmark(loginUser, {...Article,lat,lng}, no ); 
-                    console.log("결과:", bookdata);
-                    setBookmarked(bookdata.bookmarked);
-                    console.log("bookdata 객체:", bookdata);
-                    } catch (err) {
-                        console.error('북마크 저장 실패', err);
-                    }finally {
-                        setIsLoading(false); // ✅ 완료 후 해제
-                    }
-                }
+        try {
+            let lat = Article.lat;
+            let lng = Article.lng;
 
-                useEffect(() => {
-                    console.log("체크 실행 - loginUser:", loginUser, "no:", no);
-                    const checkBookmarked = async () => {
-                        if (!loginUser || !no) return;
-                        try {
-                            const res = await axios.get(`/api/bookmarks/checkArticle?userId=${loginUser}&articleNo=${no}`);
-                            console.log("북마크 체크 결과:", res.data);
-                            setBookmarked(res.data.bookmarked);
-                        } catch (err) {
-                            console.error('북마크 확인 실패', err);
+            if ((!lat || !lng) && Article.matName) {
+                const searchResult = await new Promise((resolve) => {
+                    searchKeyword(Article.matName, (data, status) => {
+                        if (status === window.kakao.maps.services.Status.OK && data.length > 0) {
+                            resolve(data[0]); // 첫 번째 결과 사용
+                        } else {
+                            resolve(null);
                         }
-                    };
-                    checkBookmarked();
-                }, [loginUser, no]);
+                    });
+                });
+                if (searchResult) {
+                    lat = searchResult.y; // 카카오는 y가 lat
+                    lng = searchResult.x; // 카카오는 x가 lng
+                }
+            }
+            const bookdata = await toggleBookmark(loginUser, {...Article, lat, lng}, no); 
+            setBookmarked(bookdata.bookmarked);
+        } catch (err) {
+            console.error('북마크 저장 실패', err);
+        } finally {
+            setIsLoading(false); 
+        }
+    }
 
+    useEffect(() => {
+        const checkBookmarked = async () => {
+            if (!loginUser || !no) return;
+            try {
+                const res = await axios.get(`/api/bookmarks/checkArticle?userId=${loginUser}&articleNo=${no}`);
+                setBookmarked(res.data.bookmarked);
+            } catch (err) {
+                console.error('북마크 확인 실패', err);
+            }
+        };
+        checkBookmarked();
+    }, [loginUser, no]);
+
+    // 🌟 렌더링 영역 (테이블 구조 -> 매거진 카드 구조로 완벽 교체!)
     return (
-        <tr>
-            {console.log("이미지")}
-            <td>{displayNo}</td>
-            <td>
-                <Link to={`/city/${item.cityName}/article/${item._id}`}><img src={`/uploads/${item.images[0]?.saveFileName}`} width='100' alt={matName}/>
-            </Link>
-            </td>
-            <td><Link to={`/city/${item.cityName}/article/${item._id}`}>{title}</Link></td>
-            <td>{matName}</td>
-            <td>
-                {canEdit && <button onClick={()=>onEdit(item)}>수정</button>}
-                {canEdit && <button onClick={()=>onDel(item)}>삭제</button>}
-
-                {loginInfo?.role !== 'city' && (
-                <div onClick={(e) => { e.stopPropagation(); handleBookmarkToggle(item); }}>
-                    <span style={{ color: bookmarked ? '#ffc107' : '#ccc', cursor:'pointer' }}>
-                        {bookmarked ? "★" : "☆"}
-                    </span>
-                </div>
+        <div className="column-card">
+            
+            {/* 📸 1. 썸네일 이미지 영역 (클릭 시 이동) */}
+            <div 
+                className="column-thumbnail" 
+                onClick={() => navigate(`/city/${item.cityName}/article/${item._id}`)}
+            >
+                {item.images && item.images.length > 0 ? (
+                    <img src={`/uploads/${item.images[0]?.saveFileName}`} alt={matName} />
+                ) : (
+                    <div className="no-image-box">No Image</div>
                 )}
-                                
+            </div>
+
+            {/* 📝 2. 칼럼 텍스트 영역 */}
+            <div className="column-text-content">
+                {/* 상단: 번호, 제목, 북마크 버튼 */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div style={{ flex: 1, marginRight: '15px' }}>
+                        <h2 
+                            className="column-title" 
+                            onClick={() => navigate(`/city/${item.cityName}/article/${item._id}`)}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <span style={{ color: '#8a2130', marginRight: '8px' }}>{displayNo}.</span>
+                            {title}
+                        </h2>
+                        <p className="column-excerpt" style={{ fontWeight: '600' }}>📍 {matName}</p>
+                    </div>
+
+                    {/* 북마크 별 아이콘 (노란색에서 매거진 컨셉에 맞게 버건디 포인트로 변경) */}
+                    {loginInfo?.role !== 'city' && (
+                        <div onClick={(e) => { e.stopPropagation(); handleBookmarkToggle(item); }}>
+                            <span style={{ color: bookmarked ? '#f6e055' : '#dddddd', cursor:'pointer', fontSize: '45px', transition: 'color 0.2s' }}>
+                                {bookmarked ? <TiStarFullOutline /> : <TiStarOutline />}
+                            </span>
+                        </div>
+                    )}
+                </div>
                 
-            </td>
-            <hr/>
-        </tr>
+                {/* 하단: 메타 정보 (기자, 작성일) & 관리 버튼 */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '10px' }}>
+                    <div className="column-meta">
+                        <span className="meta-author">{userId} 기자</span>
+                    </div>
+
+                    {/* 작성자 전용 수정/삭제 버튼 */}
+                    {canEdit && (
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <button className="btn-mini btn-edit" onClick={() => onEdit(item)}>수정</button>
+                            <button className="btn-mini btn-del" onClick={() => onDel(item)}>삭제</button>
+                        </div>
+                    )}
+                </div>
+            </div>
+            
+        </div>
     );
 };
 

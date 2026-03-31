@@ -1,0 +1,254 @@
+/* CityAdd.css */
+
+/* 전체 에디터 컨테이너 (흰색 70% 비중) */
+.editor-form {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 50px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    font-family: 'Noto Sans KR', 'Pretendard', sans-serif;
+    color: #333333; /* 검정/진회색 30% 비중 */
+}
+
+/* 상단 헤더 & 메타 정보 */
+.editor-header {
+    border-bottom: 2px solid #333333;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.editor-header h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #8a2130; /* 메인 컬러 포인트 */
+    margin: 0 0 15px 0;
+}
+
+/* 아이디와 구를 옆으로 나란히 배치 */
+.article-meta {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 14px;
+    color: #555555;
+}
+
+.meta-item strong {
+    color: #000000;
+    margin-right: 6px;
+}
+
+.meta-divider {
+    color: #cccccc;
+}
+
+/* 일반 입력 필드 (선만 얇게 표시하여 깔끔하게) */
+.input-row {
+    margin-bottom: 25px;
+}
+
+.input-row label, .editor-body label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #111111;
+}
+
+input[type='text'] {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 16px;
+    border: none;
+    border-bottom: 1px solid #cccccc;
+    background-color: transparent;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+}
+
+input[type='text']:focus {
+    outline: none;
+    border-bottom: 2px solid #333333;
+}
+
+/* 📰 기사 본문 (Textarea) - 에디터 느낌 극대화 */
+.editor-body {
+    margin: 40px 0;
+}
+
+textarea {
+    width: 100%;
+    min-height: 400px; /* 기사를 쓰기 넉넉한 높이 */
+    padding: 20px;
+    font-size: 16px;
+    line-height: 1.8; /* 기사 읽기/쓰기 좋은 줄간격 */
+    border: 1px solid #dddddd;
+    background-color: #fafafa;
+    resize: vertical;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+textarea:focus {
+    outline: none;
+    background-color: #ffffff;
+    /* 포커스 시 메인 컬러 테두리와 서브 컬러(#093c71) 좌측 포인트 띠 형성 */
+    border: 1px solid #8a2130;
+    border-left: 4px solid #093c71; 
+}
+
+/* 검색 결과 리스트 */
+.search-dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #eeeeee;
+    border-top: none;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.search-dropdown li {
+    padding: 12px 10px;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+}
+
+.search-dropdown li:hover {
+    background-color: #f9f9f9;
+}
+
+.place-name { font-weight: bold; color: #333; }
+.place-addr { font-size: 12px; color: #777; margin-top: 4px; }
+
+/* 선택된 맛집 정보 박스 */
+.selected-info {
+    margin-top: 10px;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-left: 3px solid #333333;
+    font-size: 14px;
+}
+
+.selected-info p { margin: 5px 0; }
+
+/* 첨부파일 */
+.file-input {
+    font-size: 14px;
+    color: #555;
+}
+
+/* 버튼 그룹 (크기를 줄이고 우측 정렬) */
+.button-group {
+    display: flex;
+    justify-content: flex-end; /* 우측으로 몰기 */
+    gap: 12px;
+    margin-top: 40px;
+    border-top: 1px solid #eeeeee;
+    padding-top: 20px;
+}
+
+button {
+    padding: 8px 20px; /* 버튼을 콤팩트하게 */
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 2px; /* 각진 느낌으로 전문성 강조 */
+    transition: background-color 0.2s;
+}
+
+/* 기사 송고 버튼 (기본 상태) */
+.btn-submit {
+    background-color: #8a2130 !important; /* 기본: 메인 컬러(버건디) */
+    color: #ffffff;
+    border: 1px solid #8a2130;
+    transition: all 0.2s ease-in-out; /* 색상이 부드럽게 변하도록 애니메이션 효과 추가 */
+}
+
+/* 마우스를 올렸을 때(hover)와 클릭했을 때(active) */
+.btn-submit:hover,
+.btn-submit:active {
+    background-color: #093c71 !important; /* 액션: 서브 컬러(네이비)로 변경 */
+    border-color: #093c71; /* 테두리 색상도 네이비로 통일하여 깔끔하게 처리 */
+}
+
+.btn-cancel {
+    background-color: transparent;
+    color: #333333;
+    border: 1px solid #cccccc;
+}
+
+.btn-cancel:hover {
+    background-color: #093c71;
+}
+
+/* 🌟 기존 이미지 관리 섹션 (CityEdit 전용) */
+.existing-images-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px dashed #cccccc;
+}
+
+.existing-images-section label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 12px;
+    color: #111111;
+}
+
+.image-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* 개별 이미지 카드 스타일 */
+.image-card {
+    position: relative; /* 삭제 버튼을 이미지 위에 띄우기 위함 */
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+
+/* 썸네일 이미지 비율 고정 */
+.image-card img {
+    display: block;
+    width: 120px;
+    height: 120px;
+    object-fit: cover; /* 이미지가 찌그러지지 않고 꽉 차게 */
+    transition: opacity 0.2s;
+}
+
+.image-card:hover img {
+    opacity: 0.8; /* 마우스 올렸을 때 살짝 어두워지는 효과 */
+}
+
+/* 이미지 삭제(X) 버튼 - 이미지 우측 상단에 배치 */
+.btn-delete-img {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(138, 33, 48, 0.85); /* 버건디 컬러 투명도 적용 */
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 50% !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    transition: all 0.2s !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+}
+
+.btn-delete-img:hover {
+    background-color: #8a2130 !important; /* 호버 시 완전한 버건디로 변경 */
+    transform: scale(1.1); /* 살짝 커지는 효과 */
+}
