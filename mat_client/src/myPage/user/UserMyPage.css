@@ -1,0 +1,469 @@
+/*
+   UserMyPage.css
+  */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap');
+
+:root {
+  --burgundy: #6D1E2A;
+  --burgundy-light: #8B2635;
+  --burgundy-dark: #4A1019;
+  --burgundy-pale: #f9f0f1;
+  --white: #ffffff;
+  --gray-50: #fafafa;
+  --gray-100: #f4f4f4;
+  --gray-200: #e8e8e8;
+  --gray-400: #b0b0b0;
+  --gray-600: #6b6b6b;
+  --gray-800: #2c2c2c;
+  --shadow-sm: 0 1px 4px rgba(109,30,42,0.08);
+  --shadow-md: 0 4px 16px rgba(109,30,42,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--white);
+  font-family: 'Noto Sans KR', sans-serif;
+  color: var(--gray-800);
+}
+
+/* ── 전체 래퍼 ── */
+.mypage-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--white);
+}
+
+/* ── 헤더 (전체 너비) ── */
+.mypage-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 60px;
+  background: var(--white);
+  border-bottom: 1.5px solid var(--gray-200);
+  box-shadow: var(--shadow-sm);
+}
+
+.mypage-header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--burgundy);
+}
+
+.mypage-nav {
+  display: flex;
+  gap: 10px;
+}
+
+/* ── 로고 박스 (헤더 아래 왼쪽) ── */
+.mypage-logo-bar {
+  padding: 16px 40px 0 40px;
+}
+
+.mypage-logo-box {
+  width: 120px;
+  height: 68px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.mypage-logo-box a {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--burgundy);
+  text-decoration: none;
+}
+
+/* ── 메인 바디 (사이드바 | 콘텐츠) ── */
+.mypage-body {
+  display: flex;
+  flex: 1;
+  padding: 20px 40px 40px 40px;
+  gap: 24px;
+  align-items: flex-start;
+}
+/*리뷰 별점*/
+.star-container {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  font-size: 1.2rem;
+}
+
+
+
+
+/* 빈 별 색상 */
+.star.empty {
+  color: #ddd;
+}
+
+/* ── 왼쪽: 프로필 사이드바 ── */
+.mypage-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.profile-card {
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 22px 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-card-title {
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid var(--burgundy-pale);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.profile-card-title::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 11px;
+  background: var(--burgundy);
+  border-radius: 2px;
+}
+
+.profile-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--burgundy-light), var(--burgundy-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin: 0 auto 14px;
+  box-shadow: var(--shadow-md);
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;             /* 버튼들 사이의 간격을 7px에서 12px로 확대 */
+  margin-top: 28px;
+}
+
+
+
+
+
+
+.bookmark-section {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.bookmark-container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+/* 리스트 */
+.bookmark-list {
+  flex: 1;
+}
+
+/* 지도 */
+.bookmark-map {
+  width: 400px;
+  height: 400px;
+}
+
+/* ── 오른쪽: 콘텐츠 (위/아래 stacked) ── */
+.mypage-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* ── 섹션 카드 공통 ── */
+.section-card {
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease;
+}
+
+.section-title {
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid var(--burgundy-pale);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-title::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 11px;
+  background: var(--burgundy);
+  border-radius: 2px;
+}
+
+/* ── 테이블 ── */
+.mypage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.mypage-table thead th {
+  padding: 9px 12px;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray-600);
+  background: var(--gray-50);
+  border-bottom: 1.5px solid var(--gray-200);
+}
+
+.mypage-table tbody td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--gray-100);
+  color: var(--gray-800);
+  vertical-align: middle;
+}
+
+.mypage-table tbody tr:last-child td { border-bottom: none; }
+
+.mypage-table tbody tr:hover td { background: var(--burgundy-pale); }
+
+.empty-state {
+  text-align: center;
+  padding: 36px;
+  color: var(--gray-400);
+  font-size: 0.88rem;
+}
+
+/* ── 북마크 + 지도 ── */
+.bookmark-section {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.bookmark-list-area {
+  flex: 1;
+  min-width: 0;
+}
+
+.bookmark-map-area {
+  width: 300px;
+  flex-shrink: 0;
+  height: 340px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1.5px solid var(--gray-200);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── 푸터 (전체 너비) ── */
+.mypage-footer {
+  width: 100%;
+  background: var(--gray-50);
+  border-top: 1.5px solid var(--gray-200);
+  padding: 22px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mypage-footer p {
+  font-size: 0.8rem;
+  color: var(--gray-400);
+  letter-spacing: 0.02em;
+}
+
+/* ── 버튼 ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--burgundy);
+  color: var(--white);
+}
+.btn2{
+   background-color:  #093c71;;
+   color: var(--white);
+   display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: none;
+  white-space: nowrap;
+
+}
+
+.btn3 {
+  background-color: #e8e8e8;
+   display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: none;
+  white-space: nowrap;
+}
+
+.btn3:hover {
+  box-shadow: 0 4px 12px rgba(189, 183, 184, 0.28);
+  transform: translateY(-1px);
+}
+
+.btn-primary:hover {
+  background: var(--burgundy-light);
+  box-shadow: 0 4px 12px rgba(109,30,42,0.28);
+  transform: translateY(-1px);
+}
+.btn-primary:active { background: var(--burgundy-dark); transform: translateY(0); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--burgundy);
+  border: 1.5px solid var(--burgundy);
+}
+.btn-outline:hover { background: var(--burgundy-pale); transform: translateY(-1px); }
+
+.btn-danger {
+  background: transparent;
+  color: #b91c1c;
+  border: 1.5px solid #fca5a5;
+  font-size: 0.78rem;
+  padding: 6px 12px;
+}
+.btn-danger:hover { background: #fff5f5; border-color: #b91c1c; }
+
+.btn-delete {
+  background: transparent;
+  color: var(--gray-400);
+  border: 1px solid var(--gray-200);
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-delete:hover { background: #fff5f5; color: #b91c1c; border-color: #fca5a5; }
+
+/* ── 인풋 ── */
+.profile-field { 
+  margin-bottom: 24px;  /* 기존 11px → 18~20px 추천 */
+}
+
+.profile-field p {
+ font-size: 0.9rem;     /* 폰트 크기를 살짝 키워 가독성 향상 */
+  font-weight: 600;      /* 6px 오타 수정: 600(Semi-bold) */
+  color: var(--gray-800); /* 라벨 색상을 조금 더 진하게 하여 명확하게 구분 */
+  margin-bottom: 8px;    /* 라벨과 입력창 사이의 간격 확대 */
+  letter-spacing: -0.02em;
+}
+
+.profile-input {
+  width: 100%;
+  /* 상하 패딩을 10px 이상으로 키워 인풋창 자체의 볼륨감 형성 */
+  padding: 10px 12px;    
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.9rem;
+  color: var(--gray-800);
+  background: var(--gray-50);
+  transition: all 0.18s ease;
+  outline: none;
+  line-height: 1.5;
+}
+.profile-input:focus {
+  border-color: var(--burgundy);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(109,30,42,0.08);
+}
+.profile-input:disabled {
+  background: var(--gray-100);
+  color: var(--gray-600);
+  cursor: not-allowed;
+}
+
+/* ── 뱃지, 별점 ── */
+.badge-success {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.74rem;
+  font-weight: 500;
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.rating-stars { color: var(--burgundy); letter-spacing: 1px; }
+
+.bookmark-row-clickable { cursor: pointer; }
+
+

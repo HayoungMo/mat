@@ -30,7 +30,6 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
         if((name === 'userId' || name === 'emailId') && /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value)){
             alert('한글은 입력할 수 없습니다'); return;
         }
-      
         setForm({ ...form, [name]: value });
     };
 
@@ -118,10 +117,8 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                         </h2>
                         <div style={{marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '10px'}}>
                             {loginUser ? (
-                                // 로그인 된 경우: 로그아웃 버튼 노출
                                 <button className="btn-wine" onClick={onLogout}>로그아웃</button>
                             ) : (
-                                // 로그인 안 된 경우: 로그인/회원가입 버튼 노출
                                 <>
                                     <button className="btn-navy" onClick={() => setStep(3)}>로그인</button>
                                     <button className="btn-wine" onClick={() => setStep(1)}>회원가입</button>
@@ -136,37 +133,34 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                     <div className="card navy-top join-card">
                         <h3 className="card-title">회원가입 <span className="title-en">SIGN UP</span></h3>
                         <div className="input-group">
-                            <p><label>ID</label> <input type='text' name='userId' value={userId} onChange={onText} placeholder="아이디 입력"/></p>
-                            <p><label>PW</label> <input type='password' name='password' value={password} onChange={onText} placeholder="비밀번호 입력"/></p>
+                            <p><label>ID</label> <input type='text' name='userId' value={userId} onChange={onText} placeholder="아이디 입력" className="auth-input"/></p>
+                            <p><label>PW</label> <input type='password' name='password' value={password} onChange={onText} placeholder="비밀번호 입력" className="auth-input"/></p>
                             <p><label>연락처</label>
                                 <div className="flex-row">
                                     <select name="telHead" value={form.telHead} onChange={onText} className="custom-select"><option value="010">010</option><option value="011">011</option></select>
-                                    <input type="text" name="telMid" onChange={onText} maxLength={4} style={{flex:1.5}}/>
-                                    <input type="text" name="telTail" onChange={onText} maxLength={4} style={{flex:1.5}}/>
+                                    <input type="text" name="telMid" value={form.telMid} onChange={onText} maxLength={4} className="auth-input"/>
+                                    <input type="text" name="telTail" value={form.telTail} onChange={onText} maxLength={4} className="auth-input"/>
                                 </div>
                             </p>
                             <p>
-                            <label>이메일</label>
-                            <div className="flex-row">
-                                <input type='text' name='emailId' value={emailId} onChange={onText}
-                                placeholder='이메일 주소' style={{flex:1.5}}/>
-                                <select name="emailDomain" value={form.emailDomain} onChange={onText}
-                                className="custom-select" style={{flex:1.5}}>
-                                    {EMAIL_OPTION.map(opt => (
-                                        <option key={opt.label} value={opt.value}>{opt.label}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            {form.emailDomain === '' && (
-                                <input type='text' name='emailDomain' onChange={onText} placeholder="@example.com(직접입력)"
-                                 style={{marginTop:'8px'}}/>
-                            )}
+                                <label>이메일</label>
+                                <div className="flex-row">
+                                    <input type='text' name='emailId' value={emailId} onChange={onText} placeholder='이메일 주소' className="auth-input"/>
+                                    <select name="emailDomain" value={form.emailDomain} onChange={onText} className="custom-select">
+                                        {EMAIL_OPTION.map(opt => (
+                                            <option key={opt.label} value={opt.value}>{opt.label}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                {form.emailDomain === '' && (
+                                    <input type='text' name='emailDomain' value={form.emailDomain} onChange={onText} placeholder="@example.com(직접입력)" className="auth-input" style={{marginTop:'8px'}}/>
+                                )}
                             </p>
                             <p><label>생년월일</label>
                                 <div className="flex-row">
-                                    <select name="birthYear" onChange={onText} className="custom-select" style={{flex:1.5}}><option value="">연도</option>{Array.from({length: 80}, (_,i) => 2007 - i).map(y => <option key={y} value={y}>{y}년</option>)}</select>
-                                    <select name="birthMonth" onChange={onText} className="custom-select" style={{flex:1}}><option value="">월</option>{Array.from({length: 12}, (_,i) => String(i+1).padStart(2,'0')).map(m => <option key={m} value={m}>{m}월</option>)}</select>
-                                    <select name="birthDay" onChange={onText} className="custom-select" style={{flex:1}}><option value="">일</option>{Array.from({length: lastDay}, (_,i) => String(i+1).padStart(2,'0')).map(d => <option key={d} value={d}>{d}일</option>)}</select>
+                                    <select name="birthYear" value={form.birthYear} onChange={onText} className="custom-select"><option value="">연도</option>{Array.from({length: 80}, (_,i) => 2007 - i).map(y => <option key={y} value={y}>{y}년</option>)}</select>
+                                    <select name="birthMonth" value={form.birthMonth} onChange={onText} className="custom-select"><option value="">월</option>{Array.from({length: 12}, (_,i) => String(i+1).padStart(2,'0')).map(m => <option key={m} value={m}>{m}월</option>)}</select>
+                                    <select name="birthDay" value={form.birthDay} onChange={onText} className="custom-select"><option value="">일</option>{Array.from({length: lastDay}, (_,i) => String(i+1).padStart(2,'0')).map(d => <option key={d} value={d}>{d}일</option>)}</select>
                                 </div>
                             </p>
                         </div>
@@ -176,41 +170,47 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                     </div>
                 )}
 
-                {step === 2 && (
-                    <div className="card navy-top">
-                        <LoginPageInfo name={userId} onNext={() => setStep(3)} />
-                        <Trademark />
-                    </div>
-                )}
-
                 {step === 3 && (
                     <div className="card navy-top">
                         <h3 className="card-title">로그인 <span className="title-en">LOGIN</span></h3>
                         <div className="input-group">
-                            <input type="text" name="userId" placeholder="아이디" onChange={onText} style={{marginBottom:'15px'}}/>
-                            <input type="password" name="password" placeholder="비밀번호" onChange={onText} />
+                            <p><label>ID</label> <input type='text' name='userId' value={userId} onChange={onText} placeholder="아이디 입력" className="auth-input"/></p>
+                            <p><label>PW</label> <input type='password' name='password' value={password} onChange={onText} placeholder="비밀번호 입력" className="auth-input"/></p>
                         </div>
-                        <button className="btn-navy" style={{marginTop:'25px'}} onClick={onLogin}>로그인</button>
+                        <button className="btn-navy" style={{marginTop:'30px'}} onClick={onLogin}>로그인하기</button>
                         <button className="btn-gray" onClick={() => setStep(0)}>뒤로가기</button>
                         <Trademark />
                     </div>
                 )}
+
+                {step === 2 && (
+                    <div className="card navy-top">
+                    
+                        <LoginPageInfo  name={userId} onNext={() => setStep(3)} 
+        />
+        <Trademark />
+    </div>
+)}
             </main>
 
             <footer className="auth-footer">
-                <div className="footer-line"></div>
                 <div className="footer-inner">
                     <div className="footer-info">
-                        <span className="corp-name">(주) 발로란티스 시스템즈</span><span className="footer-bar">|</span>
-                        <span>대표이사 : 홍길동</span><span className="footer-bar">|</span>
-                        <span>사업자등록번호 : 123-45-67890</span>
+                        <span className="corp-name">MAT (VALORANTIS SYSTEMS)</span>
+                        <span className="footer-bar">|</span>
+                        <span>대표자: 발로란티스</span>
+                        <span className="footer-bar">|</span>
+                        <span>사업자등록번호: 000-00-00000</span>
                     </div>
-                    <div className="footer-address"><span>서울특별시 강남구 테헤란로 123 발로란티스 타워 15층</span></div>
+                    <div className="footer-address">
+                        <span>서울특별시 강남구 혁신로 123 발로란티스 타워 24F</span>
+                    </div>
                     <div className="footer-contact">
-                        <span>고객센터 : </span><span className="cs-number">1588-1234</span><span className="footer-bar">|</span>
-                        <span>이메일 : support@valorantis.com</span>
+                        <span>고객센터: <span className="cs-number">1588-0000</span></span>
+                        <span className="footer-bar">|</span>
+                        <span>이메일: support@valorantis.com</span>
                     </div>
-                    <p className="copy">© 2024 VALORANTIS SYSTEMS Inc. All Rights Reserved.</p>
+                    <p className="copy">© 2024 VALORANTIS SYSTEMS. ALL RIGHTS RESERVED.</p>
                 </div>
             </footer>
         </div>
