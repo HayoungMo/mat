@@ -146,7 +146,7 @@ const BoardEdit = ({ item, onUpdate, onCancel }) => {
                         <th>사진 변경</th>
                         <td>
                             <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} />
-                            {image ? <p className="current-file" style={{ color: '#2d5a3d' }}>✅ 새 파일: {image.name}</p> : 
+                            {image ? <p className="current-file" style={{ color: '#093c71' }}>✅ 새 파일: {image.name}</p> : 
                              item?.originalFileName && <p className="current-file">📎 현재 파일: {item.originalFileName}</p>}
                         </td>
                     </tr>
