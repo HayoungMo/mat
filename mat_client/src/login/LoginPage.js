@@ -28,8 +28,9 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
             alert('숫자만 입력하세요'); return;
         }
         if((name === 'userId' || name === 'emailId') && /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value)){
-            alert('아이디에 한글은 입력할 수 없습니다'); return;
+            alert('한글은 입력할 수 없습니다'); return;
         }
+      
         setForm({ ...form, [name]: value });
     };
 
@@ -117,10 +118,10 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                         </h2>
                         <div style={{marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '10px'}}>
                             {loginUser ? (
-                                // 💡 로그인 된 경우: 로그아웃 버튼 노출
+                                // 로그인 된 경우: 로그아웃 버튼 노출
                                 <button className="btn-wine" onClick={onLogout}>로그아웃</button>
                             ) : (
-                                // 💡 로그인 안 된 경우: 로그인/회원가입 버튼 노출
+                                // 로그인 안 된 경우: 로그인/회원가입 버튼 노출
                                 <>
                                     <button className="btn-navy" onClick={() => setStep(3)}>로그인</button>
                                     <button className="btn-wine" onClick={() => setStep(1)}>회원가입</button>
@@ -143,6 +144,23 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                                     <input type="text" name="telMid" onChange={onText} maxLength={4} style={{flex:1.5}}/>
                                     <input type="text" name="telTail" onChange={onText} maxLength={4} style={{flex:1.5}}/>
                                 </div>
+                            </p>
+                            <p>
+                            <label>이메일</label>
+                            <div className="flex-row">
+                                <input type='text' name='emailId' value={emailId} onChange={onText}
+                                placeholder='이메일 주소' style={{flex:1.5}}/>
+                                <select name="emailDomain" value={form.emailDomain} onChange={onText}
+                                className="custom-select" style={{flex:1.5}}>
+                                    {EMAIL_OPTION.map(opt => (
+                                        <option key={opt.label} value={opt.value}>{opt.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            {form.emailDomain === '' && (
+                                <input type='text' name='emailDomain' onChange={onText} placeholder="@example.com(직접입력)"
+                                 style={{marginTop:'8px'}}/>
+                            )}
                             </p>
                             <p><label>생년월일</label>
                                 <div className="flex-row">

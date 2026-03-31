@@ -52,10 +52,10 @@ function App() {
         {/* 팀원 로그인정보 전달코드 */}
         <Route path="/mypage/*" element={loginUser ? 
         <MyPage loginUser={loginUser} setLoginUser={setLoginUser} loginInfo={loginInfo}/> :
-        <LoginPage setLoginUser={setLoginUser}/>
+        <LoginPage setLoginUser={setLoginUser} setLoginInfo={setLoginInfo}/>
         } ></Route> 
         <Route path="/city/*" element={<CityAll loginUser={loginUser} loginInfo={loginInfo}/>} ></Route>
-        <Route path="/board" element={<Board loginUser={loginUser} setLoginUser={setLoginUser} />} ></Route>
+        <Route path="/board" element={<Board loginUser={loginUser} setLoginUser={setLoginUser} setLoginInfo={setLoginInfo}/>} ></Route>
       </Routes>
     </div>
   );
