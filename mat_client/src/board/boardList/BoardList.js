@@ -108,10 +108,10 @@ const BoardList = ({
                             return (
                                 <div key={item._id} onClick={() => onDetail(item)} style={{ background: '#fff8f8', padding: '15px', borderRadius: '10px', cursor: 'pointer', border: '1px dashed #ffb3b3' }}>
                                     <h4 style={{ margin: '0 0 10px 0', color: '#ff6b6b', fontSize: '14px' }}>🗳️ {item.title}</h4>
-                                    {options.slice(0, 2).map((opt, idx) => (
-                                        <div key={idx} style={{ background: '#fff', border: '1px solid #eee', padding: '8px', marginTop: '5px', borderRadius: '5px', fontSize: '13px' }}>
-                                            {opt} ({getPercent(votes, idx, total)}%)
-                                        </div>
+                                     {options.map((opt, idx) => ( 
+                                    <div key={idx} style={{ background: '#fff', border: '1px solid #eee', padding: '8px', marginTop: '5px', borderRadius: '5px', fontSize: '13px' }}>
+                                        {opt} ({getPercent(votes, idx, total)}%)
+                                    </div>
                                     ))}
                                     <p style={{ fontSize: '11px', color: '#aaa', margin: '8px 0 0', textAlign: 'right' }}>총 {total}명 참여</p>
                                 </div>
@@ -236,7 +236,7 @@ const BoardList = ({
                             {viewType === 'card' && (
                                 <div style={{ width: '100%', height: '170px', background: '#f5f5f5', flexShrink: 0 }}>
                                     <img
-                                        src={item.saveFileName ? `http://localhost:4000/uploads/${item.saveFileName}` : '/no-image.png'}
+                                        src={item.saveFileName ? `/uploads/${item.saveFileName}` : '/no-image.png'}
                                         alt="thumb"
                                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                     />

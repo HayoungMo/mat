@@ -37,7 +37,7 @@ const Notice = ({ loginUser }) => {
 
      const fetchNotices = async () => {
         try {
-            const res = await axios.get('http://localhost:4000/api/notice')
+            const res = await axios.get('/api/notice')
             
             const combinedData = [
                 ...res.data,
@@ -106,7 +106,7 @@ const Notice = ({ loginUser }) => {
             let success = true
 
             if(typeof _id === 'string' && _id.length > 10) {
-            const res = await axios.put(`http://localhost:4000/api/notice/${_id}`, {
+            const res = await axios.put(`/api/notice/${_id}`, {
                 title: editForm.title,
                 content: editForm.content
             })
@@ -152,7 +152,7 @@ const Notice = ({ loginUser }) => {
         if(!window.confirm('정말 삭제하시겠습니까?')) return
             
         try {
-            const res = await axios.delete(`http://localhost:4000/api/notice/${_id}`)
+            const res = await axios.delete(`/api/notice/${_id}`)
 
             if(res.data.success) {
                 alert('게시글이 삭제되었습니다')
@@ -176,7 +176,7 @@ const Notice = ({ loginUser }) => {
         const dateString = `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}`
         
         try {
-            const res = await axios.post('http://localhost:4000/api/notice',{
+            const res = await axios.post('/api/notice',{
                 title,
                 writer: loginUser || writer || '관리자',
                 content,
