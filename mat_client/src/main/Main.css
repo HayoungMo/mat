@@ -17,8 +17,36 @@
 .mainContainer{
     
     background-color: #8a2130;
-
+      background-image: 
     
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 8px,
+      rgba(255,255,255,0.03) 8px,
+      rgba(255,255,255,0.03) 9px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 8px,
+      rgba(255,255,255,0.03) 8px,
+      rgba(255,255,255,0.03) 9px
+    );
+    position: relative;
+}
+
+.mainContainer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 200px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.05),
+    transparent
+  );
+  pointer-events: none;
 }
 
 .mainInner{
@@ -75,23 +103,29 @@
    display: flex;
   justify-content: flex-start;
   gap: 10px; /* 버튼 사이 간격 */
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 
 .btnArea button{
-    padding: 8px 18px;
-    margin-right: 5px;
-    background-color: #fff;
-    border: 1px solid var(--text-primary);
+    padding: 6px 16px;
+    margin-right: 3px;
+    background-color: transparent;
+    border: none;
     color: #000;
-    font-family: var(--font-sans);
+    font-family: var(--font-serif);
     cursor: pointer;
     transition: background-color 0.5s ease;
+    width: 100%;
+    height: 100%;
+    color: #e5e5e5;
+    font-size: 18px;
 }
 .btnArea button:hover{
-    background-color: #8a2130;
-    color: #ffffff;
+    color: #000;
+    text-decoration: underline;
+    text-decoration-color :#093c71;
+    text-decoration-thickness : 2px; 
 }
 
 .listItem{
@@ -120,7 +154,7 @@
     font-family: var(--font-serif);
     font-size: 1.25rem;
     cursor: pointer;
-    color:#8a2130;
+    color:var(--point-color);
     font-weight: bold;
 }
 
