@@ -8,6 +8,7 @@ import Board from './board/boardList/Board';
 import React, { useState,useEffect } from 'react'; // ★ React와 useState 추가
 import CityAll from './cityHome/CityAll';
 import axios from 'axios';
+import Header from './Header';
 
 function App() {
 
@@ -40,16 +41,8 @@ function App() {
 
   return (
     <div>
-      <p>
-        <Link to='/'><button>메인</button></Link>
-        <Link to='/map'><button>지도</button></Link>
-        <Link to='/search'><button>검색</button></Link>
-        {/* 추가된코드 */}
-        <Link to='/login'><button>{loginUser ? `${loginUser}님` : '로그인'}</button></Link>
-        <Link to='/mypage'><button>마이 페이지</button></Link>
-        <Link to='/city'><button>블로그 홈</button></Link>
-        <Link to='/board'><button>게시판</button></Link>
-      </p>
+      
+      <Header loginUser={loginUser} />
 
       <Routes>
         <Route path="/" element={<MainPage loginUser={loginUser} setLoginUser={setLoginUser}/>} exact></Route>

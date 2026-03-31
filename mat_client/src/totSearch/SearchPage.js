@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import SearchBar from './SearchBar';
 import SearchItem from './SearchItem';
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const SearchPage = () => {
 
@@ -19,6 +19,18 @@ const [list, setList] = useState([]);
 //페이징 처리
 const [currentPage, setCurrentPage] = useState(1);
 const itemsPerPage = 5; // 한 페이지에 5개씩
+
+//전체 데이터에서 제목/본문 결과를 미리 분류해서 합친다.
+const allTitleMatches = list.filter(item =>
+    item.title.toLowerCase().includes(urlKeyword.toLowerCase())
+);
+const allSubjectMatches = list.filter(item => 
+    !item.title.toLowerCase().includes(urlKeyword.toLowerCase()) && 
+    item.subject.toLowerCase().includes(urlKeyword.toLowerCase())
+);
+
+//제목 우선
+const sortedTotalList = [...allTitleMatches, ...allSubjectMatches];
 
 
 const onSearch = async (query) => {
@@ -59,7 +71,7 @@ const onSearch = async (query) => {
 //페이징 데이터 자르는 로직
 const indexOfLastItem = currentPage * itemsPerPage;
 const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-const currentItems = list.slice(indexOfFirstItem, indexOfLastItem);
+const currentItems = sortedTotalList.slice(indexOfFirstItem, indexOfLastItem);
 
 //잘라낸 데이터에서 제목/ 본문 분류하기
 //제목에 키워드가 포함된 걸 빼기
@@ -72,11 +84,11 @@ const subjectMatches = currentItems.filter(item =>
         item.subject.toLowerCase().includes(urlKeyword.toLowerCase())
 );
 
-const totalPages = Math.ceil(list.length / itemsPerPage);
+const totalPages = Math.ceil(sortedTotalList.length / itemsPerPage);
 
 return (
     <div>
-
+        <button onClick={() => navigate(-1)}>뒤로가기</button>
         <SearchBar keyword={inputText} setKeyword={setInputText} onSearch={() => onSearch(inputText)}/>
             {/* 검색 결과 출력 */}
            {urlKeyword && list.length > 0 ? (
