@@ -4,6 +4,7 @@ import articleService from '../services/articleServices'
 import CityMessage from './CityMessage';
 import CityAdd from './CityAdd';
 import { useParams,useNavigate } from 'react-router-dom';
+import style from './CityHome.css';
 
 const cityNames = {
     Gangnam: '강남구',
@@ -88,29 +89,63 @@ const CityHome = ({loginUser,loginInfo}) => {
         setIsShow(true)
     }
     return (
-        <div>
-            <h1>{displayTitle} 블로그</h1>
+        <div className="magazine-home-container">
+            {/* 매거진 타이틀 */}
+            <div className="magazine-header-section">
+                <h1 className="magazine-main-title">{displayTitle} <span className="title-highlight">맛집 칼럼</span></h1>
+            </div>
+            
             {myCityName === cityName &&
                 <CityAdd onAdd={onAdd} loginUser={loginUser}/>
             }
+            
             {
                 isShow && <CityMessage msg={msg} isShow={isShow} setIsShow={setIsShow}/>
             }
             
-            <CityList articles={currentArticles} currentPage={currentPage} itemsPerPage={itemsPerPage} onEdit={onEdit} onDel={onDel} loginUser={loginUser} loginInfo={loginInfo}/>
+            {/* 리스트 컴포넌트 호출 */}
+            <CityList 
+                articles={currentArticles} 
+                currentPage={currentPage} 
+                itemsPerPage={itemsPerPage} 
+                onEdit={onEdit} 
+                onDel={onDel} 
+                loginUser={loginUser} 
+                loginInfo={loginInfo}
+            />
+            
+            {/* 🌟 매거진 스타일 페이징 */}
             {totalPages > 1 && (
-                <div style={{display:'flex',gap:'8px',justifyContent:'center',marginTop:'16px'}}>
-                    <button onClick={() => setCurrentPage(p => Math.max(1, p-1))} disabled={currentPage === 1}>이전</button>
-                    {Array.from({length: totalPages}, (_,i) => (
-                        <button key={i+1} onClick={() => setCurrentPage(i+1)}
-                        style={{fontWeight: currentPage === i+1 ? 'bold' : 'normal'}}>
-                            {i+1}
-                        </button>
-                    ))}
-                    <button onClick={() => setCurrentPage(p => Math.min(totalPages, p+1))} disabled={currentPage === totalPages}>다음</button>
+                <div className="magazine-pagination">
+                    <button 
+                        className="page-nav-btn"
+                        onClick={() => setCurrentPage(p => Math.max(1, p-1))} 
+                        disabled={currentPage === 1}
+                    >
+                        이전
+                    </button>
+                    
+                    <div className="page-numbers">
+                        {Array.from({length: totalPages}, (_,i) => (
+                            <button 
+                                key={i+1} 
+                                onClick={() => setCurrentPage(i+1)}
+                                className={`page-num-btn ${currentPage === i+1 ? 'active' : ''}`}
+                            >
+                                {i+1}
+                            </button>
+                        ))}
+                    </div>
+
+                    <button 
+                        className="page-nav-btn"
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p+1))} 
+                        disabled={currentPage === totalPages}
+                    >
+                        다음
+                    </button>
                 </div>
             )}
-            <hr/>
         </div>
     );
 };

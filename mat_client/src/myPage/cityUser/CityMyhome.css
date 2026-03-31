@@ -1,0 +1,159 @@
+/* 전체 컨테이너 및 섹션 여백 */
+.myhome-container {
+    max-width: 800px;
+    margin: 0 auto 60px auto;
+    font-family: 'Noto Sans KR', 'Pretendard', sans-serif;
+}
+
+.article-list-section {
+    margin-top: 50px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #111111;
+    margin-bottom: 15px;
+}
+
+/* 📊 표(Table) 레이아웃 */
+.table-container {
+    border-top: 2px solid #333333; /* 표 상단 굵은 선 */
+    border-bottom: 1px solid #333333; /* 표 하단 선 */
+}
+
+/* 행(Row) 공통 설정 - 가로 배치 */
+.table-header, .table-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+/* 표 헤더 스타일 */
+.table-header {
+    background-color: #f9f9f9;
+    font-weight: 700;
+    font-size: 14px;
+    color: #555555;
+    text-align: center;
+}
+
+/* 표 본문 행 호버 효과 */
+.table-row:hover {
+    background-color: #fdfdfd;
+}
+
+.table-row:last-child {
+    border-bottom: none; /* 마지막 줄은 테두리 제거 */
+}
+
+/* 📏 열(Column) 너비 비율 설정 */
+.col-title {
+    flex: 1; /* 남은 공간을 모두 차지함 (가장 넓게) */
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 글자가 길면 ... 표시 */
+}
+
+.col-date {
+    width: 120px; /* 작성일 고정 너비 */
+    text-align: center;
+    font-size: 14px;
+    color: #777777;
+}
+
+.col-action {
+    width: 140px; /* 버튼 영역 고정 너비 */
+    display: flex;
+    justify-content: center;
+    gap: 8px; /* 버튼 사이 간격 */
+}
+
+/* 기사 제목 링크 스타일 */
+.title-link {
+    cursor: pointer;
+    color: #333333;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.title-link:hover {
+    color: #093c71; /* 마우스 올리면 서브컬러(네이비) */
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+/* 빈 상태 */
+.empty-state {
+    padding: 50px 0;
+    text-align: center;
+    color: #999999;
+    font-size: 15px;
+}
+
+/* 🔘 미니 버튼 스타일 (테두리와 글자 톤을 부드럽게 수정) */
+.btn-mini {
+    padding: 5px 10px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important; /* 기존 600에서 500으로 줄여 덜 투박하게 */
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    background-color: #ffffff !important;
+    color: #777777 !important; /* 글자색도 살짝 더 부드러운 회색으로 */
+    border: 1px solid #eeeeee !important; /* ⭐️ 테두리를 아주 연한 회색(#eeeeee)으로 변경 */
+    box-shadow: none !important;
+    transition: all 0.2s !important;
+}
+
+/* 마우스를 올렸을 때의 색상은 기존과 동일하게 유지 (포인트 효과) */
+.btn-del:hover {
+    border-color: #093c71 !important;
+    color: #093c71 !important;
+    background-color: #f0f4f8 !important;
+}
+
+.btn-edit:hover {
+    border-color: #8a2130 !important;
+    color: #8a2130 !important;
+    background-color: #fdf2f3 !important;
+}
+
+/* 🌟 페이징 (Pagination) 스타일 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 30px;
+    padding-top: 20px;
+}
+
+.page-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555555;
+    background-color: transparent;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-btn:hover {
+    background-color: #f5f5f5;
+    border-color: #cccccc;
+}
+
+/* 현재 선택된 페이지 스타일 (네이비 서브컬러 강조) */
+.page-btn.active {
+    background-color: #8a2130 !important;
+    color: #ffffff;
+    border-color: #8a2130 !important;
+}
