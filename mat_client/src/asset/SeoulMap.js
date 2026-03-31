@@ -28,6 +28,13 @@ const Test2 = ({width, height, ...props}) => {
            
             
           }
+
+          svg text {
+            font-family: 'Playfair Display', 'Nanum Myeongjo', serif !important;
+            font-size: 50px !important;
+            font-weight: 600;
+            
+          }
           
 
           
