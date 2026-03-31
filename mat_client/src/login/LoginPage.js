@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import LoginPageInfo from './LoginPageInfo';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import LoginPageInfo from './LoginPageInfo';
+import './loginpage.css';
 
 const EMAIL_OPTION = [
     {value: '', label: '직접입력'},
@@ -11,298 +12,189 @@ const EMAIL_OPTION = [
     {value: '@nate.com', label:'@nate.com'},
 ]
 
-
-//수정한 부분(세션관련)
-const LoginPage = ({loginUser,setLoginUser,loginInfo, setLoginInfo}) => {
+const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
     const [step, setStep] = useState(0);
-
     const navigate = useNavigate();
-    //const [loginUser, setLoginUser] = useState(localStorage.getItem('userId'));
     const [form, setForm] = useState({
-        userId: '', password: '', telHead: '010', telMid:'', telTail:'', emailId: '',emailDomain:'' , addr: '', birthYear: '',
-        birthMonth:'',birthDay:''
+        userId: '', password: '', telHead: '010', telMid:'', telTail:'', 
+        emailId: '', emailDomain:'' , addr: '', birthYear: '', birthMonth:'', birthDay:''
     });
 
-    
-    //중첩이유 onText에서 select일때 form.email + value로 계속 이어 붙어서 input 두개로 분리하는것이다. 그래서 위에 form state에서 emailId와 emailDomain을 나눠야한다.
-    // const onText = (evt) => {
-        //     const { value, name, tagName } = evt.target;
-        //     let newValue = value;
-        //그래서 여기서 관련 분기를 지우고 
-        // if (name === 'email' && tagName === 'SELECT') {
-            //     newValue = form.email + value;
-            // }
-    const { userId, password, emailId, emailDomain, addr } = form;
-            
+    const { userId, password, emailId, emailDomain } = form;
+
     const onText = (evt) => {
         const { value, name } = evt.target;
-        let newValue = value;
-
         if((name === 'telMid' || name === 'telTail') && isNaN(value)){
-            alert('숫자만 입력하세요');
-            return;
+            alert('숫자만 입력하세요'); return;
         }
-        // if (name === 'tel' && isNaN(value)) {
-        //     alert('숫자만 입력하세요');
-        //     return;
-        // }
-
-        if (name === 'birth' && value.length > 6) {
-            alert('6자리만 입력하세요');
-            return;
-        }
-       //아이디&이메일 한글 차단 
         if((name === 'userId' || name === 'emailId') && /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value)){
-            alert('아이디에 한글은 입력할 수 없습니다');
-            return;
+            alert('아이디에 한글은 입력할 수 없습니다'); return;
         }
-        
-        setForm({
-            ...form,
-            [name]: newValue
-        });
+        setForm({ ...form, [name]: value });
     };
 
     const onNext = async () => {
-
         const tel = form.telHead + form.telMid + form.telTail;
-        const birth = form.birthYear ?
-        String(form.birthYear).slice(2) + form.birthMonth + form.birthDay : '';
-
-        //필수항목 검사(email, addr은 선택이라 제외)
-        if(!userId.trim()) {alert('아이디를 입력해주세요'); document.querySelector('[name=userId]').focus(); return}
-        if(!password.trim()) {alert('비밀번호를 입력해주세요'); document.querySelector('[name=password]').focus(); return}
-        if(!form.telMid.trim() || !form.telTail.trimEnd()) {
-            alert('전화번호를 입력해주세요'); document.querySelector('[name=telMid]').focus(); 
-            return
-        }
-        if(!form.birthYear || !form.birthMonth || !form.birthDay) {
-            alert('생년월일을 입력해주세요'); document.querySelector('[name=birthYear]').focus(); 
-            return
-        }
-        
-        try{
-            //이메일 합쳐서 전송(비어있으면 빈문자열)
-            // const sendData ={
-            //     ...form,
-            //     email: form.emailId + form.emailDomain 
-            // };
-            // delete sendData.emailId;
-            // delete sendData.emailDomain;
-
-            const domain = emailDomain || (form.emailCustomDomain ? '@' + form.emailCustomDomain : '');
+        const birth = form.birthYear ? String(form.birthYear).slice(2) + form.birthMonth + form.birthDay : '';
+        if(!userId.trim()) { alert('아이디를 입력해주세요'); return }
+        if(!password.trim()) { alert('비밀번호를 입력해주세요'); return }
+        try {
             const email = emailId ? emailId + emailDomain : '';
-            const {emailId: _eid, emailDomain: _edom, ...rest} = form;
-            const response = await axios.post('/api/register', { 
-                userId: form.userId,
-                password: form.password,
-                tel,
-                email,
-                addr: form.addr,
-                birth
-             });
-            if(response.data.success) {
-                setStep(2); //가입 완료  페이지
-            }
-        }catch (error) {
-            console.error("회원가입 에러",error);
-            alert("이미 사용 중인 ID거나 저장에 실패하였습니다.")
+            const response = await axios.post('/api/register', { userId, password, tel, email, addr: form.addr, birth });
+            if(response.data.success) setStep(2);
+        } catch (error) {
+            alert("이미 사용 중인 ID거나 저장에 실패하였습니다.");
         }
     };
 
-    //선택된 연도와 월을 숫자로 변환한다.
-    const year = Number(form.birthYear);
-    const month = Number(form.birthMonth);
-
-    //연도와 월이 모두 선택되면 해당 달의 마지막 날을 구하고 아니면 31을 기본으로 사용한다
-    const lastDay = (year && month) ? new Date(year, month, 0).getDate() : 31;
-    
-    // const onNext = async () => {
-    //     try {
-    //         const response = await axios.post('/api/register', form);
-    //         if (response.data.success) {
-    //             setStep(2); // 가입 완료 페이지로
-    //         }
-    //     } catch (error) {
-    //         console.error("회원가입 에러", error);
-    //         alert("이미 사용 중인 ID이거나 저장에 실패했습니다");
-    //     }
-    // };
-
-    //수정한부분(세션관련)
     const onLogin = async () => {
-
-        //버튼을 누를때 ' 그 순간' 최신 값을 form에서 꺼낸다
-        const {userId, password} =form;
-
-        console.log("로그인 시도 데이터:", {userId, password})
         try {
-            const response = await axios.post('/api/login', {
-                userId,
-                password
-            });
-            console.log("서버 응답:", response.data);
-
+            const response = await axios.post('/api/login', { userId, password });
             if (response.data.success) {
-                localStorage.setItem('userId',response.data.userId)
-                localStorage.setItem('user',JSON.stringify(response.data.user))
+                localStorage.setItem('userId', response.data.userId);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
                 setLoginUser(response.data.userId);
                 setLoginInfo(response.data.user);
-                setStep(0); 
-
-                //성공 시 메인 페이지로 이동
                 alert(`${response.data.userId}님, 환영합니다!`);
-                navigate('/');
+                setStep(0); 
             } else {
                 alert(response.data.message || "아이디 또는 비밀번호가 틀렸습니다");
             }
-        } catch (error) {
-            //console.log(error.response) //서버가 보내는 오류
-            //console.log(error.message) //에러 메세지
-            alert("로그인 중 서버 오류가 발생했습니다");
-        }
+        } catch (error) { alert("로그인 중 서버 오류가 발생했습니다"); }
     };
 
-    //수정한부분(세션관련)
     const onLogout = () => {
-        localStorage.removeItem('userId')
+        localStorage.removeItem('userId');
+        localStorage.removeItem('user');
         setLoginUser(null);
-        onReset();
+        setLoginInfo(null);
+        setForm({ userId: '', password: '', telHead: '010', telMid:'', telTail:'', emailId: '', emailDomain:'' , addr: '', birthYear: '', birthMonth:'', birthDay:'' });
         setStep(0);
         alert("로그아웃 되었습니다");
     };
 
-    const onReset = () => {
-        setForm({
-            userId: '', password: '', tel: '', emailId: '',emailDomain:'', addr: '', birthYear: '', birthMonth: '', birthDay: ''
-        });
-        setStep(0);
-    };
+    const year = Number(form.birthYear);
+    const month = Number(form.birthMonth);
+    const lastDay = (year && month) ? new Date(year, month, 0).getDate() : 31;
 
-    //로그인 안했으면 로그인 페이지로 보내기 기능
-    const checkLoginAndAction = (action) => {
-        if(!loginUser){
-            alert("로그인이 필요한 서비스입니다.")
-            setStep(3)
-            return
-        }
-        action()
-    }
+    const Trademark = () => (
+        <div className="card-trademark-container">
+            <div className="trademark-line"></div>
+            <p className="card-trademark">PROUDLY POWERED BY <strong>VALORANTIS SYSTEMS</strong> © 2024</p>
+            <p className="card-tagline">INNOVATION BEYOND BOUNDARIES</p>
+        </div>
+    );
 
     return (
-        <div className='wrap'>
-            
-            {step === 0 && (
-                <div className="menu-box">
-                    <h2>{loginUser ? `${loginUser}님 환영합니다!` : "서비스를 선택해주세요."}</h2>
-                    <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginTop: '30px' }}>
-                        {!loginUser && (
-                            <button onClick={() => setStep(1)} style={{ padding: '10px 20px' }}>회원가입</button>
-                        )}
+        <div className='login-page-container'>
+            <header className="auth-header">
+                <div className="header-inner">
+                    <Link to="/" className="logo-text">MAT</Link>
+                    <div className="header-right">
                         {loginUser ? (
-                            <button onClick={onLogout} style={{ padding: '10px 20px', backgroundColor: 'red', color: 'white' }}>로그아웃</button>
+                            <>
+                                <span>{loginUser}님</span>
+                                <span className="bar">|</span>
+                                <span onClick={onLogout} style={{cursor:'pointer'}}>로그아웃</span>
+                            </>
                         ) : (
-                            <button onClick={() => setStep(3)} style={{ padding: '10px 20px' }}>로그인</button>
+                            <>
+                                <span onClick={() => setStep(3)} style={{cursor:'pointer'}}>로그인</span>
+                                <span className="bar">|</span>
+                                <span onClick={() => setStep(1)} style={{cursor:'pointer'}}>회원가입</span>
+                            </>
                         )}
                     </div>
                 </div>
-            )}
+            </header>
 
-            {step === 1 && (
-                <div className="join-box">
-                    <h3>회원가입</h3>
-                    
-                    <p><label>ID</label><input type='text' value={userId} name='userId' onChange={onText}/></p>
-                    
-                    <p><label>생년월일(6자리)</label>
-                    <select name="birthYear" value={form.birthYear} onChange={onText}>
-                        <option value="">년도</option>
-                        {Array.from({length: 80}, (_,i) => 2007 - i).map(y => (
-                            <option key={y} value={y}>{y}년</option>
-                        ))}
-                    </select>
-                    <select name="birthMonth" value={form.birthMonth} onChange={onText}>
-                        <option value="">월</option>
-                        {Array.from({length: 12}, (_,i) => i + 1).map(m => (
-                            <option key={m} value={String(m).padStart(2,'0')}>{m}월</option>
-                        ))}
-                    </select>
-                    <select name="birthDay" value={form.birthDay} onChange={onText}>
-                        <option value="">일</option>
-                        {Array.from({length: lastDay}, (_,i) => i + 1).map(d => (
-                            <option key={d} value={String(d).padStart(2,'0')}>{d}일</option>
-                        ))}
-                    </select>
-                    </p>
-                    
-                    <p><label>비밀번호</label><input type='password' value={password} name='password' onChange={onText}/></p>
-                    
-                    <p><label>전화번호</label>
-                    <select name="telHead" value={form.telHead} onChange={onText}>
-                        <option value="010">010</option>
-                        <option value="011">011</option>
-                        <option value="02">02</option>
-                        <option value="031">031</option>
-                    </select>
-                    -
-                    <input type='text' value={form.telMid} name='telMid' onChange={onText} maxLength={4} 
-                    placeholder='0000' style={{width:'60px'}}/>
-                    -
-                    <input type='text' value={form.telTail} name='telTail' onChange={onText} maxLength={4} 
-                    placeholder='0000' style={{width:'60px'}}/>
-                    </p>
-                    <p>
-                        <label>이메일(선택)</label>
-                        <input type='text' value={form.emailId} name='emailId' onChange={onText}
-                            placeholder='example' style={{width:'120'}}/>
-                            @
-                            {form.emailDomain === '' ? (
-                                <input type='text' name='emailCustomDomain' value={form.emailCustomDomain || ''}
-                                onChange={onText} placeholder='직접입력' style={{width:'120px'}}/>
+            <main className="auth-main">
+                {step === 0 && (
+                    <div className="card navy-top">
+                        <h2 className="card-title">
+                            {loginUser ? `${loginUser}님 환영합니다!` : "서비스 선택"}
+                            {!loginUser && <span className="title-en">SELECT SERVICE</span>}
+                        </h2>
+                        <div style={{marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '10px'}}>
+                            {loginUser ? (
+                                // 💡 로그인 된 경우: 로그아웃 버튼 노출
+                                <button className="btn-wine" onClick={onLogout}>로그아웃</button>
                             ) : (
-                                <span style={{display:'inline-block', width:'120px', padding:'4px'}}>{form.emailDomain.replace('@','')}</span>
+                                // 💡 로그인 안 된 경우: 로그인/회원가입 버튼 노출
+                                <>
+                                    <button className="btn-navy" onClick={() => setStep(3)}>로그인</button>
+                                    <button className="btn-wine" onClick={() => setStep(1)}>회원가입</button>
+                                </>
                             )}
-                        <select name="emailDomain" value={form.emailDomain} onChange={onText}>
-                            {EMAIL_OPTION.map((item, index) => (
-                                <option key={index} value={item.value}>{item.label}</option>
-                            ))}
-                        </select>
+                        </div>
+                        <Trademark />
+                    </div>
+                )}
 
-                        {/* <input type='text' value={form.emailId} name='emailId' onChange={onText} placeholder='example'/>
-                        <select name="emailDomain" value={form.emailDomain} onChange={onText}>
-                            {EMAIL_OPTION.map((item, index) => (
-                                <option key={index} value={item.value}>{item.label}</option>
-                            ))}
-                        </select> */}
-                        {/* 입력 결과 미리보기 */}
-                        {/* {emailId && <span style={{marginLeft:'8px', color:'#666'}}>{emailId}{emailDomain}</span>} */}
-                    </p>
-                    <p><label>주소(선택)</label><input type='text' value={addr} name='addr' onChange={onText}/></p>
-                    <p>
-                        <button onClick={onNext}>가입완료</button>
-                        <button onClick={onReset}>취소</button>
-                    </p>
-                    <p style={{marginTop:'10px',textAlign:'center'}}>
-                        이미 계정이 있으신가요?
-                        <span onClick={() => {onReset(); setStep(3);}}
-                        style={{color:'blue', cursor:'pointer', textDecoration:'underline', marginLeft:'5px'}}>
-                            로그인 하기
-                        </span>
-                    </p>
+                {step === 1 && (
+                    <div className="card navy-top join-card">
+                        <h3 className="card-title">회원가입 <span className="title-en">SIGN UP</span></h3>
+                        <div className="input-group">
+                            <p><label>ID</label> <input type='text' name='userId' value={userId} onChange={onText} placeholder="아이디 입력"/></p>
+                            <p><label>PW</label> <input type='password' name='password' value={password} onChange={onText} placeholder="비밀번호 입력"/></p>
+                            <p><label>연락처</label>
+                                <div className="flex-row">
+                                    <select name="telHead" value={form.telHead} onChange={onText} className="custom-select"><option value="010">010</option><option value="011">011</option></select>
+                                    <input type="text" name="telMid" onChange={onText} maxLength={4} style={{flex:1.5}}/>
+                                    <input type="text" name="telTail" onChange={onText} maxLength={4} style={{flex:1.5}}/>
+                                </div>
+                            </p>
+                            <p><label>생년월일</label>
+                                <div className="flex-row">
+                                    <select name="birthYear" onChange={onText} className="custom-select" style={{flex:1.5}}><option value="">연도</option>{Array.from({length: 80}, (_,i) => 2007 - i).map(y => <option key={y} value={y}>{y}년</option>)}</select>
+                                    <select name="birthMonth" onChange={onText} className="custom-select" style={{flex:1}}><option value="">월</option>{Array.from({length: 12}, (_,i) => String(i+1).padStart(2,'0')).map(m => <option key={m} value={m}>{m}월</option>)}</select>
+                                    <select name="birthDay" onChange={onText} className="custom-select" style={{flex:1}}><option value="">일</option>{Array.from({length: lastDay}, (_,i) => String(i+1).padStart(2,'0')).map(d => <option key={d} value={d}>{d}일</option>)}</select>
+                                </div>
+                            </p>
+                        </div>
+                        <button className="btn-navy" style={{marginTop:'30px'}} onClick={onNext}>가입하기</button>
+                        <button className="btn-gray" onClick={() => setStep(0)}>뒤로가기</button>
+                        <Trademark />
+                    </div>
+                )}
+
+                {step === 2 && (
+                    <div className="card navy-top">
+                        <LoginPageInfo name={userId} onNext={() => setStep(3)} />
+                        <Trademark />
+                    </div>
+                )}
+
+                {step === 3 && (
+                    <div className="card navy-top">
+                        <h3 className="card-title">로그인 <span className="title-en">LOGIN</span></h3>
+                        <div className="input-group">
+                            <input type="text" name="userId" placeholder="아이디" onChange={onText} style={{marginBottom:'15px'}}/>
+                            <input type="password" name="password" placeholder="비밀번호" onChange={onText} />
+                        </div>
+                        <button className="btn-navy" style={{marginTop:'25px'}} onClick={onLogin}>로그인</button>
+                        <button className="btn-gray" onClick={() => setStep(0)}>뒤로가기</button>
+                        <Trademark />
+                    </div>
+                )}
+            </main>
+
+            <footer className="auth-footer">
+                <div className="footer-line"></div>
+                <div className="footer-inner">
+                    <div className="footer-info">
+                        <span className="corp-name">(주) 발로란티스 시스템즈</span><span className="footer-bar">|</span>
+                        <span>대표이사 : 홍길동</span><span className="footer-bar">|</span>
+                        <span>사업자등록번호 : 123-45-67890</span>
+                    </div>
+                    <div className="footer-address"><span>서울특별시 강남구 테헤란로 123 발로란티스 타워 15층</span></div>
+                    <div className="footer-contact">
+                        <span>고객센터 : </span><span className="cs-number">1588-1234</span><span className="footer-bar">|</span>
+                        <span>이메일 : support@valorantis.com</span>
+                    </div>
+                    <p className="copy">© 2024 VALORANTIS SYSTEMS Inc. All Rights Reserved.</p>
                 </div>
-            )}
-
-            {step === 2 && <LoginPageInfo name={userId} />}
-
-            {step === 3 && (
-                <div className="login-box">
-                    <h3>로그인</h3>
-                    <p><label>ID</label><input type='text' name='userId' value={userId} onChange={onText}/></p>
-                    <p><label>PW</label><input type='password' name='password' value={password} onChange={onText}/></p>
-                    <button onClick={onLogin}>로그인하기</button>
-                    <button onClick={() => setStep(0)}>뒤로가기</button>
-                </div>
-            )}
+            </footer>
         </div>
     );
 };
