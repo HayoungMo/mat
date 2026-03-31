@@ -74,10 +74,10 @@ const BoardList = ({
 
             {/* ── 상단 설문 섹션 ── */}
             {surveyList.length > 0 && (
-                <div className="survey-section" style={{ border: '2px dashed #ffb3b3', borderRadius: '15px', padding: '20px', marginBottom: '20px', background: '#fff' }}>
+                <div className="survey-section" style={{ border: '2px dashed #8a2130', borderRadius: '15px', padding: '20px', marginBottom: '20px', background: '#fff' }}>
                     <div className="survey-section-header" style={{ marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                            <MdPoll style={{ color: '#ff6b6b', fontSize: '20px' }} /> 맛잘러들에게 물어보기
+                            <MdPoll style={{ color: '#8a2130', fontSize: '20px' }} /> 맛잘러들에게 물어보기
                         </span>
                         {totalSurveyPages > 1 && (
                             <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
@@ -86,7 +86,7 @@ const BoardList = ({
                                     disabled={surveyPage === 1}
                                     style={{ padding: '4px', border: '1px solid #ddd', borderRadius: '5px', background: '#fff', cursor: 'pointer', display: 'flex' }}
                                 ><MdChevronLeft /></button>
-                                <span style={{ fontSize: '13px', color: '#999' }}>{surveyPage} / {totalSurveyPages}</span>
+                                <span style={{ fontSize: '13px', color: '#093c71' }}>{surveyPage} / {totalSurveyPages}</span>
                                 <button
                                     onClick={() => setSurveyPage(p => Math.min(totalSurveyPages, p + 1))}
                                     disabled={surveyPage === totalSurveyPages}
@@ -102,7 +102,7 @@ const BoardList = ({
                             const votes = item.votedCount || options.map(() => 0);
                             const total = votes.reduce((a, b) => Number(a) + Number(b), 0);
                             return (
-                                <div key={item._id} onClick={() => onDetail(item)} style={{ background: '#fff8f8', padding: '15px', borderRadius: '10px', cursor: 'pointer', border: '1px dashed #ffb3b3' }}>
+                                <div key={item._id} onClick={() => onDetail(item)} style={{ background: '#fff8f8', padding: '15px', borderRadius: '10px', cursor: 'pointer', border: '1px dashed #8a2130' }}>
                                     <h4 style={{ margin: '0 0 10px 0', color: '#8a2130', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '5px' }}>
                                         <MdHowToVote /> {item.title}
                                     </h4>
@@ -111,7 +111,7 @@ const BoardList = ({
                                         {opt} ({getPercent(votes, idx, total)}%)
                                     </div>
                                     ))}
-                                    <p style={{ fontSize: '11px', color: '#aaa', margin: '8px 0 0', textAlign: 'right' }}>총 {total}명 참여</p>
+                                    <p style={{ fontSize: '11px', color: '#093c71', margin: '8px 0 0', textAlign: 'right' }}>총 {total}명 참여</p>
                                 </div>
                             );
                         })}

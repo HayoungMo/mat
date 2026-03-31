@@ -22,7 +22,7 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
             .finally(() => setLoadingDetail(false));
     }, [item?._id]);
 
-    // 2. 연관 게시글 추출 (이전글 2개, 다음글 2개)
+    // 2.  게시글 추출 (이전글 2개, 다음글 2개)
     useEffect(() => {
         if (!detail?._id) return;
         BoardService.getMatList().then(data => {
@@ -100,7 +100,7 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
         >
             <span style={{ fontSize: '11px', color: '#8a2130', fontWeight: 'bold' }}>{label} 게시글</span>
             <div style={{ fontSize: '14px', fontWeight: 'bold', margin: '5px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.title}</div>
-            <div style={{ fontSize: '12px', color: '#666', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <div style={{ fontSize: '12px', color: '#093c71', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <MdPerson size={14} /> {post.userId} | <MdCalendarToday size={12} /> {new Date(post.sysdate).toLocaleDateString()}
             </div>
         </div>
@@ -112,7 +112,7 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
     return (
         <div className="detail-container">
             {/* 1번째 줄: 상세보기 브레드크럼 (왼쪽 정렬) */}
-            <div className="breadcrumb" style={{ fontSize: '13px', color: '#999', marginBottom: '12px' }}>
+            <div className="breadcrumb" style={{ fontSize: '13px', color: '#6a87aa', marginBottom: '12px' }}>
                 <span onClick={onBack} style={{ cursor: 'pointer' }}>게시판</span> / 
                 <span onClick={onBack} style={{ cursor: 'pointer', marginLeft: '8px' }}>{viewType === 'card' ? '이미지형' : '목록형'}</span> / 
                 <span style={{ fontWeight: 'bold', color: '#093c71', marginLeft: '8px' }}>상세보기</span>
@@ -197,18 +197,18 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
                                         <span style={{ fontWeight: 'bold', color: '#8a2130' }}>{getPercent(votes[idx])}%</span>
                                     </div>
                                     <div style={{ width: '100%', height: '10px', background: '#eee', borderRadius: '5px', overflow: 'hidden' }}>
-                                        <div style={{ width: `${getPercent(votes[idx])}%`, height: '100%', background: '#8a2130', transition: 'width 0.5s ease' }}></div>
+                                        <div style={{ width: `${getPercent(votes[idx])}%`, height: '100%', background: '#e6c2c9' , transition: 'width 0.5s ease' }}></div>
                                     </div>
                                 </div>
                             </div>
                         ))}
-                        <p style={{ textAlign: 'center', fontSize: '13px', color: '#999', marginTop: '15px' }}>총 {totalVotes}명이 투표했습니다.</p>
+                        <p style={{ textAlign: 'center', fontSize: '13px', color: '#093c71', marginTop: '15px' }}>총 {totalVotes}명이 투표했습니다.</p>
                     </div>
                 ) : (
                     <>
                         {detail.type === 'image' && detail.saveFileName && (
                             <div className="image-box" style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px' }}>
-                                <img src={`/uploads/${detail.saveFileName}`} alt="맛집 사진" style={{ maxWidth: '100%', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                                <img src={`/uploads/${detail.saveFileName}`} alt="맛집 사진" style={{ maxWidth: '40%', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                             </div>
                         )}
                         <div className="detail-subject" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8', fontSize: '16px' }}>{detail.subject}</div>
