@@ -21,6 +21,7 @@ const addArticle = async (article, images) => {
     formData.append('matName', article.matName)
     formData.append('matTel', article.matTel)
     formData.append('matAddr', article.matAddr)
+    formData.append('placeId', article.placeId)
 
     // 이미지 배열 (multer array('images') 대응)
     if (images) {

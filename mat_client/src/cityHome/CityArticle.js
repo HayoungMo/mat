@@ -4,6 +4,7 @@ import axios from 'axios';
 import articleServices from '../services/articleServices';
 import { useNavigate } from 'react-router-dom';
 import { toggleBookmark} from '../services/bookmarkService';
+import { searchKeyword } from '../services/SearchMapService';
 
 const CityArticle = ({loginUser,loginInfo}) => {
 
@@ -14,6 +15,7 @@ const CityArticle = ({loginUser,loginInfo}) => {
     const [bookmarked, setBookmarked] = useState(false);
     const [reviews, setReviews] =useState([])
     const [reviewForm, setReviewForm] =useState({content: '',rating:5})
+    // const {placeId} = data
 
     useEffect(()=>{
         if(data?.no){
@@ -69,6 +71,19 @@ const CityArticle = ({loginUser,loginInfo}) => {
 
     },[id])
 
+            useEffect(() => {
+            const checkBookmarked = async () => {
+                if (!loginUser || !data?.no) return;
+                try {
+                    const res = await axios.get(`/api/bookmarks/checkArticle?userId=${loginUser}&articleNo=${data.no}`);
+                    setBookmarked(res.data.bookmarked);
+                } catch (err) {
+                    console.error('북마크 확인 실패', err);
+                }
+                };
+                checkBookmarked();
+            }, [loginUser, data]);
+
     if(!data) return <div>로딩중... </div>
 
     const {no,title,subject,userId,matAddr,matName,matTel} = data
@@ -105,9 +120,30 @@ const CityArticle = ({loginUser,loginInfo}) => {
          const handleBookmarkToggle = async(Article) => {
                 console.log("place 객체:", Article); 
                 try {
-                const data = await toggleBookmark(userId, Article, no); 
-                console.log("결과:", data);
-                setBookmarked(data.bookmarked);
+                    let lat = Article.lat;
+                    let lng = Article.lng;
+
+                if ((!lat || !lng) && Article.matName) {
+                    const searchResult = await new Promise((resolve) => {
+                        searchKeyword(Article.matName, (data, status) => {
+                            console.log("검색결과:", data, status);
+                            if (status === window.kakao.maps.services.Status.OK && data.length > 0) {
+                                resolve(data[0]); // 첫 번째 결과 사용
+                            } else {
+                                resolve(null);
+                            }
+                    });
+                });
+                console.log("searchResult:", searchResult);
+                if (searchResult) {
+                    lat = searchResult.y; // 카카오는 y가 lat
+                    lng = searchResult.x; // 카카오는 x가 lng
+                   }
+                }
+                const bookdata = await toggleBookmark(loginUser, {...Article,lat,lng}, no ); 
+                console.log("결과:", bookdata);
+                setBookmarked(bookdata.bookmarked);
+                console.log("bookdata 객체:", bookdata);
                 } catch (err) {
                     console.error('북마크 저장 실패', err);
                 }
@@ -115,19 +151,13 @@ const CityArticle = ({loginUser,loginInfo}) => {
     return (
         <div>
             <h2>{title}</h2> 
-            <div
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        // 토글 로직: 기존 객체를 복사하고 현재 ID 값만 반전
-                        handleBookmarkToggle(data);
-                    }}>
-                    
-                        <span style={{ color: bookmarked ? '#ffc107' : '#ccc',
-                            cursor:'pointer'
-                         }}>
-                            {data ? "★" : "☆"}
-                        </span>
+            {loginInfo?.role !== 'city' && (
+                <div onClick={(e) => { e.stopPropagation(); handleBookmarkToggle(data); }}>
+                    <span style={{ color: bookmarked ? '#ffc107' : '#ccc', cursor:'pointer' }}>
+                        {bookmarked ? "★" : "☆"}
+                    </span>
                 </div>
+            )}
             <p>{subject}</p>
 
             <p>작성자: {userId}</p>       
@@ -141,7 +171,7 @@ const CityArticle = ({loginUser,loginInfo}) => {
                 data.images?.map((image,index)=>(
                     <img
                         key={index}
-                        src={`http://localhost:4000/uploads/${image.saveFileName}`}
+                        src={`/uploads/${image.saveFileName}`}
                         width={200}
                         alt={title}
                     />

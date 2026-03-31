@@ -1,10 +1,10 @@
 
 
 
-export const searchKeyword = async (keyword, callback) => {
-    const ps = new window.kakao.maps.services.Places();
-
+export const searchKeyword = (keyword, callback) => {
+    //체크를 먼저
     if (!window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
+        alert("지도가 아직 로드되지 않았습니다. 잠시 후 다시 시도해주세요.");
         window.kakao.maps.load(() => {
             const ps = new window.kakao.maps.services.Places();
             ps.keywordSearch(keyword, (data, status) => {
@@ -17,6 +17,8 @@ export const searchKeyword = async (keyword, callback) => {
         });
         return;
     }
+    //places() 생성을 체크보다 먼저하고 있어서 오류가 난다. 순서를 바꿔야한다.
+    const ps = new window.kakao.maps.services.Places();
     ps.keywordSearch(keyword, (data, status) => {
         if (status === window.kakao.maps.services.Status.OK) {
             callback(data, status); // ✅ 결과를 밖으로 전달

@@ -1,6 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import LevelupStart from './levelup/LevelupStart';
 import upgradeService from '../../services/upgradeServices';
+import UserMyPage from './UserMyPage';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import LevelupAdd from './levelup/LevelupAdd';
 import LevelupPending from './levelup/LevelupPending';
@@ -29,9 +30,12 @@ const UserPage = ({loginUser}) => {
     
     return (
         <div>
-            <h2>등업 페이지</h2>
             <Routes>
-                <Route path='/' element={<LevelupStart loginUser={loginUser} ugUsers={ugUsers}/>}/>
+        {/*마이페이지 홈 -> UserMyPage */}
+            <Route path='/' element ={<UserMyPage loginUser={loginUser} ugUsers={ugUsers}/>}/>
+
+        {/*등업 관련 */}
+                <Route path='/levelup-check' element={<LevelupStart loginUser={loginUser} ugUsers={ugUsers}/>}/>
                 <Route path='/levelup' element={<LevelupAdd loginUser={loginUser}/>}/>
                 <Route path='/pending' element={<LevelupPending/>}/>
                 <Route path='/rejected' element={<LevelupRejected/>}/>
