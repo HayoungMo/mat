@@ -4,7 +4,7 @@ import { toggleBookmark} from '../services/bookmarkService';
 import { searchKeyword } from '../services/SearchMapService';
 import axios from 'axios';
 
-const CityItem = ({item,onDel,onEdit,loginUser, loginInfo}) => {
+const CityItem = ({item,displayNo,onDel,onEdit,loginUser, loginInfo}) => {
 
     console.log('item 전체',item)
     console.log('이미지',item.images)
@@ -67,9 +67,9 @@ const CityItem = ({item,onDel,onEdit,loginUser, loginInfo}) => {
     return (
         <tr>
             {console.log("이미지")}
-            <td>{no}</td>
+            <td>{displayNo}</td>
             <td>
-                <Link to={`/city/${item.cityName}/article/${item._id}`}><img src={`http://localhost:4000/uploads/${item.images[0]?.saveFileName}`} width='100' alt={matName}/>
+                <Link to={`/city/${item.cityName}/article/${item._id}`}><img src={`/uploads/${item.images[0]?.saveFileName}`} width='100' alt={matName}/>
             </Link>
             </td>
             <td><Link to={`/city/${item.cityName}/article/${item._id}`}>{title}</Link></td>
@@ -78,19 +78,13 @@ const CityItem = ({item,onDel,onEdit,loginUser, loginInfo}) => {
                 {canEdit && <button onClick={()=>onEdit(item)}>수정</button>}
                 {canEdit && <button onClick={()=>onDel(item)}>삭제</button>}
 
-                <div
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        // 토글 로직: 기존 객체를 복사하고 현재 ID 값만 반전
-                        handleBookmarkToggle(item);
-                    }}>
-                    
-                        <span style={{ color: bookmarked ? '#ffc107' : '#ccc',
-                            cursor:'pointer'
-                         }}>
-                            {item ? "★" : "☆"}
-                        </span>
+                {loginInfo?.role !== 'city' && (
+                <div onClick={(e) => { e.stopPropagation(); handleBookmarkToggle(item); }}>
+                    <span style={{ color: bookmarked ? '#ffc107' : '#ccc', cursor:'pointer' }}>
+                        {bookmarked ? "★" : "☆"}
+                    </span>
                 </div>
+                )}
                                 
                 
             </td>

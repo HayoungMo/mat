@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import UserMyPageItem from './UserMyPageItem';
 import UserMyPageList from './UserMyPageList';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import UserMyPageProfile from './UserMyPageProfile';
 import reviewService from '../../services/reviewService';
 import profileService from '../../services/profileService';
@@ -11,11 +11,15 @@ import UserMyPageBookmark from './UserMyPageBookmark';
 import MapPage from '../../map/MapPage';
 import { BookmarkProvider } from '../../contexts/BookmarkContext';
 
-const UserMyPage = ({loginUser, className}) => {
 
+const UserMyPage = ({loginUser, className, ugUsers}) => {
+
+     const navigate = useNavigate()
+     const request = ugUsers?.[0]
      const [users,setUsers] = useState([])
      const [profile,setProfile] = useState({})
      const [isEdit,setIsEdit] = useState(false)
+     const [isUserDel, setIsUserDel] = useState(false) //모하영 탈퇴유저 추가
      const [current,setCurrent] =useState({})
      const [bookmark,setBookmark] = useState([])
      const [selectedPlace, setSelectedPlace] = useState(null);
@@ -45,7 +49,25 @@ const UserMyPage = ({loginUser, className}) => {
             onProfile()
             alert('프로필 수정 완료.')
         }
-    
+        //모하영 탈퇴 버튼 추가 3월 30일
+        const onUserDel = async (user) =>{
+            const ok = window.confirm(
+                '회원 탈퇴 시 모든 정보가 영구 삭제 됩니다.\n 정말 탈퇴하시겠습니까?'
+            )
+            if (!ok) return
+            try{
+                await profileService.deleteProfile(profile._id)
+                //localStorage 정리
+                localStorage.removeItem('userId')
+                localStorage.removeItem('user')
+                alert('탈퇴가 완료 되었습니다.')
+                window.location.href = '/' //메인으로 이동 + 새로고침
+            }catch (err) {
+                console.log('탈퇴 오류', err)
+                alert('탈퇴 중 오류가 발생했습니다.')
+            }
+            
+        }
     const onData = async () => {
         try {
             const res = await reviewService.getReview(loginUser)
@@ -90,10 +112,15 @@ const UserMyPage = ({loginUser, className}) => {
         }
 
 
-        const changeInput = (evt) => {
-    const { value, name } = evt.target
+    const changeInput = (evt) => {
+        //이메일에 한글 입력 방지
+    const { value, name } = evt.target;
+    if(name === 'email' && /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value)){
+        alert('이메일에 한글은 입력할 수 없습니다');
+        return;
+    }
     setProfile({ ...profile, [name]: value })
-}
+};
 
         
         
@@ -101,12 +128,12 @@ const UserMyPage = ({loginUser, className}) => {
         <div>
             <h2><a href='/'>로고</a></h2>
             <h2>상단바 메뉴</h2>
-            <Link to="/login">
+            {/* <Link to="/login">
             <button>로그인</button>
             </Link>
             <Link to="/board">
             <button>자유게시판</button>
-            </Link>
+            </Link> */}
 
             <h3>프로필</h3>
             <UserMyPageProfile profile={profile} onEdit={onEdit} isEdit={isEdit} changeInput={changeInput} loginUser={loginUser}/>
@@ -117,6 +144,18 @@ const UserMyPage = ({loginUser, className}) => {
               </>
             : <button onClick={() => setIsEdit(true)}>정보 수정</button>
         }
+        {/* 등업 상태에 따라서 실시간으로 버튼 상태 변경이 되는것  */}
+        {request?.status === 'pending' ? (
+            <button onClick={()=> navigate('/mypage/levelup-check')}>등업 확인하기</button>
+        ) : request?.status === 'rejected' ? (
+            <button onClick={()=> navigate('/mypage/levelup-check')}>등업 확인하기</button>
+        ) : request?.status === 'approved' ? (
+            <span>등업 완료! 재로그인 시 반영됩니다.</span>
+        ) : (
+            <button onClick={() => navigate('/mypage/levelup-check')}>등업 신청</button>
+        )}
+
+
             
             <div>
             <UserMyPageList users={users} onDel={onDel}/>
@@ -141,8 +180,8 @@ const UserMyPage = ({loginUser, className}) => {
             </div>
             </BookmarkProvider>
             </div>
+            <button onClick={onUserDel}>회원 탈퇴</button>
         </div>
-        
     );
 };
 

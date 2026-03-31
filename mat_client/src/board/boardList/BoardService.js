@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL
     ? `${process.env.REACT_APP_API_URL}/api/freeboard`
-    : 'http://localhost:4000/api/freeboard';
+    : '/api/freeboard';
 
 const axiosWithCreds = axios.create({
     withCredentials: true,

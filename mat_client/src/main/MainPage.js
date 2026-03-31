@@ -3,13 +3,24 @@ import Seoul from '../asset/SeoulMap.js'
 import MapPage from '../map/MapPage.js';
 import { useNavigate } from 'react-router-dom';
 import articleServices from '../services/articleServices.js';
+import axios from 'axios';
+import SearchBar from '../totSearch/SearchBar.js';
+import SearchItem from '../totSearch/SearchItem.js';
 
 const MainPage = () => {
+  //총합검색어
+  const [keyword, setKeyword] = useState('');
+  const [searchList, setSearchList] = useState([]);
 
   const [selectedGu, setSelectedGu] = useState("");
   const navigate = useNavigate();
   const [articles, setArticles] = useState([]); //아티클 객체 정보를 담을 배열
 
+  const onSearch = async () => {
+    if(!keyword.trim()) return;
+    const res = await axios.get(`/api/article?keyword=${keyword}`);
+    setSearchList(res.data || []);
+  };
   const handleGuSelect = (guName) => {
     console.log("1. 버튼 클릭됨:", guName);
     setSelectedGu(guName);
@@ -30,8 +41,8 @@ const externalKeyword = useMemo(() =>
       setArticles(res);
     }
     fetchArticles();
-  })
-
+  },[])
+//useEffect 무한 루프
  
 
   const moveArticle =(place) =>{
@@ -42,7 +53,7 @@ const externalKeyword = useMemo(() =>
         a.matName === place.place_name &&
         a.matAddr === place.address_name
     );
-          alert("아티클로 이동");
+          
         
         if(found){
           navigate(`/city/${found.cityName}/article/${found._id || found.id}`);
@@ -89,7 +100,14 @@ const externalKeyword = useMemo(() =>
     <div>
       <div>
         <div style={{display:'flex', justifyContent:'center'}}>
-          <input type='text' placeholder='검색' style={{width:'300px', height:'30px'}}/>
+         
+            <SearchBar keyword={keyword} setKeyword={setKeyword} onSearch={onSearch} />
+          {/* 검색 결과가 있을 때만 목록 출력 */}
+          {searchList.length > 0 && (
+            <div className="search-results">
+                {searchList.map(item => <SearchItem key={item._id} item={item} keyword={keyword} />)}
+            </div>
+        )}
         </div>
       
       

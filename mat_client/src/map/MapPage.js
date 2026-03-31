@@ -34,6 +34,11 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
 
        console.log(selectedPlace);
         
+        if(!window.kakao || !window.kakao.maps) {
+            console.error("카카오 sdk 로드 안됨");
+            return;
+        }
+
         window.kakao.maps.load(async () => {
             if(!mapRef.current) return;
             const container = mapRef.current;

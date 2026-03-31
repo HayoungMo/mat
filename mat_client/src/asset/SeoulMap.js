@@ -18,7 +18,7 @@ const Test2 = ({width, height, ...props}) => {
             transition: fill 0.2s ease;
           }
           
-          path:hover { 
+          path[id]:hover { 
             fill: #66aaff !important;
             filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
             stroke: #ffffff;

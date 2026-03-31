@@ -107,8 +107,8 @@ const BoardList = ({
                             const total = votes.reduce((a, b) => Number(a) + Number(b), 0);
                             return (
                                 <div key={item._id} onClick={() => onDetail(item)} style={{ background: '#fff8f8', padding: '15px', borderRadius: '10px', cursor: 'pointer', border: '1px dashed #ffb3b3' }}>
-                                    <h4 style={{ margin: '0 0 10px 0', color: '#ff6b6b', fontSize: '14px' }}>🗳️ {item.title}</h4>
-                                 {options.map((opt, idx) => ( 
+                                    <h4 style={{ margin: '0 0 10px 0', color: '#8a2130', fontSize: '14px' }}>🗳️ {item.title}</h4>
+                                     {options.map((opt, idx) => ( 
                                     <div key={idx} style={{ background: '#fff', border: '1px solid #eee', padding: '8px', marginTop: '5px', borderRadius: '5px', fontSize: '13px' }}>
                                         {opt} ({getPercent(votes, idx, total)}%)
                                     </div>
@@ -140,7 +140,7 @@ const BoardList = ({
                                 fontSize: '14px',
                                 padding: '6px 15px',
                                 borderRadius: '20px',
-                                backgroundColor: isActive ? '#ff6b6b' : '#f0f0f0',
+                                backgroundColor: isActive ? '#8a2130' : '#f0f0f0',
                                 color: isActive ? '#fff' : '#555',
                                 fontWeight: isActive ? 'bold' : 'normal',
                                 transition: '0.2s',
@@ -170,7 +170,7 @@ const BoardList = ({
                 <span style={{ fontWeight: 'bold', fontSize: '16px' }}>
                     📝 게시글 ({filteredList.length})
                     {selectedCity !== '전체' && (
-                        <span style={{ fontSize: '13px', color: '#ff6b6b', marginLeft: '8px' }}>— {selectedCity}</span>
+                        <span style={{ fontSize: '13px', color: '#8a2130', marginLeft: '8px' }}>— {selectedCity}</span>
                     )}
                 </span>
                 <div style={{ display: 'flex', gap: '8px' }}>
@@ -185,7 +185,7 @@ const BoardList = ({
                             style={{
                                 padding: '6px 12px', borderRadius: '8px',
                                 border: '1px solid #ddd',
-                                background: viewType === key ? '#ff6b6b' : '#fff',
+                                background: viewType === key ? '#8a2130' : '#fff',
                                 color: viewType === key ? '#fff' : '#333',
                                 cursor: 'pointer',
                             }}
@@ -236,7 +236,7 @@ const BoardList = ({
                             {viewType === 'card' && (
                                 <div style={{ width: '100%', height: '170px', background: '#f5f5f5', flexShrink: 0 }}>
                                     <img
-                                        src={item.saveFileName ? `http://localhost:4000/uploads/${item.saveFileName}` : '/no-image.png'}
+                                        src={item.saveFileName ? `/uploads/${item.saveFileName}` : '/no-image.png'}
                                         alt="thumb"
                                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                     />
@@ -249,7 +249,7 @@ const BoardList = ({
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                     <h3 style={{ fontSize: '14px', margin: '0', color: '#333', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: '1.4' }}>
                                         {item.address && (
-                                            <span style={{ color: '#ff6b6b', fontSize: '11px', marginRight: '4px' }}>
+                                            <span style={{ color: '#8a2130', fontSize: '11px', marginRight: '4px' }}>
                                                 [{item.address.split(' ')[0]}]
                                             </span>
                                         )}
@@ -270,7 +270,7 @@ const BoardList = ({
                                             fontSize: '12px',
                                             fontWeight: 'bold',
                                             background: isItemBookmarked(item) ? '#fff0f0' : '#f5f5f5',
-                                            color: isItemBookmarked(item) ? '#ff6b6b' : '#aaa',
+                                            color: isItemBookmarked(item) ? '#8a2130' : '#aaa',
                                             border: `1px solid ${isItemBookmarked(item) ? '#ffb3b3' : '#e0e0e0'}`,
                                             transition: 'all 0.2s',
                                         }}
@@ -304,7 +304,7 @@ const BoardList = ({
                             onClick={() => setCurrentPage(i + 1)}
                             style={{
                                 padding: '5px 10px', border: '1px solid #ddd', borderRadius: '5px',
-                                background: currentPage === i + 1 ? '#ff6b6b' : '#fff',
+                                background: currentPage === i + 1 ? '#8a2130' : '#fff',
                                 color: currentPage === i + 1 ? '#fff' : '#333',
                                 cursor: 'pointer',
                             }}
