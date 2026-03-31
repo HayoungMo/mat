@@ -14,7 +14,6 @@ const CityAll = ({loginUser,loginInfo}) => {
 
     return (
         <div>
-            <h1>블로그 모음</h1>
             <Link to='/city/Gangnam'><button>강남구</button></Link>
             <Link to='/city/Yongsan'><button>용산구</button></Link>
             <Link to='/city/Dongjak'><button>동작구</button></Link>

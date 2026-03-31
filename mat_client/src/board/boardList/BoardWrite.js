@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import BoardService from './BoardService';
+import { 
+    MdEditNote, MdPerson, MdTitle, MdOutlineCategory, 
+    MdDescription, MdCloudUpload, MdAddCircleOutline, 
+    MdClose, MdHowToVote, MdHistoryEdu, MdImage, MdCheckCircle
+} from "react-icons/md";
 
 const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
     const [board, setBoard] = useState({
@@ -50,7 +55,6 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
         if (submitting) return;
 
         const finalUserId = board.userId.trim() || `쓰니${nextNo}`;
-
         if (!board.title.trim()) return alert("제목을 입력해주세요.");
 
         const formData = new FormData();
@@ -61,7 +65,6 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
         if (board.type === 'survey') {
             const filtered = options.filter(o => o.trim() !== '');
             if (filtered.length < 2) return alert("설문 옵션을 최소 2개 입력해주세요.");
-           
             formData.append('subject', JSON.stringify(filtered));
         } else {
             if (!board.subject.trim()) return alert("내용을 입력해주세요.");
@@ -79,7 +82,7 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
             onAdd();
         } catch (err) {
             console.error(err);
-            alert("서버 오류: 등록에 실패했습니다. 서버 상태를 확인해주세요.");
+            alert("서버 오류: 등록에 실패했습니다.");
         } finally {
             setSubmitting(false);
         }
@@ -87,7 +90,9 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
 
     return (
         <form onSubmit={onSubmit} className="write-form">
-            <h3 className="form-title">✏️ 맛집 게시글 작성</h3>
+            <h3 className="form-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <MdEditNote size={28} style={{ color: '#8a2130' }} /> 맛집 게시글 작성
+            </h3>
 
             <table className="write-table">
                 <tbody>
@@ -99,14 +104,12 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
                     </tr>
 
                     <tr>
-                        <th>작성자</th>
+                        <th><MdPerson /> 작성자</th>
                         <td>
                             {loginUser ? (
-                                <span style={{ fontWeight: 'bold', color: '#2d5a3d' }}>
+                                <span style={{ fontWeight: 'bold', color: '#2d5a3d', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                     {loginUser}
-                                    <span style={{ fontSize: '11px', color: '#888', marginLeft: '6px' }}>
-                                        (로그인됨)
-                                    </span>
+                                    <span style={{ fontSize: '11px', color: '#888' }}>(로그인됨)</span>
                                 </span>
                             ) : (
                                 <input
@@ -120,7 +123,7 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
                     </tr>
 
                     <tr>
-                        <th>제목</th>
+                        <th><MdTitle /> 제목</th>
                         <td>
                             <input
                                 name="title"
@@ -133,13 +136,14 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
                     </tr>
 
                     <tr>
-                        <th>유형</th>
+                        <th><MdOutlineCategory /> 유형</th>
                         <td>
                             <div className="type-select">
                                 {['text', 'image', 'survey'].map(t => (
                                     <label
                                         key={t}
                                         className={`type-label ${board.type === t ? 'active' : ''}`}
+                                        style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}
                                     >
                                         <input
                                             type="radio"
@@ -147,8 +151,11 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
                                             value={t}
                                             checked={board.type === t}
                                             onChange={() => setBoard(prev => ({ ...prev, type: t }))}
+                                            style={{ display: 'none' }}
                                         />
-                                        {t === 'text' ? '📝 텍스트' : t === 'image' ? '🖼✨ 이미지' : '📊 설문'}
+                                        {t === 'text' && <><MdHistoryEdu /> 텍스트</>}
+                                        {t === 'image' && <><MdImage /> 이미지</>}
+                                        {t === 'survey' && <><MdHowToVote /> 설문</>}
                                     </label>
                                 ))}
                             </div>
@@ -156,15 +163,18 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
                     </tr>
 
                     <tr>
-                        <th>내용</th>
+                        <th><MdDescription /> 내용</th>
                         <td>
                             {board.type === 'survey' ? (
                                 <div className="survey-box">
-                                    <p className="survey-hint">📊 설문 항목을 입력하세요 (최소 2개)</p>
+                                    <p className="survey-hint" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                        <MdHowToVote /> 설문 항목을 입력하세요 (최소 2개)
+                                    </p>
                                     {options.map((opt, i) => (
-                                        <div key={i} className="survey-option-row">
+                                        <div key={i} className="survey-option-row" style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', gap: '8px' }}>
                                             <span className="option-num">{i + 1}.</span>
                                             <input
+                                                style={{ flex: 1 }}
                                                 value={opt}
                                                 onChange={(e) => handleOptionChange(i, e.target.value)}
                                                 placeholder={`옵션 ${i + 1}`}
@@ -173,11 +183,19 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
                                                 type="button"
                                                 className="btn-remove-opt"
                                                 onClick={() => removeOption(i)}
-                                            >✕</button>
+                                                style={{ background: 'none', border: 'none', color: '#ff4d4f', cursor: 'pointer' }}
+                                            >
+                                                <MdClose size={20} />
+                                            </button>
                                         </div>
                                     ))}
-                                    <button type="button" className="btn-add-opt" onClick={addOption}>
-                                        + 항목 추가
+                                    <button 
+                                        type="button" 
+                                        className="btn-add-opt" 
+                                        onClick={addOption}
+                                        style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#f5f5f5', border: '1px solid #ddd', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
+                                    >
+                                        <MdAddCircleOutline /> 항목 추가
                                     </button>
                                 </div>
                             ) : (
@@ -187,18 +205,22 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
                                         value={board.subject}
                                         onChange={changeInput}
                                         placeholder="내용을 입력하세요"
+                                        style={{ width: '100%', minHeight: '150px' }}
                                     />
                                     {board.type === 'image' && (
-                                        <div className="file-row">
-                                            <label>📎 파일 첨부</label>
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={(e) => setImage(e.target.files[0])}
-                                            />
+                                        <div className="file-row" style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', background: '#eee', padding: '5px 10px', borderRadius: '4px' }}>
+                                                <MdCloudUpload /> 파일 첨부
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) => setImage(e.target.files[0])}
+                                                    style={{ display: 'none' }}
+                                                />
+                                            </label>
                                             {image && (
-                                                <span style={{ fontSize: '12px', color: '#2d5a3d' }}>
-                                                    ✅ {image.name}
+                                                <span style={{ fontSize: '12px', color: '#2d5a3d', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                                                    <MdCheckCircle /> {image.name}
                                                 </span>
                                             )}
                                         </div>
@@ -210,11 +232,11 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
                 </tbody>
             </table>
 
-            <div className="form-footer">
-                <button type="submit" className="btn-submit" disabled={submitting}>
+            <div className="form-footer" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                <button type="submit" className="btn-submit" disabled={submitting} style={{ padding: '10px 25px', background: '#8a2130', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
                     {submitting ? '등록 중...' : '올리기'}
                 </button>
-                <button type="button" className="btn-cancel" onClick={onCancel} disabled={submitting}>
+                <button type="button" className="btn-cancel" onClick={onCancel} disabled={submitting} style={{ padding: '10px 25px', background: '#093c71', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
                     취소
                 </button>
             </div>

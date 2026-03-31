@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { MdSearch } from "react-icons/md";
 
 const BoardForm = ({ onSearch }) => {
     const [search, setSearch] = useState('');
@@ -13,7 +14,7 @@ const BoardForm = ({ onSearch }) => {
             clearTimeout(debounceRef.current);
         }
 
-        // 2. 500ms(0.5초) 후에 onSearch를 실행하도록 예약
+      
         debounceRef.current = setTimeout(() => {
             onSearch(val);
             console.log("실시간 검색 실행:", val);
@@ -35,13 +36,17 @@ const BoardForm = ({ onSearch }) => {
 
     return (
         <form className="search-form" onSubmit={onSubmit}>
-            <input
-                type="text"
-                className="search-input"
-                placeholder="🔍 맛집명, 지역, 제목으로 검색..."
-                value={search}
-                onChange={handleChange}
-            />
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
+                <MdSearch style={{ position: 'absolute', left: '15px', color: '#888', fontSize: '20px' }} />
+                <input
+                    type="text"
+                    className="search-input"
+                    placeholder="맛집명, 지역, 제목으로 검색하세요" 
+                    style={{ paddingLeft: '45px' }}
+                    value={search}
+                    onChange={handleChange}
+                />
+            </div>
             {search && (
                 <button type="button" onClick={handleClear} className="btn-clear-search">✕</button>
             )}
