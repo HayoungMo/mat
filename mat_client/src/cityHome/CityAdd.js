@@ -76,7 +76,9 @@ const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
         setResult([]);
         setArticle({
             ...article,
-            matName: item.place_name
+            matName: item.place_name,
+            matTel: item.phone,
+            matAddr: item.address_name
         });
     };
     
