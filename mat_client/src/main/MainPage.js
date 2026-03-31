@@ -1,13 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Seoul from '../asset/SeoulMap.js'
 import MapPage from '../map/MapPage.js';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import articleServices from '../services/articleServices.js';
 import axios from 'axios';
-import SearchBar from '../totSearch/SearchBar.js';
-import SearchItem from '../totSearch/SearchItem.js';
+import './Main.css'
+import './AboutUs.js'
+import AboutUs from './AboutUs.js';
 
-const MainPage = () => {
+
+
+const MainPage = ({loginUser, setLoginUser, setLoginInfo}) => {
   //총합검색어
   const [keyword, setKeyword] = useState('');
   const [searchList, setSearchList] = useState([]);
@@ -65,6 +68,17 @@ const externalKeyword = useMemo(() =>
   }
 
 
+   const onLogout = () => {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('user');
+    // props로 setter를 받았다면 상태를 비워줍니다.
+    if (setLoginUser) setLoginUser(null);
+    if (setLoginInfo) setLoginInfo(null);
+    alert("로그아웃 되었습니다");
+    // 상태 변경 후 화면 갱신이 안 될 경우를 대비해 새로고침을 할 수도 있습니다.
+    // window.location.reload(); 
+  };
+
   //25개의 구 데이터
   //한글패치
   const guMap = {
@@ -72,7 +86,7 @@ const externalKeyword = useMemo(() =>
   "Dongdaemun-gu" : "동대문구",
   "Dongjak-gu" : "동작구",
   "Gangnam-gu": "강남구",
-  "Eunpyeong-gu":"연평구",
+  "Eunpyeong-gu":"은평구",
   "Gangbuk-gu":"강북구",
   "Gangdong-gu":"강동구",
   "Gangseo-gu":"강서구",
@@ -96,86 +110,141 @@ const externalKeyword = useMemo(() =>
   "Yongsan-gu":"용산구",
   };
 
-  return (
-    <div>
-      <div>
-        <div style={{display:'flex', justifyContent:'center'}}>
-         
-            <SearchBar keyword={keyword} setKeyword={setKeyword} onSearch={onSearch} />
-          {/* 검색 결과가 있을 때만 목록 출력 */}
-          {searchList.length > 0 && (
-            <div className="search-results">
-                {searchList.map(item => <SearchItem key={item._id} item={item} keyword={keyword} />)}
-            </div>
-        )}
+ return (
+    <div className='mainContainer' style={{
+
+      position: 'sticky',
+      top: 0,
+      zIndex: 1,
+      backgroundColor: '#6b2737', /* 톤온톤 색상 */
+    
+    }}  >
+
+      <header style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          padding: '20px 40px', 
+          backgroundColor: '#8a2130', 
+          borderBottom: '1px solid #e5e5e5' 
+      }}>
+        <Link to="/" style={{ fontSize: '1.5rem', fontWeight: 'bold', textDecoration: 'none', color: '#1a1a1a', fontFamily: 'var(--font-serif)' }}>
+            MAT
+        </Link>
+        
+        <div>
+          {loginUser ? (
+              <>
+                  <span style={{ fontWeight: '500', color: '#1a1a1a' }}>{loginUser}님</span>
+                  <span style={{ margin: '0 10px', color: '#ccc' }}>|</span>
+                  <span onClick={onLogout} style={{ cursor: 'pointer', color: '#1a1a1a', fontWeight: 'bold' }}>
+                      로그아웃
+                  </span>
+              </>
+          ) : (
+              <>
+                  <span onClick={() => navigate('/login')} style={{ cursor: 'pointer', color: '#1a1a1a' }}>로그인</span>
+                  <span style={{ margin: '0 10px', color: '#ccc' }}>|</span>
+                  <span onClick={() => navigate('/login')} style={{ cursor: 'pointer', color: '#1a1a1a' }}>회원가입</span>
+              </>
+          )}
         </div>
-      
-      
-        <div style={{ display: 'flex', paddingTop : "50px"}}>
-          {/* path (svg파일의 path태그 클릭시) 함수실행 */}
-          {/* 선택된 아이디의 이름과 같은 구 이름을 set */}
-          <Seoul
-          width = "600" height="600"
-        
-          onClick={(e)=>{
-            if(e.target.tagName === "path"){
-              setSelectedGu(guMap[e.target.id]);
-              console.log(e.target.id);
-            }
-          }}
-          />
-        
-      
-          <div style={{ display: 'none' }}>
-            <MapPage setList={setList}
-          
-            externalKeyword={selectedGu ? `${selectedGu} 맛집` : ""}/>
+      </header>
+
+
+      {/* ── 레이어 1: 지도 + 리스트 (뒤에 고정) ── */}
+      <div style={{             
+        backgroundColor: '#8a2130',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1,
+        height: '600px',
+      }}>
+        <div className='mainInner'>
+
+          <div className='SeoulCont'>
+            <Seoul
+              width="500" height="500"
+              onClick={(e) => {
+                if (e.target.tagName === "path") {
+                  setSelectedGu(guMap[e.target.id]);
+                  console.log(e.target.id);
+                }
+              }}
+            />
           </div>
 
-          <div className='listwrap' style={{ width:"500px"}}>
-            <div className='listTitle' >맛집리스트</div>
-            <hr/>
-            {/* 버튼을 누르면 각 구에 해당하는 값 세팅 */}
-            <div style={{alignItems:"center"}}>
-                <button onClick={() => handleGuSelect("강남구")}>강남</button>
-                <button onClick={() => handleGuSelect("용산구")}>용산</button>
-                <button onClick={() => handleGuSelect("마포구")}>마포</button>
-                <button onClick={() => handleGuSelect("동작구")}>동작</button>
-                <button onClick={() => handleGuSelect("중구")}>중구</button>
+          <div className='listwrap' style={{ width: "500px" }}>
+            <div className='listTitle'>맛집리스트</div>
+            <hr className='divider'/>
+            <div className="btnArea" style={{ alignItems: "center" }}>
+              <button onClick={() => handleGuSelect("강남구")}>강남</button>
+              <button onClick={() => handleGuSelect("용산구")}>용산</button>
+              <button onClick={() => handleGuSelect("마포구")}>마포</button>
+              <button onClick={() => handleGuSelect("동작구")}>동작</button>
+              <button onClick={() => handleGuSelect("중구")}>중구</button>
             </div>
-            <div className="" style={{
-                    top: '10px',         
-                    left: '500px',         
-                    width: '300px',       // 너비 조절
-                    maxHeight: '500px',   
-                    overflowY: 'auto', //넘어가면 조절
-                    background: 'rgba(255, 255, 255, 0.9)', // 살짝 투명한 흰색
-                    padding: '15px',
-                    borderRadius: '10px',
-                    border: '1px solid #ddd',
-                    zIndex: 10,           
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)' // 그림자를 주면 더 입체적임
-                }}>
-                  {/* 리스트 반복해서 데이터 출력 */}
-            {list.map((item, index) =>(
-              <div key={index}>
-                <div onClick={() => moveArticle(item)}>
-                  {item.place_name}</div>
-                <div>{item.category_name}</div>
-                <div>{item.address_name}</div>
-                <span style={{color: "#888" }}>{item.phone}</span>
-                <hr/>
-              </div>
-                ))}
-            {list.length === 0 && (
-              <div className="empty-msg">데이터 없음</div>
-            )}
+
+            <div className="listItem">
+              {list.map((item, index) => (
+                <div key={index}>
+                  <div className="place-name" onClick={() => moveArticle(item)}>{item.place_name}</div>
+                  <div className="place-category">{item.category_name}</div>
+                  <div className="place-address">{item.address_name}</div>
+                  <span style={{ color: "#888" }} className="place-phone">{item.phone}</span>
+                  <hr className="item-divider"/>
+                </div>
+              ))}
+              {list.length === 0 && (
+                <div className="empty-msg">데이터 없음</div>
+              )}
+            </div>
+
+            <div style={{ display: 'none' }}>
+              <MapPage
+                setList={setList}
+                externalKeyword={selectedGu ? `${selectedGu} 맛집` : ""}
+              />
+            </div>
           </div>
+
         </div>
       </div>
+      {/* ── 레이어 1 끝 ── */}
+
+
+      {/* ── 레이어 2: AboutUs (위로 올라오며 덮음) ── */}
+      <div style={{
+        position: 'relative',
+        zIndex: 2,
+        borderRadius: '28px 28px 0 0',
+        overflow: 'hidden',
+        marginTop: '-28px',
+        boxShadow: '0 -8px 32px rgba(0,0,0,0.12)',
+      }}>
+        <AboutUs />
+      </div>
+      {/* ── 레이어 2 끝 ── */}
+
+
+      <footer className="auth-footer" style={{ position: 'relative', zIndex: 2 }}>
+        <div className="footer-line"></div>
+        <div className="footer-inner">
+          <div className="footer-info">
+            <span className="corp-name">(주) 발로란티스 시스템즈</span><span className="footer-bar">|</span>
+            <span>대표이사 : 홍길동</span><span className="footer-bar">|</span>
+            <span>사업자등록번호 : 123-45-67890</span>
+          </div>
+          <div className="footer-address"><span>서울특별시 강남구 테헤란로 123 발로란티스 타워 15층</span></div>
+          <div className="footer-contact">
+            <span>고객센터 : </span><span className="cs-number">1588-1234</span><span className="footer-bar">|</span>
+            <span>이메일 : support@valorantis.com</span>
+          </div>
+          <p className="copy">© 2024 VALORANTIS SYSTEMS Inc. All Rights Reserved.</p>
+        </div>
+      </footer>
+
     </div>
-  </div>
-      
   );
 };
 
