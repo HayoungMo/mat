@@ -2,6 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { toggleBookmark, getBookmarks } from '../services/bookmarkService'; // ← 추가
 import { useNavigate } from 'react-router-dom';
 import {searchKeyword} from '../services/SearchMapService.js';
+import Search from './Search.js';
+import './Map.css';
+
 
 const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace,
     className}) => {
@@ -245,31 +248,14 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
 
     
    return (
-        <div className="map_wrap" style={{width:"500px", height:"500px",
-            position: "relative",  
-           display:'flex' }} >
+        <div className="map_wrap">
 
             {/* 임시 css */}
-            <div id="menu_wrap" style={{width : "300px",
-                position: "absolute", maxHeight: "450px",
-                overflowY: "auto",
-                zIndex: 10,
-                overflowY: "auto",
-                top: "10px",
-            left: "10px",
-             
-            }}>
+            <div id="menu_wrap">
+
                 <div className="option">
-                    <form onSubmit={searchPlaces}>
-                        키워드 : 
-                        <input 
-                            type="text" 
-                            value={keyword} 
-                            onChange={(e) => setKeyword(e.target.value)} 
-                            size="15" 
-                        /> 
-                        <button type="submit">검색하기</button> 
-                    </form>
+                    <Search keyword={keyword} setKeyword={setKeyword} onSearch={searchPlaces} />
+                    
                 </div>
                 <hr />
                 <ul id="placesList">
@@ -324,7 +310,7 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
             
             </div>
             {/* 1. 지도 영역 (배경처럼 깔림) */}
-                <div ref={mapRef}   style={{width:"100%", height:"500px", display:"flex"}}></div>
+                <div ref={mapRef}   style={{width:"100%", height:"1000px", display:"flex"}}></div>
         </div>
     );
 };
