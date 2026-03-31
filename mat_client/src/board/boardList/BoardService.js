@@ -1,51 +1,51 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:4000/api/freeboard';
+const API_URL = process.env.REACT_APP_API_URL
+    ? `${process.env.REACT_APP_API_URL}/api/freeboard`
+    : '/api/freeboard';
+
+const axiosWithCreds = axios.create({
+    withCredentials: true,
+});
 
 const BoardService = {
-    // [R] 목록 조회
     getMatList: async (keyword = "") => {
-        const res = await axios.get(API_URL, { params: { keyword } });
+        const res = await axiosWithCreds.get(API_URL, {
+            params: keyword ? { keyword } : {},
+        });
         return res.data;
     },
 
-    // [R] 상세 조회 (조회수 증가)
     getDetail: async (id) => {
-        const res = await axios.get(`${API_URL}/${id}`);
+        const res = await axiosWithCreds.get(`${API_URL}/${id}`);
         return res.data;
     },
 
-    // [C] 등록
     addMat: async (formData) => {
-        return await axios.post(API_URL, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+        return await axiosWithCreds.post(API_URL, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
         });
     },
 
-    // [U] 수정
     updateMat: async (id, formData) => {
-        return await axios.put(`${API_URL}/${id}`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+        return await axiosWithCreds.put(`${API_URL}/${id}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
         });
     },
 
-    // [D] 삭제
     deleteMat: async (id) => {
-        return await axios.delete(`${API_URL}/${id}`);
-    },
-
-    // [U] 북마크 토글
-    updateBookmark: async (id) => {
-       return await axios.patch(`${API_URL}/${id}/bookmark`, {}, { 
-            withCredentials: true
-    });
+        return await axiosWithCreds.delete(`${API_URL}/${id}`);
     },
 
 
-    // [U] 투표
+    updateBookmark: async (id, userId) => {
+       
+        return await axiosWithCreds.patch(`${API_URL}/${id}/bookmark`, { userId });
+    },
+
     updateVote: async (id, index) => {
-        return await axios.patch(`${API_URL}/${id}/vote`, { index });
-    }
+        return await axiosWithCreds.patch(`${API_URL}/${id}/vote`, { index });
+    },
 };
 
 export default BoardService;

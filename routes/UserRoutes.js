@@ -52,4 +52,42 @@ module.exports = (app) => {
         res.status(500).send({error : true, message: error.message})
       }
   })
+
+  //모하영 3월 30일 프로필 조회, 프로필 수정, 회원 탈퇴
+
+  //프로필 조회
+  app.get('/api/profile/:userId', async (req,res) => {
+    try{
+      const user = await User.findOne({userId:req.params.userId})
+      if(!user) return res.status(404).send({error:true,message: '유저 없음'})
+      return res.status(200).send(user)
+    } catch (error){
+      return res.status(500).send({error:true,message:error.message})
+    }
+  })
+  //프로필 수정
+  app.put('/api/profile', async (req,res) => {
+    try{
+      const updated = await User.findByIdAndUpdate(
+        req.body.id,
+        {password: req.body.password, tel:req.body.tel, email: req.body.email},
+        {new: true}
+      )
+        return res.status(200).send(updated)
+    } catch (error){
+      return res.status(500).send({error:true,message:error.message})
+    }
+  })
+
+  //회원 탈퇴
+  app.delete('/api/profile',async (req,res) => {
+    try {
+      await User.findByIdAndDelete(req.body.id)
+      return res.status(200).send({error:false})
+    } catch (error) {
+      return res.status(500).send({ error:true, message:error.message})
+    }
+  })
+
+
 };

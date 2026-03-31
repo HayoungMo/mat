@@ -51,6 +51,16 @@ module.exports = (app) => {
       res.send(list);
     }
   });
+  // no. 아티클 조회 (리뷰 -> 아티클 이동용.)
+  app.get('/api/article/byNo/:no', async (req, res) => {
+    try {
+        const article = await Article.findOne({ no: Number(req.params.no) });
+        if (!article) return res.status(404).send({ message: '해당 글 없음' });
+        res.send(article);
+    } catch (err) {
+        res.status(500).send({ message: '서버 오류' });
+    }
+});
 
   // 1-1 cityhome 아티클을 위한 기능
   app.get('/api/article/:id',async (req,res)=>{

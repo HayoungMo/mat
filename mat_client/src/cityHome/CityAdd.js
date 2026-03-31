@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {searchKeyword} from '../services/SearchMapService.js';
+import axios from 'axios';
 
 const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
 
@@ -21,6 +22,7 @@ const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
 
     const [article,setArticle] = useState({
         //userId는 나중에 삭제
+        placeId: '',
         userId:loginUser,
         cityName:cityName,
         title:'',
@@ -28,7 +30,9 @@ const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
         region:'',
         matName:'',
         matTel:'',
-        matAddr:''
+        matAddr:'',
+        lat : '',
+        lng : ''
     })
 
     const cityMap = {
@@ -39,7 +43,7 @@ const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
         Jung: '중구'
     }
 
-    const {title,subject,region,matName,matTel,matAddr}=article
+    const {placeId, title,subject,region,matName,matTel,matAddr}=article
     const [res, setResult] = useState([]);//검색 결과
     const [selected, setSelected] = useState(null); //선택된 항목
 
@@ -63,11 +67,14 @@ const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
                 setResult([]);
                 return;
             }
-            searchKeyword(value, (data) => { //추가된 로직
-                console.log("콜백 data", data);         // 전체 구조 확인
-                console.log("배열?:", Array.isArray(data)); // true/false 확인
-                setResult(data); //serachKeyword 찾아가서 data 가져옴
-            });
+            try {
+                searchKeyword(value, (data) => {
+                    setResult(data);
+                });
+            } catch (error) {
+                console.error(error);
+                alert("검색 기능을 불러오는 중 오류가 발생했습니다.");
+            }
         }
     }
 
@@ -76,16 +83,29 @@ const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
         setResult([]);
         setArticle({
             ...article,
-            matName: item.place_name
+            placeId : item.id,
+            matName: item.place_name,
+            matTel: item.phone,
+            matAddr: item.address_name,
+            lat : item.lat,
+            lng : item.lng
         });
     };
     
 
 
-    const onSubmit =(evt)=>{
+    const onSubmit = async(evt)=>{
         evt.preventDefault()
         if(!loginUser || !cityName ||!title || !subject || !region) return
 
+        //글 이 두개 저장되는 이유
+        // try{
+        //     await axios.post("/api/article", article)
+        // }catch(e){
+        //     console.log(e)
+        // }
+        console.log(article)
+        
         onAdd(article,images)
 
         setArticle({
