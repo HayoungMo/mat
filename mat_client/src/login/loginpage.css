@@ -1,0 +1,110 @@
+/* 1. 전체 컨테이너 및 배경 */
+.login-page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: radial-gradient(circle at center, #ffffff 0%, #f4f6f9 100%);
+    overflow-x: hidden;
+}
+
+/* 2. 상단 헤더: 볼륨감 + 우측 정렬 화이트 메뉴 */
+.auth-header {
+    background: linear-gradient(180deg, #8a2130 0%, #751b28 100%);
+    padding: 40px 20px;
+    position: relative;
+    box-shadow: 0 12px 25px rgba(138, 33, 48, 0.15);
+    z-index: 20; /* 메인보다 위에 위치 */
+}
+
+.header-inner {
+    max-width: 1200px; /* 양 끝 정렬을 위해 넉넉히 설정 */
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between; /* 💡 로고-왼쪽, 메뉴-오른쪽 배치 */
+    align-items: center;
+}
+
+.logo-text { 
+    color: white; font-size: 32px; font-weight: 900; letter-spacing: 3px; 
+    text-decoration: none; text-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 14px;
+    color: #ffffff; /* 💡 화이트 폰트 */
+}
+
+.header-right span { cursor: pointer; opacity: 0.9; transition: 0.2s; }
+.header-right span:hover { opacity: 1; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
+.bar { color: rgba(255, 255, 255, 0.3); font-size: 12px; }
+
+/* 3. 중앙 메인: 배경 투명화로 푸터 그림자 노출 */
+.auth-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 90px 20px;
+    background: transparent;
+    z-index: 5;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 60px 50px;
+    border-radius: 30px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+    width: 100%; max-width: 470px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    position: relative;
+}
+
+.navy-top { border-top: 15px solid #093c71; }
+.join-card { max-width: 500px; }
+
+/* 4. 하단 푸터: 위로 퍼지는 부드러운 와인색 볼륨 */
+.auth-footer {
+    background: linear-gradient(0deg, #8a2130 0%, #751b28 100%);
+    padding: 70px 20px;
+    color: rgba(255, 255, 255, 0.75);
+    text-align: center;
+    position: relative;
+    /* 💡 위로 올라오는 굵고 흐릿한 그림자 효과 */
+    box-shadow: 0 -20px 40px rgba(138, 33, 48, 0.18); 
+    z-index: 10;
+}
+
+/* 푸터 상단 엣지 광택 */
+.auth-footer::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.footer-inner p { margin: 8px 0; font-size: 14.5px; letter-spacing: 0.5px; }
+.copy { margin-top: 20px; opacity: 0.4; font-size: 12px; }
+
+/* 5. 버튼 및 입력창 디테일 */
+.btn-navy, .btn-wine {
+    border: none; padding: 18px; border-radius: 14px;
+    font-weight: 800; font-size: 17px; cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: 100%; margin-top: 12px;
+}
+.btn-navy { background: #093c71; color: white; box-shadow: 0 5px 15px rgba(9, 60, 113, 0.25); }
+.btn-wine { background: #8a2130; color: white; box-shadow: 0 5px 15px rgba(138, 33, 48, 0.25); }
+.btn-navy:hover, .btn-wine:hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(0,0,0,0.2); }
+.btn-navy:active, .btn-wine:active { transform: scale(0.96); }
+
+.input-group input {
+    width: 100%; padding: 16px; border: 1px solid #eee; border-radius: 12px;
+    background: #fafafa; transition: 0.3s;
+}
+.input-group input:focus { border-color: #093c71; outline: none; background: #fff; box-shadow: 0 0 0 5px rgba(9, 60, 113, 0.08); }
+.btn-gray { background: #f1f3f5; color: #888; border: none; padding: 12px; border-radius: 12px; width: 100%; margin-top: 12px; cursor: pointer; }
