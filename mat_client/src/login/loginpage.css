@@ -1,110 +1,87 @@
-/* 1. 전체 컨테이너 및 배경 */
+/* 1. 전체 레이아웃 */
 .login-page-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background: radial-gradient(circle at center, #ffffff 0%, #f4f6f9 100%);
-    overflow-x: hidden;
+    display: flex; flex-direction: column; min-height: 100vh;
+    background: #ffffff; margin: 0; padding: 0;
 }
 
-/* 2. 상단 헤더: 볼륨감 + 우측 정렬 화이트 메뉴 */
-.auth-header {
-    background: linear-gradient(180deg, #8a2130 0%, #751b28 100%);
-    padding: 40px 20px;
-    position: relative;
-    box-shadow: 0 12px 25px rgba(138, 33, 48, 0.15);
-    z-index: 20; /* 메인보다 위에 위치 */
+/* 2. 상단 헤더: 단색 와인(#8a2130) + 아래쪽 강한 볼륨 */
+.auth-header { 
+    background: #8a2130; padding: 25px 40px; display: flex; justify-content: center;
+    box-shadow: 0 10px 25px rgba(138, 33, 48, 0.35); 
+    position: relative; z-index: 20;
 }
+.header-inner { width: 100%; max-width: 1100px; display: flex; justify-content: space-between; align-items: center; }
+.logo-text { color: white; font-size: 24px; font-weight: 800; text-decoration: none; letter-spacing: 1px; }
+.header-right { display: flex; gap: 20px; font-size: 13px; color: rgba(255, 255, 255, 0.8); }
+.header-right span { cursor: pointer; }
+.bar { opacity: 0.3; }
 
-.header-inner {
-    max-width: 1200px; /* 양 끝 정렬을 위해 넉넉히 설정 */
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between; /* 💡 로고-왼쪽, 메뉴-오른쪽 배치 */
-    align-items: center;
-}
-
-.logo-text { 
-    color: white; font-size: 32px; font-weight: 900; letter-spacing: 3px; 
-    text-decoration: none; text-shadow: 0 3px 10px rgba(0,0,0,0.3);
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    font-size: 14px;
-    color: #ffffff; /* 💡 화이트 폰트 */
-}
-
-.header-right span { cursor: pointer; opacity: 0.9; transition: 0.2s; }
-.header-right span:hover { opacity: 1; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
-.bar { color: rgba(255, 255, 255, 0.3); font-size: 12px; }
-
-/* 3. 중앙 메인: 배경 투명화로 푸터 그림자 노출 */
-.auth-main {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 90px 20px;
-    background: transparent;
-    z-index: 5;
-}
-
+/* 3. 중앙 메인 */
+.auth-main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 80px 20px; }
 .card {
-    background: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    padding: 60px 50px;
-    border-radius: 30px;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.1);
-    width: 100%; max-width: 470px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    position: relative;
+    background: #fdfcf5; padding: 60px 50px; border-radius: 40px;
+    box-shadow: 25px 30px 60px rgba(0, 0, 0, 0.08);
+    width: 100%; max-width: 480px; position: relative; box-sizing: border-box;
+}
+.navy-top { border-top: 12px solid #093c71 !important; }
+.card-title { display: flex; align-items: baseline; justify-content: center; gap: 10px; font-size: 26px; font-weight: 800; color: #222; margin-bottom: 35px; }
+.title-en { color: #00aaff; font-size: 12px; font-weight: 600; letter-spacing: 1px; }
+
+/* 4. 텍스트 상자(Input) 시각적 대비 극대화 */
+.input-group label { display: block; font-weight: 800; margin-bottom: 10px; color: #333; font-size: 14px; }
+
+.input-group input, .custom-select {
+    display: block; width: 100%; padding: 16px; 
+    background: #e9ecef !important; 
+    border: 2px solid #ced4da; 
+    border-radius: 15px; 
+    font-size: 15px; 
+    font-weight: 500;
+    color: #333;
+    box-sizing: border-box;
+    transition: all 0.2s ease-in-out;
 }
 
-.navy-top { border-top: 15px solid #093c71; }
-.join-card { max-width: 500px; }
+.input-group input:focus, .custom-select:focus {
+    background: #ffffff !important; 
+    border-color: #8a2130; 
+    outline: none;
+    box-shadow: 0 0 0 5px rgba(138, 33, 48, 0.15); 
+}
 
-/* 4. 하단 푸터: 위로 퍼지는 부드러운 와인색 볼륨 */
+/* 💡 연락처/생년월일 가로 정렬 수정 */
+.flex-row { display: flex; gap: 8px; width: 100%; align-items: center; }
+
+/* select(국번/연도)는 적당히, input(번호)은 넓게 */
+.flex-row .custom-select { flex: 1; min-width: 80px; }
+.flex-row input { flex: 2; } /* 뒷번호 입력칸을 더 넓게 */
+
+.flex-row input, .flex-row select { padding: 14px; box-sizing: border-box; }
+
+/* 5. 버튼 디자인 */
+.btn-navy, .btn-wine { border: none; padding: 18px; border-radius: 20px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 12px; transition: 0.2s; }
+.btn-navy { background: #093c71; color: white; }
+.btn-wine { background: #8a2130; color: white; }
+.btn-navy:hover, .btn-wine:hover { opacity: 0.95; transform: translateY(-2px); }
+.btn-gray { background: transparent; color: #bbb; border: none; cursor: pointer; width: 100%; margin-top: 20px; text-decoration: underline; font-size: 13px; }
+
+/* 6. 하단 푸터 */
 .auth-footer {
-    background: linear-gradient(0deg, #8a2130 0%, #751b28 100%);
-    padding: 70px 20px;
-    color: rgba(255, 255, 255, 0.75);
-    text-align: center;
-    position: relative;
-    /* 💡 위로 올라오는 굵고 흐릿한 그림자 효과 */
-    box-shadow: 0 -20px 40px rgba(138, 33, 48, 0.18); 
-    z-index: 10;
+    width: 100%; background: #8a2130; padding: 60px 20px; text-align: center;
+    color: rgba(255, 255, 255, 0.7); font-size: 13px; line-height: 1.8;
+    position: relative; z-index: 20;
+    box-shadow: 0 -12px 25px rgba(138, 33, 48, 0.35); 
 }
+.footer-line { display: none; } 
 
-/* 푸터 상단 엣지 광택 */
-.auth-footer::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 1px;
-    background: rgba(255, 255, 255, 0.15);
-}
+.footer-inner { max-width: 1100px; margin: 0 auto; }
+.footer-info, .footer-address, .footer-contact { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+.corp-name, .cs-number { font-weight: 700; color: #fff; }
+.footer-bar { color: rgba(255, 255, 255, 0.2); font-size: 10px; }
+.copy { margin-top: 25px; font-size: 11px; color: rgba(255, 255, 255, 0.4); letter-spacing: 0.5px; }
 
-.footer-inner p { margin: 8px 0; font-size: 14.5px; letter-spacing: 0.5px; }
-.copy { margin-top: 20px; opacity: 0.4; font-size: 12px; }
-
-/* 5. 버튼 및 입력창 디테일 */
-.btn-navy, .btn-wine {
-    border: none; padding: 18px; border-radius: 14px;
-    font-weight: 800; font-size: 17px; cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    width: 100%; margin-top: 12px;
-}
-.btn-navy { background: #093c71; color: white; box-shadow: 0 5px 15px rgba(9, 60, 113, 0.25); }
-.btn-wine { background: #8a2130; color: white; box-shadow: 0 5px 15px rgba(138, 33, 48, 0.25); }
-.btn-navy:hover, .btn-wine:hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(0,0,0,0.2); }
-.btn-navy:active, .btn-wine:active { transform: scale(0.96); }
-
-.input-group input {
-    width: 100%; padding: 16px; border: 1px solid #eee; border-radius: 12px;
-    background: #fafafa; transition: 0.3s;
-}
-.input-group input:focus { border-color: #093c71; outline: none; background: #fff; box-shadow: 0 0 0 5px rgba(9, 60, 113, 0.08); }
-.btn-gray { background: #f1f3f5; color: #888; border: none; padding: 12px; border-radius: 12px; width: 100%; margin-top: 12px; cursor: pointer; }
+/* 7. 가상 트레이드마크 */
+.card-trademark-container { margin-top: 40px; text-align: center; }
+.trademark-line { width: 30px; height: 2px; background: #093c71; margin: 0 auto 15px; opacity: 0.2; }
+.card-trademark { font-size: 10px; color: #bbb; letter-spacing: 1px; text-transform: uppercase; }
+.card-tagline { font-size: 8px; color: #ccc; letter-spacing: 2px; text-transform: uppercase; }
