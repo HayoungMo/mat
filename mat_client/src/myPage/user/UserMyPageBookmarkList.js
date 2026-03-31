@@ -8,7 +8,7 @@ const UserMyPageBookmarkList = ({onSelectPlace}) => {
     return (
         <div>
             <h2 className='users'></h2>
-            <table>
+            <table className='mypage-table'>
                 <colgroup>
                 <col className=''/>
                 <col className=''/>
@@ -19,7 +19,7 @@ const UserMyPageBookmarkList = ({onSelectPlace}) => {
                         <th>맛집 이름</th>
                         <th>전화번호</th>
                         <th>주소</th>
-                        <th>추가 일자</th>
+                        <th>삭제</th>
 
                     </tr>
                 </thead>

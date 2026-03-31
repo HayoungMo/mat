@@ -9,7 +9,6 @@ const LoginPageInfo = ({name, onNext}) => {
                 회원가입이 완료되었습니다!
             </h2>
             <p style={{marginTop:'30px'}}>
-                {/* 💡 디자인 통일을 위해 className="btn-navy" 적용 */}
                 <button 
                     onClick={onNext}
                     className="btn-navy"
