@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { FaTrashCan } from "react-icons/fa6";
 
 const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
 
@@ -109,68 +110,86 @@ const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
         navigate(`/city/${cityName}`)
     }
 
-
     return (
-            <form onSubmit={onSubmit}>
-            <h2>수정: {title} </h2>
-            <p>
-                <label>아이디</label>
-                <span>{loginUser}</span>
-            </p>
-            <p>
-                <label>구</label>
-                <span>{cityMap[cityName]}</span>
-            </p>
-            <p>
-                <label>제목</label>
-                <input type='text' value={title} name='title' onChange={changeInput}></input>
-            </p>
-            <p>
-                <label>내용</label>
-                <textarea value={subject} name='subject' onChange={changeInput}></textarea>
-            </p>
-            <p>
-                <label>지역</label>
-                <input type='text' value={region} name='region' onChange={changeInput}></input>
-            </p>
-            <p>
-                <label>맛집 이름</label>
-                <input type='text' value={matName} name='matName' onChange={changeInput}></input>
-            </p>
-            
-            <p>
-                <label>맛집 전화번호</label>
-                <input type='text' value={matTel} name='matTel' onChange={changeInput}></input>
-            </p>
-            
-            <p>
-                <label>맛집 주소</label>
-                <input type='text' value={matAddr} name='matAddr' onChange={changeInput}></input>
-            </p>
-            
-            <p>
-                <label>사진</label>
-                <input type='file' multiple onChange={changeImage}/>
-            </p>
-
-        <h3>기존 이미지</h3>
-        <div style={{display: 'flex',gap: '10px'}}>
-            {existingImages.map((image,index)=>(
-                <div key={index}>
-                    <img 
-                    src={`/uploads/${image.saveFileName}`} width='100'
-                    />
-                    <button type='button' onClick={()=>deleteExist(image)}>삭제</button>
-                    {/*      ^^^^^^^^ 추가됨 */}
+        <form className="editor-form" onSubmit={onSubmit}>
+            <div className="editor-header">
+                <h2>기사 내용 수정</h2>
+                <div className="article-meta">
+                    <span className="meta-item"><strong>기자명</strong> {loginUser}</span>
+                    <span className="meta-divider">|</span>
+                    <span className="meta-item"><strong>취재 구역</strong> {cityMap[cityName]}</span>
                 </div>
-            ))}
-        </div>
-            <p>
-                <button>수정</button>
-                <button type='button' onClick={()=>navigate(-1)}>취소</button>
-            </p>
+            </div>
+
+            <div className="input-row">
+                <label>기사 제목</label>
+                <input type='text' value={title} name='title' onChange={changeInput} placeholder="제목을 지우셨군요?" />
+            </div>
+
+            <div className="input-row">
+                <label>지역</label>
+                <input type='text' value={region} name='region' onChange={changeInput} placeholder="예: 연남동, 가로수길" />
+            </div>
+
+            <div className="input-row">
+                <label>맛집 상호명</label>
+                <input type='text' value={matName} name='matName' onChange={changeInput} />
+            </div>
+            
+            <div className="input-row">
+                <label>맛집 전화번호</label>
+                <input type='text' value={matTel} name='matTel' onChange={changeInput} placeholder="예: 02-123-4567" />
+            </div>
+            
+            <div className="input-row">
+                <label>맛집 주소</label>
+                <input type='text' value={matAddr} name='matAddr' onChange={changeInput} />
+            </div>
+
+            <div className="editor-body">
+                <label>기사 본문</label>
+                <textarea value={subject} name='subject' onChange={changeInput} placeholder="본문을 입력해주세요"></textarea>
+            </div>
+
+            <div className="input-row">
+                <label>추가 첨부할 사진</label>
+                <input type='file' multiple onChange={changeImage} className="file-input" />
+            </div>
+
+            {/* 🌟 기존 이미지 관리 영역 (새로 추가된 클래스) */}
+            {existingImages.length > 0 && (
+                <div className="existing-images-section">
+                    <label>기존 첨부 사진 관리</label>
+                    <div className="image-gallery">
+                        {existingImages.map((image, index) => (
+                            <div className="image-card" key={index}>
+                                <img 
+                                    src={`/uploads/${image.saveFileName}`} 
+                                    alt={`첨부 이미지 ${index + 1}`} 
+                                    width={300}
+                                />
+                                <button 
+                                    type='button' 
+                                    className="btn-delete-img" 
+                                    onClick={() => deleteExist(image)}
+                                    title="이미지 삭제"
+                                >
+                                   <FaTrashCan />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* 하단 버튼 그룹 */}
+            <div className="button-group">
+                <button type="submit" className="btn-submit">기사 수정 완료</button>
+                <button type="button" className="btn-cancel" onClick={() => navigate(-1)}>작성 취소</button>
+            </div>
         </form>
     );
+    
 };
 
 export default CityEdit;
