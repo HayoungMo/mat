@@ -2,17 +2,20 @@ import React from 'react';
 
 const LoginPageInfo = ({name, onNext}) => {
     return (
-        <div style={{textAlign:'center',margin: '50px'}}>
-            <h2>
-                <span style={{color:'blue'}}>{name}</span>
+        <div style={{textAlign:'center', padding: '20px 0'}}>
+            <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#222', lineHeight: '1.5' }}>
+                <span style={{color:'#00aaff'}}>{name}</span>님,
                 <br/>
                 회원가입이 완료되었습니다!
             </h2>
-            <p style={{marginTop:'20px'}}>
-                <button onClick={() => window.location.href='/login'}
-                 style={{padding:'10px 20px', cursor:'pointer'}}>
-                    로그인
-                 </button>
+            <p style={{marginTop:'30px'}}>
+                <button 
+                    onClick={onNext}
+                    className="btn-navy"
+                    style={{ cursor:'pointer' }}
+                >
+                    로그인하러 가기
+                </button>
             </p>
         </div>
     );
