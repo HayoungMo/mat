@@ -46,7 +46,7 @@
     align-items: center;
     justify-content: center;
 }
-.header-nav a {
+.header-nav span {
     color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
     font-size: 16px;
@@ -55,10 +55,15 @@
     padding: 4px 0;
     border-bottom: 2px solid transparent;
     transition: all 0.2s ease;
+    cursor: pointer;
 }
-.header-nav a:hover {
+.header-nav span:hover,
+.header-nav span.active {
     color: #ffffff;
     border-bottom: 2px solid rgba(255, 255, 255, 0.6);
+}
+.header-nav span.active {
+    border-bottom: 2px solid #ffffff;
 }
 
 /* 검색창 */

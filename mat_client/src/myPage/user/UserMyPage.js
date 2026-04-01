@@ -91,10 +91,10 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
                 //등업 신청 데이터도 같이 삭제 : 모하영
                 await fetch('/api/upgrade', {
                     method: 'DELETE',
-                    headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({userId: loginUser})
-                });
-                
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: loginUser })
+                 });
+
                 await profileService.deleteProfile(profile._id)
                 //localStorage 정리
                 localStorage.removeItem('userId')

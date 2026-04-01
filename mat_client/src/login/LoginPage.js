@@ -52,10 +52,16 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
     //회원 가입 제출
     const onNext = async () => {
         if(!idCheck.ok) {alert('아이디 중복확인을 해주세요'); return;}
+        if(!userId.trim()) { alert('아이디를 입력해주세요'); return; }
+        if(!password.trim()) { alert('비밀번호를 입력해주세요'); return; }
+
+        //생년월일 필수 체크 추가
+        if(!form.birthYear || !form.birthMonth || !form.birthDay){
+            alert('생년월일을 모두 선택해주세요'); return;
+        }
         const tel = form.telHead + form.telMid + form.telTail;
+        
         const birth = form.birthYear ? String(form.birthYear).slice(2) + form.birthMonth + form.birthDay : '';
-        if(!userId.trim()) { alert('아이디를 입력해주세요'); return }
-        if(!password.trim()) { alert('비밀번호를 입력해주세요'); return }
         try {
             const email = emailId ? emailId + emailDomain : '';
             const response = await axios.post('/api/register', { userId, password, tel, email, addr: form.addr, birth });
@@ -128,32 +134,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                             <input type='password' name='password' value={password} onChange={onText}
                                 placeholder="비밀번호 입력" className="auth-input" />
                         </p>
-                        <p><label>연락처</label>
-                            <div className="flex-row">
-                                <select name="telHead" value={form.telHead} onChange={onText} className="custom-select">
-                                    <option value="010">010</option><option value="011">011</option>
-                                </select>
-                                <input type="text" name="telMid" value={form.telMid} onChange={onText} maxLength={4} className="auth-input" />
-                                <input type="text" name="telTail" value={form.telTail} onChange={onText} maxLength={4} className="auth-input" />
-                            </div>
-                        </p>
-                        <p>
-                            <label>이메일</label>
-                            <div className="flex-row">
-                                <input type='text' name='emailId' value={emailId} onChange={onText}
-                                    placeholder='이메일 주소' className="auth-input" />
-                                <select name="emailDomain" value={form.emailDomain} onChange={onText} className="custom-select">
-                                    {EMAIL_OPTION.map(opt => (
-                                        <option key={opt.label} value={opt.value}>{opt.label}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            {form.emailDomain === '' && (
-                                <input type='text' name='emailDomain' value={form.emailDomain} onChange={onText}
-                                    placeholder="@example.com(직접입력)" className="auth-input" style={{ marginTop: '8px' }} />
-                            )}
-                        </p>
-                        <p><label>생년월일</label>
+                         <p><label>생년월일</label>
                             <div className="flex-row">
                                 <select name="birthYear" value={form.birthYear} onChange={onText} className="custom-select">
                                     <option value="">연도</option>
@@ -169,6 +150,32 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                                 </select>
                             </div>
                         </p>
+                        <p><label>연락처(선택)</label>
+                            <div className="flex-row">
+                                <select name="telHead" value={form.telHead} onChange={onText} className="custom-select">
+                                    <option value="010">010</option><option value="011">011</option>
+                                </select>
+                                <input type="text" name="telMid" value={form.telMid} onChange={onText} maxLength={4} className="auth-input" />
+                                <input type="text" name="telTail" value={form.telTail} onChange={onText} maxLength={4} className="auth-input" />
+                            </div>
+                        </p>
+                        <p>
+                            <label>이메일(선택)</label>
+                            <div className="flex-row">
+                                <input type='text' name='emailId' value={emailId} onChange={onText}
+                                    placeholder='이메일 주소' className="auth-input" />
+                                <select name="emailDomain" value={form.emailDomain} onChange={onText} className="custom-select">
+                                    {EMAIL_OPTION.map(opt => (
+                                        <option key={opt.label} value={opt.value}>{opt.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            {form.emailDomain === '' && (
+                                <input type='text' name='emailDomain' value={form.emailDomain} onChange={onText}
+                                    placeholder="@example.com(직접입력)" className="auth-input" style={{ marginTop: '8px' }} />
+                            )}
+                        </p>
+                       
                     </div>
                     <button className="btn-navy" style={{ marginTop: '30px' }} onClick={onNext}>가입하기</button>
                     <button className="btn-gray" onClick={() => setStep(3)}>뒤로가기</button>
