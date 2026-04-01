@@ -3,7 +3,8 @@ import BoardService from './BoardService';
 import { 
     MdEdit, MdDelete, MdArrowBack, MdPushPin, MdPerson, 
     MdCalendarToday, MdSync, MdStar, MdStarBorder, 
-    MdHowToVote, MdLock, MdHistoryEdu, MdVisibility 
+    MdHowToVote, MdLock, MdHistoryEdu, MdVisibility,
+    MdAccessTime // 🕒 시계 아이콘 추가
 } from "react-icons/md";
 
 const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, viewType, onVoteSuccess }) => {
@@ -12,6 +13,10 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
     const [isUpdating, setIsUpdating] = useState(false);
     const [relatedPosts, setRelatedPosts] = useState({ prev: [], next: [] });
     const [hasVotedThisSession, setHasVotedThisSession] = useState(false);
+    
+    // ⏰ 타이머 및 긴급 상태를 위한 상태값
+    const [timeLeft, setTimeLeft] = useState("");
+    const [isUrgent, setIsUrgent] = useState(false); 
 
     // 1. 상세 데이터 로드 (최신 상태 동기화)
     useEffect(() => {
@@ -40,10 +45,43 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
         });
     }, [detail?._id, detail?.type]);
 
+    // ⏰ 3. 실시간 카운트다운 로직 (설문 전용)
+    useEffect(() => {
+        if (!detail?.sysdate || detail.type !== 'survey') return;
+
+        const timer = setInterval(() => {
+            const now = new Date();
+            const writeDate = new Date(detail.sysdate);
+            const limitDate = new Date(writeDate.getTime() + 3 * 24 * 60 * 60 * 1000); // 3일 후 마감
+            const diff = limitDate - now;
+
+            if (diff <= 0) {
+                setTimeLeft("투표가 마감되었습니다.");
+                setIsUrgent(false);
+                clearInterval(timer);
+            } else {
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const m = Math.floor((diff / (1000 * 60)) % 60);
+                const s = Math.floor((diff / 1000) % 60);
+                
+                // 1시간 미만으로 남았을 때 긴급 강조 (빨간색)
+                setIsUrgent(diff < 1000 * 60 * 60);
+
+                if (d > 0) {
+                    setTimeLeft(`${d}일 ${h}시간 ${m}분 ${s}초 남음`);
+                } else {
+                    // 24시간 이내일 때는 시계 스타일로 표시
+                    setTimeLeft(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')} 남음`);
+                }
+            }
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [detail?.sysdate, detail?.type]);
+
     // ---------------------------------------------------------
-    // ✅ [핵심 수정] 데이터 파싱 로직 (설문 vs 일반글)
+    // ✅ 데이터 파싱 로직 (설문 vs 일반글)
     // ---------------------------------------------------------
-    
     let options = [];
     let displayContent = detail?.subject || '';
     let displayStyle = {
@@ -53,14 +91,12 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
     };
 
     if (detail?.type === 'survey') {
-        // 설문 데이터 파싱
         try {
             options = typeof detail.subject === 'string' ? JSON.parse(detail.subject) : detail.subject;
         } catch {
             options = (detail.subject || '').split('^').filter(Boolean);
         }
     } else {
-        // 일반글/이미지글 서식 데이터 파싱
         try {
             const parsed = JSON.parse(detail.subject);
             if (parsed && typeof parsed === 'object' && parsed.content !== undefined) {
@@ -72,12 +108,10 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
                 };
             }
         } catch (e) {
-            // JSON이 아닐 경우(기존 데이터) 일반 텍스트로 처리
             displayContent = detail.subject;
         }
     }
 
-    // 투표 관련 계산
     const votes = detail?.votedCount || options.map(() => 0);
     const totalVotes = votes.reduce((a, b) => Number(a) + Number(b), 0);
     const getPercent = (count) => (totalVotes === 0 ? 0 : Math.round((Number(count) / totalVotes) * 100));
@@ -87,6 +121,8 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
     const handleVote = async (index) => {
         if (!loginUser) { alert("로그인 후 투표에 참여해주세요! 😊"); return; }
         if (isAlreadyVoted) { alert("이미 이 설문에 참여하셨습니다! 🙏"); return; }
+        if (timeLeft === "투표가 마감되었습니다.") { alert("마감된 투표에는 참여할 수 없습니다."); return; }
+
         try {
             await BoardService.updateVote(detail._id, index, loginUser);
             setHasVotedThisSession(true);
@@ -152,11 +188,27 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
             <div className="detail-body" style={{ minHeight: '300px', padding: '20px 0' }}>
                 {detail.type === 'survey' ? (
                     <div className="survey-vote-container" style={{ background: '#f9f9f9', padding: '30px', borderRadius: '15px', border: '1px dashed #ddd' }}>
+                        
+                        {/* 🕒 실시간 타이머 UI 추가 */}
+                        <div style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            gap: '8px', 
+                            marginBottom: '15px',
+                            color: isUrgent ? '#ff4d4f' : '#8a2130',
+                            fontWeight: 'bold',
+                            fontSize: '15px'
+                        }}>
+                            <MdAccessTime size={20} className={isUrgent ? "pulse-animation" : ""} />
+                            <span>{timeLeft}</span>
+                        </div>
+
                         <h3 style={{ fontSize: '18px', marginBottom: '20px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                             {loginUser ? (isAlreadyVoted ? <><MdHowToVote color="#666" /> 투표 결과</> : <><MdHowToVote color="#8a2130" /> 투표하세요!</>) : <><MdLock color="#666" /> 로그인 필요</>}
                         </h3>
                         {options.map((opt, idx) => (
-                            <div key={idx} onClick={() => handleVote(idx)} className={`survey-option-item ${loginUser && !isAlreadyVoted ? 'active' : 'disabled'}`} style={{ background: '#fff', border: '1px solid #ddd', padding: '15px', borderRadius: '12px', marginBottom: '15px', cursor: (loginUser && !isAlreadyVoted) ? 'pointer' : 'default', display: 'flex', alignItems: 'center', gap: '15px', opacity: isAlreadyVoted ? 0.7 : 1 }}>
+                            <div key={idx} onClick={() => handleVote(idx)} className={`survey-option-item ${loginUser && !isAlreadyVoted ? 'active' : 'disabled'}`} style={{ background: '#fff', border: '1px solid #ddd', padding: '15px', borderRadius: '12px', marginBottom: '15px', cursor: (loginUser && !isAlreadyVoted) ? 'pointer' : 'default', display: 'flex', alignItems: 'center', gap: '15px', opacity: (isAlreadyVoted || timeLeft.includes("마감")) ? 0.7 : 1 }}>
                                 <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '2px solid #8a2130', background: (loginUser && !isAlreadyVoted) ? '#fff' : '#f0f0f0', flexShrink: 0 }}></div>
                                 <div style={{ flex: 1 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '15px' }}>
@@ -177,7 +229,6 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
                                 <img src={`/uploads/${detail.saveFileName}`} alt="맛집 사진" style={{ maxWidth: '40%', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                             </div>
                         )}
-                        {/* ✅ [수정된 출력부] 풀어헤친 스타일을 직접 적용함 */}
                         <div 
                             className="detail-subject" 
                             style={{ 
