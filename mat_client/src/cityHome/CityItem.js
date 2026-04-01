@@ -92,7 +92,7 @@ const CityItem = ({ item, displayNo, onDel, onEdit, loginUser, loginInfo }) => {
                     {/* 북마크 별 아이콘 (노란색에서 매거진 컨셉에 맞게 버건디 포인트로 변경) */}
                     {loginInfo?.role !== 'city' && (
                         <div onClick={(e) => { e.stopPropagation(); handleBookmarkToggle(item); }}>
-                            <span style={{ color: bookmarked ? '#f6e055' : '#dddddd', cursor:'pointer', fontSize: '45px', transition: 'color 0.2s' }}>
+                            <span style={{ color: bookmarked ? '#f6e055' : '#dddddd', cursor:'pointer', fontSize: '40px', transition: 'color 0.2s' }}>
                                 {bookmarked ? <TiStarFullOutline /> : <TiStarOutline />}
                             </span>
                         </div>
