@@ -38,16 +38,7 @@ function App() {
 
   return (
     <div>
-      <p>
-        <Link to='/'><button>메인</button></Link>
-        <Link to='/map'><button>지도</button></Link>
-        <Link to='/search'><button>검색</button></Link>
-        {/* 추가된코드 */}
-        <Link to='/login'><button>{loginUser ? `${loginUser}님` : '로그인'}</button></Link>
-        <Link to='/mypage'><button>마이 페이지</button></Link>
-        <Link to='/city'><button>지역</button></Link>
-        <Link to='/board'><button>게시판</button></Link>
-      </p>
+      
       <Header loginUser={loginUser} onLogout={onLogout} />
 
       <Routes>
@@ -56,7 +47,7 @@ function App() {
         <Route path="/search" element={<SearchPage loginUser={loginUser} setLoginUser={setLoginUser} />} />
         <Route path="/login" element={<LoginPage loginUser={loginUser} loginInfo={loginInfo} setLoginInfo={setLoginInfo} setLoginUser={setLoginUser} />} />
         <Route path="/mypage/*" element={loginUser ?
-          <MyPage loginUser={loginUser} setLoginUser={setLoginUser} loginInfo={loginInfo} /> :
+          <MyPage loginUser={loginUser} setLoginUser={setLoginUser} loginInfo={loginInfo} setLoginInfo={setLoginInfo}/> :
           <LoginPage setLoginUser={setLoginUser} setLoginInfo={setLoginInfo} />
         } />
         <Route path="/city/*" element={<CityAll loginUser={loginUser} loginInfo={loginInfo} />} />

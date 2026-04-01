@@ -4,7 +4,7 @@ import CityPage from './cityUser/CityPage';
 import UserPage from './user/UserPage';
 
 
-const MyPage = ({loginUser,loginInfo}) => {
+const MyPage = ({loginUser,loginInfo,setLoginInfo}) => {
     
    const role = loginInfo?.role;
 
@@ -17,7 +17,8 @@ const MyPage = ({loginUser,loginInfo}) => {
             case 'city':
                 return <CityPage loginInfo={loginInfo} loginUser={loginUser}/>
             default:
-                return <UserPage loginInfo={loginInfo} loginUser={loginUser}/>
+                //setLoginInfo를 UserPage까지 전달
+                return <UserPage loginInfo={loginInfo} loginUser={loginUser} setLoginInfo={setLoginInfo}/>
         }
    }
 
