@@ -15,7 +15,9 @@ const Footer = () => {
                     <span>서울특별시 강남구 혁신로 123 발로란티스 타워 24F</span>
                 </div>
                 <div className="footer-contact">
-                    <span>고객센터: <span className="cs-number">https://open.kakao.com/o/sDZGgOni</span></span>
+                    <a href="https://open.kakao.com/o/sDZGgOni" target="_blank" rel="noreferrer" className="cs-number cs-link">
+                    카카오 문의하기
+                    </a>
                     <span className="footer-bar">|</span>
                     <span>이메일: support@valorantis.com</span>
                 </div>
