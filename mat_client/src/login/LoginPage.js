@@ -87,7 +87,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
 
     return (
         <div className='login-page-container'>
-            <header className="auth-header">
+            {/* <header className="auth-header">
                 <div className="header-inner">
                     <Link to="/" className="logo-text">MAT</Link>
                     <div className="header-right">
@@ -106,7 +106,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                         )}
                     </div>
                 </div>
-            </header>
+            </header> */}
 
             <main className="auth-main">
                 {step === 0 && (
@@ -193,7 +193,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
 )}
             </main>
 
-            <footer className="auth-footer">
+            {/* <footer className="auth-footer">
                 <div className="footer-inner">
                     <div className="footer-info">
                         <span className="corp-name">MAT (VALORANTIS SYSTEMS)</span>
@@ -212,7 +212,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                     </div>
                     <p className="copy">© 2024 VALORANTIS SYSTEMS. ALL RIGHTS RESERVED.</p>
                 </div>
-            </footer>
+            </footer> */}
         </div>
     );
 };

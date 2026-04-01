@@ -9,6 +9,7 @@ import React, { useState,useEffect } from 'react'; // ★ React와 useState 추�
 import CityAll from './cityHome/CityAll';
 import axios from 'axios';
 import Header from './Header';
+import Footer from './Footer'
 
 function App() {
 
@@ -57,6 +58,7 @@ function App() {
         <Route path="/city/*" element={<CityAll loginUser={loginUser} loginInfo={loginInfo}/>} ></Route>
         <Route path="/board" element={<Board loginUser={loginUser} setLoginUser={setLoginUser} setLoginInfo={setLoginInfo}/>} ></Route>
       </Routes>
+      <Footer/>
     </div>
   );
 }
