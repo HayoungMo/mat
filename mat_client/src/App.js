@@ -62,7 +62,7 @@ function App() {
         <LoginPage setLoginUser={setLoginUser}/>
         } ></Route> 
         <Route path="/city/*" element={<CityAll loginUser={loginUser} loginInfo={loginInfo}/>} ></Route>
-        <Route path="/board" element={<Board loginUser={loginUser} setLoginUser={setLoginUser} />} ></Route>
+        <Route path="/board/*" element={<Board loginUser={loginUser} setLoginUser={setLoginUser} />} ></Route>
       </Routes>
     </div>
   );
