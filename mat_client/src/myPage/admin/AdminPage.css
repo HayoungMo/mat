@@ -1,0 +1,246 @@
+/* admin/AdminPage.css */
+
+.admin-page-wrapper {
+    max-width: 900px;
+    margin: 40px auto;
+    font-family: 'Noto Sans KR', 'Pretendard', sans-serif;
+}
+
+/* 🌟 절대 틀어지지 않는 초강력 왼쪽 정렬 배너 */
+.admin-profile-banner {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 25px !important;
+    background-color: #f8fafc;
+    padding: 30px 40px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.admin-profile-avatar {
+    width: 70px;
+    height: 70px;
+    background-color: #093c71 !important;
+    border-radius: 50%;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(9, 60, 113, 0.3);
+}
+
+.admin-avatar-text {
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1;
+}
+
+.admin-profile-info {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    text-align: left !important;
+}
+
+.admin-profile-info h2 {
+    margin: 0 0 8px 0 !important;
+    font-size: 24px;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.admin-highlight-text {
+    color: #8a2130;
+}
+
+.admin-profile-role {
+    margin: 0 !important;
+    font-size: 15px;
+    color: #64748b;
+}
+
+.admin-profile-role strong {
+    color: #334155;
+}
+
+.admin-content-section {
+    background: #ffffff;
+    padding: 10px 0;
+}
+
+/* 📋 전체 컨테이너 및 헤더 */
+.admin-table-wrapper {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.admin-table-header {
+    display: flex;
+    background-color: #f8fafc;
+    padding: 15px 20px;
+    border-bottom: 2px solid #e2e8f0;
+    font-weight: 700;
+    color: #475569;
+    text-align: center;
+}
+
+/* 📋 리스트 바디 */
+.admin-list-body {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-list-item {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* 🌟 아이템 외부 컨테이너 */
+.admin-item-outer {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.15s ease;
+}
+
+.admin-item-outer:hover {
+    background-color: #fafafa;
+}
+
+/* 📋 가로행 데이터 배치 */
+.levelup-item-row {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    text-align: center;
+}
+
+/* 🌟 각 컬럼 너비 고정 */
+.col-id { flex: 1; font-weight: 600; }
+.col-city { flex: 1; }
+.col-date { flex: 1.5; color: #64748b; }
+.col-reason {
+    flex: 3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 15px;
+    color: #334155;
+    cursor: help;
+}
+.col-action { flex: 2; display: flex; gap: 10px; justify-content: center; }
+
+/* 🌟 공통 버튼 베이스 */
+.btn {
+    border-radius: 4px;
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary {
+    background-color: #8a2130;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #a12939;
+}
+
+.btn-outline {
+    background-color: #1e293b;
+    color: white;
+    border: none;
+}
+
+.btn-outline:hover {
+    background-color: #334155;
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 🌟 수락 버튼 */
+.btn-approve {
+    padding: 6px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #334155;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-approve:hover {
+    background-color: #f1f5f9;
+}
+
+/* 🌟 반려 버튼 */
+.btn-reject {
+    padding: 6px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #334155;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-reject:hover {
+    background-color: #f1f5f9;
+}
+
+/* 🌟 상세 사유 박스 */
+.reason-detail-box {
+    background-color: #f8fafc;
+    padding: 16px 24px;
+    margin: 0;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #334155;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.reason-detail-box strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.reason-detail-box p {
+    margin: 0;
+    color: #334155;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

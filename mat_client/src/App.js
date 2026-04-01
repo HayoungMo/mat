@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import MainPage from './main/MainPage';
 import MapPage from './map/MapPage';
 import SearchPage from './totSearch/SearchPage';
@@ -38,6 +38,16 @@ function App() {
 
   return (
     <div>
+      <p>
+        <Link to='/'><button>메인</button></Link>
+        <Link to='/map'><button>지도</button></Link>
+        <Link to='/search'><button>검색</button></Link>
+        {/* 추가된코드 */}
+        <Link to='/login'><button>{loginUser ? `${loginUser}님` : '로그인'}</button></Link>
+        <Link to='/mypage'><button>마이 페이지</button></Link>
+        <Link to='/city'><button>지역</button></Link>
+        <Link to='/board'><button>게시판</button></Link>
+      </p>
       <Header loginUser={loginUser} onLogout={onLogout} />
 
       <Routes>
