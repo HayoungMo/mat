@@ -3,7 +3,8 @@ import BoardService from './BoardService';
 import { 
     MdEditNote, MdPerson, MdTitle, MdOutlineCategory, 
     MdDescription, MdCloudUpload, MdAddCircleOutline, 
-    MdClose, MdHowToVote, MdHistoryEdu, MdImage, MdCheckCircle
+    MdClose, MdHowToVote, MdHistoryEdu, MdImage, MdCheckCircle,
+    MdFormatBold, MdFormatAlignLeft, MdFormatAlignCenter, MdFormatAlignRight
 } from "react-icons/md";
 
 const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
@@ -18,6 +19,19 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
     const [nextNo, setNextNo] = useState('...');
     const [submitting, setSubmitting] = useState(false);
 
+    // ✅ 서식 상태값
+    const [font, setFont] = useState('Pretendard');
+    const [align, setAlign] = useState('left');
+    const [weight, setWeight] = useState('400');
+
+    const fontOptions = [
+        { label: '기본설정', value: 'Pretendard' },
+        { label: '나눔고딕체', value: 'Nanum Gothic' },
+        { label: '본고딕체', value: 'Noto Sans KR' },
+        { label: '궁서체', value: 'Gungsuh' },
+        { label: '함초롬바탕체', value: 'Batang' }
+    ];
+
     // ✅ 로그인 유저 자동 세팅
     useEffect(() => {
         if (loginUser) {
@@ -25,7 +39,7 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
         }
     }, [loginUser]);
 
-    // ✅ 다음 번호 조회 (1회만)
+    // ✅ 다음 번호 조회
     useEffect(() => {
         BoardService.getMatList()
             .then(data => setNextNo(Array.isArray(data) ? data.length + 1 : '-'))
@@ -62,14 +76,21 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
         formData.append('title', board.title);
         formData.append('type', board.type);
 
+        let subjectValue = "";
         if (board.type === 'survey') {
             const filtered = options.filter(o => o.trim() !== '');
             if (filtered.length < 2) return alert("설문 옵션을 최소 2개 입력해주세요.");
-            formData.append('subject', JSON.stringify(filtered));
+            subjectValue = JSON.stringify(filtered);
         } else {
             if (!board.subject.trim()) return alert("내용을 입력해주세요.");
-            formData.append('subject', board.subject);
+            subjectValue = JSON.stringify({
+                content: board.subject,
+                font: font,
+                align: align,
+                weight: weight
+            });
         }
+        formData.append('subject', subjectValue);
 
         if (board.type === 'image' && image) {
             formData.append('images', image);
@@ -181,7 +202,6 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
                                             />
                                             <button
                                                 type="button"
-                                                className="btn-remove-opt"
                                                 onClick={() => removeOption(i)}
                                                 style={{ background: 'none', border: 'none', color: '#ff4d4f', cursor: 'pointer' }}
                                             >
@@ -189,24 +209,72 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
                                             </button>
                                         </div>
                                     ))}
-                                    <button 
-                                        type="button" 
-                                        className="btn-add-opt" 
-                                        onClick={addOption}
-                                        style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#f5f5f5', border: '1px solid #ddd', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
-                                    >
+                                    <button type="button" className="btn-add-opt" onClick={addOption}>
                                         <MdAddCircleOutline /> 항목 추가
                                     </button>
                                 </div>
                             ) : (
-                                <>
+                                <div className="editor-container">
+                                    {/* ✅ 툴바를 textarea 바로 위에 배치 */}
+                                    <div className="editor-toolbar" style={{ 
+                                        display: 'flex', gap: '8px', padding: '8px', background: '#f1f3f5', 
+                                        border: '1px solid #ccc', borderBottom: 'none', borderRadius: '4px 4px 0 0' 
+                                    }}>
+                                        <select value={font} onChange={(e) => setFont(e.target.value)} style={{ padding: '3px', fontSize: '13px' }}>
+                                            {fontOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                        </select>
+                                        
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setWeight(weight === '700' ? '400' : '700')}
+                                            style={{ 
+                                                padding: '4px 8px', background: weight === '700' ? '#8a2130' : '#fff', 
+                                                color: weight === '700' ? '#fff' : '#333', border: '1px solid #ccc', borderRadius: '3px'
+                                            }}
+                                        >
+                                            <MdFormatBold size={16} />
+                                        </button>
+
+                                        <div style={{ display: 'flex', border: '1px solid #ccc', borderRadius: '3px', overflow: 'hidden' }}>
+                                            {[
+                                                { val: 'left', icon: <MdFormatAlignLeft /> },
+                                                { val: 'center', icon: <MdFormatAlignCenter /> },
+                                                { val: 'right', icon: <MdFormatAlignRight /> }
+                                            ].map(item => (
+                                                <button
+                                                    key={item.val}
+                                                    type="button"
+                                                    onClick={() => setAlign(item.val)}
+                                                    style={{
+                                                        padding: '4px 8px', background: align === item.val ? '#093c71' : '#fff',
+                                                        color: align === item.val ? '#fff' : '#333', border: 'none', cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    {item.icon}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
                                     <textarea
                                         name="subject"
                                         value={board.subject}
                                         onChange={changeInput}
                                         placeholder="내용을 입력하세요"
-                                        style={{ width: '100%', minHeight: '150px' }}
+                                        style={{ 
+                                            width: '100%', 
+                                            minHeight: '200px',
+                                            padding: '15px',
+                                            fontFamily: font,
+                                            textAlign: align,
+                                            fontWeight: weight,
+                                            border: '1px solid #ccc',
+                                            borderRadius: '0 0 4px 4px',
+                                            outline: 'none',
+                                            resize: 'vertical'
+                                        }}
                                     />
+
                                     {board.type === 'image' && (
                                         <div className="file-row" style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                             <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', background: '#eee', padding: '5px 10px', borderRadius: '4px' }}>
@@ -225,7 +293,7 @@ const BoardWrite = ({ loginUser, onAdd, onCancel }) => {
                                             )}
                                         </div>
                                     )}
-                                </>
+                                </div>
                             )}
                         </td>
                     </tr>
