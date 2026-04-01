@@ -291,7 +291,7 @@ const AboutUs = () => {
               우리는 <em>진짜 경험</em>을 기록하고,<br />
               당신의 다음 한 끼를 더 특별하게 만듭니다.
             </p>
-            <a href="#" className="about-cta-btn">더 알아보기</a>
+            <a href="./search" className="about-cta-btn">더 알아보기</a>
           </div>
  
           <div className={`about-divider ${visible ? 'visible' : ''}`} />
