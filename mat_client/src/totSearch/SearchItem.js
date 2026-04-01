@@ -17,16 +17,16 @@ const SearchItem = ({item, keyword}) => {
     };
     return (
        
-        <div style={{ marginBottom: '20px' }}>
+        <div className="search-item">
             {/* 제목 하이라이트 */}
-            <div>
+            <div className="search-item-title">
                 <Link to={`/city/${item.cityName}/article/${item._id}`}>
                     <strong>{getHighlightedText(item.title, keyword)}</strong>
                 </Link>
             </div>
             
             {/* 본문 하이라이트 (제목 밑에 본문이 나옵니다) */}
-            <div style={{ fontSize: '0.9em', color: '#666' }}>
+            <div className="search-item-subject">
                 {getHighlightedText(
                     item.subject.length > 80 ? item.subject.substring(0, 80) + '...' : item.subject, 
                     keyword

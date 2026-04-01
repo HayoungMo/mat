@@ -10,8 +10,13 @@ import UserProfileUpdate from './UserProfileUpdate';
 import UserMyPageBookmark from './UserMyPageBookmark';
 import MapPage from '../../map/MapPage';
 import { BookmarkProvider } from '../../contexts/BookmarkContext';
-import './UserMyPage.css'
-
+import './UserMyPage.css';
+import axios from 'axios';
+import { Routes, Route } from 'react-router-dom';
+import LevelupStart from './levelup/LevelupStart';
+import LevelupAdd from './levelup/LevelupAdd';
+import LevelupPending from './levelup/LevelupPending';
+import LevelupRejected from './levelup/LevelupRejected'
 
 const UserMyPage = ({loginUser, className, ugUsers}) => {
 
@@ -27,28 +32,54 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
 
      console.log('loginUser 확인',loginUser)
      console.log(selectedPlace);
-
     
+
         useEffect(() => {
             onData()
              onProfile()
          },[])
-        
-
-         
-        
+                 
          const onEdit = (user) => {
             console.log('onEdit 받은 데이터:',user)
             setCurrent(user)
             setIsEdit(true)
          }
 
+         //업데이트 수정(04.01)
         const onUpdate= async (user) =>{
             console.log('onUpdate 호출됨: ',profile)
-            setIsEdit(false)
-            await profileService.updateProfile(profile)
-            onProfile()
-            alert('프로필 수정 완료.')
+
+            if(!profile.currentPassword){
+                alert('비밀번호를 입력해주세요!')
+                return
+            }
+
+            try{
+
+                await axios.put('/api/profile',{
+                    id: profile._id,
+                    currentPassword: profile.currentPassword, 
+                    newPassword: profile.password,            
+                    tel: profile.tel,
+                    email: profile.email
+                })
+
+                setIsEdit(false);
+                setProfile(prev => ({ ...prev, currentPassword: '' })); 
+                onProfile(); 
+                alert('프로필 수정 완료.');
+
+            }catch(error){
+                console.error('비밀번호 검증 or update 오류', error)
+                
+                if (error.response && error.response.status === 401) {
+                    alert('현재 비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
+                } else {
+                    alert('비밀번호가 다릅니다.');
+                }
+            }
+            
+
         }
         //모하영 탈퇴 버튼 추가 3월 30일
         const onUserDel = async (user) =>{
@@ -148,7 +179,7 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
            {isEdit
             ? <>
                 <button className='btn btn-primary' onClick={onUpdate}>저장</button>
-                <button className='btn btn-outline' onClick={() => setIsEdit(false)}>취소</button>
+                <button className='btn btn-outline' onClick={() => { setIsEdit(false); setProfile({ ...profile, currentPassword: '' }); }}>취소</button>
               </>
             : <button className='btn btn-primary' onClick={() => setIsEdit(true)}>정보 수정</button>            
         }
@@ -171,31 +202,36 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
         </aside>
 
 
-            <main className='mypage-content'>
-            <section className='section-card'>
-                <h2 className='section-title'>내가 쓴 글</h2>
-            <UserMyPageList users={users} onDel={onDel}/>
-            </section>
+<main className='mypage-content'>
+                <Routes>
+                    <Route path="/" element={
+                        <>
+                            <section className='section-card'>
+                                <h2 className='section-title'>내가 쓴 글</h2>
+                                <UserMyPageList users={users} onDel={onDel}/>
+                            </section>
 
-            <section className='section-card'>
-                  <h2 className='section-title'>북마크</h2>
-            <BookmarkProvider loginUser={loginUser}>
-          
-                <div className="bookmark-section">
-                 <div className="bookmark-list-area">
-                    <UserMyPageBookmark onDel={onDel} loginUser={loginUser}
-                    onSelectPlace = {setSelectedPlace}
-                />
-                </div>
-               
-                 <div className="bookmark-map-area"> 
-                    <MapPage selectedPlace={selectedPlace}
-                    showSearch={false}/>
-                    </div>  
-                </div>
-            
-            </BookmarkProvider>
-            </section>
+                            <section className='section-card'>
+                                <h2 className='section-title'>북마크</h2>
+                                <BookmarkProvider loginUser={loginUser}>
+                                    <div className="bookmark-section">
+                                        <div className="bookmark-list-area">
+                                            <UserMyPageBookmark onDel={onDel} loginUser={loginUser} onSelectPlace={setSelectedPlace} />
+                                        </div>
+                                        <div className="bookmark-map-area"> 
+                                            <MapPage selectedPlace={selectedPlace} showSearch={false}/>
+                                        </div>  
+                                    </div>
+                                </BookmarkProvider>
+                            </section>
+                        </>
+                    } />
+
+                    <Route path="/levelup-check" element={<LevelupStart loginUser={loginUser} ugUsers={ugUsers}/>} />
+                    <Route path="/levelup" element={<LevelupAdd loginUser={loginUser}/>} />
+                    <Route path="/pending" element={<LevelupPending/>} />
+                    <Route path="/rejected" element={<LevelupRejected/>} />
+                </Routes>
             </main>
            </div>
         </div>

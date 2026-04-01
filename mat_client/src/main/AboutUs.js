@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 
 const AboutUs = () => {
 
+  //로그인을 props 못받아서 직접 로컬 스토리지에서 읽어오기
+  const isLoggedIn = !!localStorage.getItem('userId')
     const sectionRef = useRef(null);
   const [visible, setVisible] = useState(false);
  
@@ -291,7 +293,7 @@ const AboutUs = () => {
               우리는 <em>진짜 경험</em>을 기록하고,<br />
               당신의 다음 한 끼를 더 특별하게 만듭니다.
             </p>
-            <a href="./search" className="about-cta-btn">더 알아보기</a>
+            <a href="/city" className="about-cta-btn">블로그 보러가기</a>
           </div>
  
           <div className={`about-divider ${visible ? 'visible' : ''}`} />
@@ -323,14 +325,25 @@ const AboutUs = () => {
           {/* 블로그 체험단 배너 */}
           <div className={`about-blog-banner ${visible ? 'visible' : ''}`}>
             <div className="about-blog-banner-text">
-              <h4>블로그 체험단을 모집합니다</h4>
-              <p>맛집을 직접 방문하고, 경험을 나눠주세요. 선정된 분께 혜택을 드립니다.</p>
-            </div>
-            <a href="./city" className="about-blog-btn">블로그 글쓰기</a>
-
+              {isLoggedIn ? (
+                    <>
+                        <h4>블로그 등업을 신청하세요</h4>
+                        <p>등업 후 맛집 아티클을 직접 작성하고 경험을 나눌 수 있습니다.</p>
+                    </>
+                ) : (
+                    <>
+                        <h4>지금 바로 가입하세요</h4>
+                        <p>회원가입 후 등업 신청을 통해 맛집 아티클을 직접 작성할 수 있습니다.</p>
+                    </>
+                  )}
+                      </div>
+                      {isLoggedIn ? (
+                      <a href="/mypage" className="about-blog-btn">등업 신청하기</a>
+                  ) : (
+                      <a href="/login" className="about-blog-btn">회원가입 하러가기</a>
+                  )}
+           </div>
           </div>
- 
-        </div>
       </section>
       </>
     );

@@ -1,38 +1,175 @@
-.App {
-  text-align: center;
+/* ====== 공통 헤더 ====== */
+.auth-header {
+    background: #8a2130;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 20;
+    padding: 0 40px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.header-inner {
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+    height: 110px; /* 90px → 110px */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* 로고 */
+.logo-text {
+    color: white;
+    font-size: 28px;
+    font-weight: 900;
+    text-decoration: none;
+    letter-spacing: 2px;
+    flex-shrink: 0;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* 중앙 그룹: 네비 + 검색창 세로 배치 */
+.header-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px; /* 10px → 12px */
+    flex: 1;
+    margin: 0 40px;
 }
 
-.App-link {
-  color: #61dafb;
+/* 네비게이션 */
+.header-nav {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    justify-content: center;
+}
+.header-nav a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 4px 0;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+.header-nav a:hover {
+    color: #ffffff;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.6);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* 검색창 */
+.header-search-wrap {
+    position: relative;
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    max-width: 460px;
 }
+.header-search-input {
+    flex: 1;
+    padding: 9px 18px;
+    border-radius: 25px;
+    border: none;
+    font-size: 14px;
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    transition: 0.2s;
+}
+.header-search-input::placeholder { color: rgba(255, 255, 255, 0.6); }
+.header-search-input:focus {
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+.header-search-btn {
+    padding: 9px 18px;
+    border-radius: 25px;
+    border: none;
+    background: #093c71;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+    flex-shrink: 0;
+}
+.header-search-btn:hover { background: #0a4d91; }
+
+/* 미리보기 아이템 */
+.preview-slide a {
+    text-decoration: none;
+    color: #222;
+}
+.preview-slide > div {
+    padding: 10px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.preview-slide > div:last-child {
+    border-bottom: none;
+}
+.preview-slide > div:hover {
+    background: #f8f8f8;
+}
+
+/* 미리보기 드롭다운 */
+.preview-slide {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    z-index: 100;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* 로그인/로그아웃 */
+.header-right {
+    display: flex;
+    gap: 14px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+    align-items: center;
+    flex-shrink: 0;
+}
+.header-right a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: 0.2s;
+}
+.header-right a:hover { color: #fff; }
+.header-right span { transition: 0.2s; cursor: pointer; }
+.header-right span:hover { color: #fff; }
+.bar { opacity: 0.3; }
+
+/* ====== 공통 푸터 ====== */
+.auth-footer {
+    width: 100%;
+    background: #8a2130;
+    padding: 60px 20px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    line-height: 1.8;
+    box-shadow: 0 -10px 25px rgba(138, 33, 48, 0.35);
+}
+.footer-inner { max-width: 1100px; margin: 0 auto; }
+.footer-info, .footer-address, .footer-contact {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.corp-name, .cs-number { font-weight: 700; color: #fff; }
+.footer-bar { color: rgba(255, 255, 255, 0.2); font-size: 10px; }
+.copy { margin-top: 25px; font-size: 11px; color: rgba(255, 255, 255, 0.4); letter-spacing: 0.5px; }
