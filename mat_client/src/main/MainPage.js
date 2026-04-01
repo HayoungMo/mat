@@ -7,6 +7,8 @@ import axios from 'axios';
 import './Main.css'
 import './AboutUs.js'
 import AboutUs from './AboutUs.js';
+import Footer from '../Footer.js';
+
 
 
 
@@ -110,48 +112,22 @@ const externalKeyword = useMemo(() =>
   "Yongsan-gu":"용산구",
   };
 
+
+
  return (
     <div className='mainContainer' style={{
 
       position: 'sticky',
       top: 0,
       zIndex: 1,
-      backgroundColor: '#6b2737', /* 톤온톤 색상 */
+      backgroundColor: '#ffffff', /* 톤온톤 색상 */
     
     }}  >
 
-      <header style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          padding: '20px 40px', 
-          backgroundColor: '#8a2130', 
-          borderBottom: '1px solid #e5e5e5' 
-      }}>
-        <Link to="/" style={{ fontSize: '1.5rem', fontWeight: 'bold', textDecoration: 'none', color: '#1a1a1a', fontFamily: 'var(--font-serif)' }}>
-            MAT
-        </Link>
-        
-        <div>
-          {loginUser ? (
-              <>
-                  <span style={{ fontWeight: '500', color: '#1a1a1a' }}>{loginUser}님</span>
-                  <span style={{ margin: '0 10px', color: '#ccc' }}>|</span>
-                  <span onClick={onLogout} style={{ cursor: 'pointer', color: '#1a1a1a', fontWeight: 'bold' }}>
-                      로그아웃
-                  </span>
-              </>
-          ) : (
-              <>
-                  <span onClick={() => navigate('/login')} style={{ cursor: 'pointer', color: '#1a1a1a' }}>로그인</span>
-                  <span style={{ margin: '0 10px', color: '#ccc' }}>|</span>
-                  <span onClick={() => navigate('/login')} style={{ cursor: 'pointer', color: '#1a1a1a' }}>회원가입</span>
-              </>
-          )}
-        </div>
-      </header>
 
-
+      {/* 배너 */}
+      {/* 상단에서 서서히 나타나는 배너 */}
+    
       {/* ── 레이어 1: 지도 + 리스트 (뒤에 고정) ── */}
       <div style={{             
         
@@ -159,6 +135,7 @@ const externalKeyword = useMemo(() =>
         top: 0,
         zIndex: 1,
         height: '600px',
+        
         
       }}>
         <div className='mainInner'>
@@ -187,13 +164,18 @@ const externalKeyword = useMemo(() =>
             </div>
 
             <div className="listItem">
-              {list.map((item, index) => (
-                <div key={index}>
-                  <div className="place-name" onClick={() => moveArticle(item)}>{item.place_name}</div>
-                  <div className="place-category">{item.category_name}</div>
+              {list
+              .filter(item=> item.place_name)
+              .map((item, index) => (
+              
+                <div key={index} className='list-row'>
+                  <div className="list-info">
+                  <div className="place-title" onClick={() => moveArticle(item)}>{item.place_name}</div>
                   <div className="place-address">{item.address_name}</div>
+                  <div className="place-category">{item.category_name}</div>
+                  
                   <span style={{ color: "#888" }} className="place-phone">{item.phone}</span>
-                  <hr className="item-divider"/>
+                  </div>
                 </div>
               ))}
               {list.length === 0 && (
@@ -212,7 +194,8 @@ const externalKeyword = useMemo(() =>
         </div>
       </div>
       {/* ── 레이어 1 끝 ── */}
-
+      
+              
 
       {/* ── 레이어 2: AboutUs (위로 올라오며 덮음) ── */}
       <div style={{
@@ -222,29 +205,15 @@ const externalKeyword = useMemo(() =>
         overflow: 'hidden',
         marginTop: '-28px',
         boxShadow: '0 -8px 32px rgba(0,0,0,0.12)',
+        marginTop: "80px"
+
       }}>
         <AboutUs />
       </div>
       {/* ── 레이어 2 끝 ── */}
 
 
-      <footer className="auth-footer" style={{ position: 'relative', zIndex: 2 }}>
-        <div className="footer-line"></div>
-        <div className="footer-inner">
-          <div className="footer-info">
-            <span className="corp-name">(주) 발로란티스 시스템즈</span><span className="footer-bar">|</span>
-            <span>대표이사 : 홍길동</span><span className="footer-bar">|</span>
-            <span>사업자등록번호 : 123-45-67890</span>
-          </div>
-          <div className="footer-address"><span>서울특별시 강남구 테헤란로 123 발로란티스 타워 15층</span></div>
-          <div className="footer-contact">
-            <span>고객센터 : </span><span className="cs-number">1588-1234</span><span className="footer-bar">|</span>
-            <span>이메일 : support@valorantis.com</span>
-          </div>
-          <p className="copy">© 2024 VALORANTIS SYSTEMS Inc. All Rights Reserved.</p>
-        </div>
-      </footer>
-
+      <Footer/>
     </div>
   );
 };

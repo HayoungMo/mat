@@ -1,0 +1,107 @@
+/* cityUser/CityPage.css */
+
+.city-page-wrapper {
+    max-width: 900px;
+    margin: 40px auto;
+    font-family: 'Noto Sans KR', 'Pretendard', sans-serif;
+}
+
+/* 🌟 왼쪽 프로필과 오른쪽 버튼을 양끝으로 밀어내는 배너 */
+.city-profile-banner {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important; /* 👈 양끝 정렬 핵심! */
+    background-color: #fcfcfc;
+    padding: 30px 40px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 묶음: 아바타 + 텍스트 정보 (왼쪽) */
+.city-profile-left {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+/* 아바타 동그라미 (버건디) */
+.city-profile-avatar {
+    width: 70px;
+    height: 70px;
+    background-color: #8a2130 !important; 
+    border-radius: 50%;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(138, 33, 48, 0.3);
+}
+
+.city-avatar-text {
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1;
+}
+
+/* 텍스트 정보 */
+.city-profile-info {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    text-align: left !important;
+}
+
+.city-profile-info h2 {
+    margin: 0 0 8px 0 !important;
+    font-size: 24px;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.city-highlight-text {
+    color: #8a2130;
+}
+
+.city-profile-role {
+    margin: 0 !important;
+    font-size: 15px;
+    color: #64748b;
+}
+
+/* 묶음: 수정/삭제 버튼 (오른쪽) */
+.city-profile-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* 프로필 전용 미니 버튼 */
+.btn-profile-edit, .btn-profile-del {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    color: #555555;
+}
+
+.btn-profile-edit:hover {
+    border-color: #111111;
+    color: #111111;
+    background-color: #f9f9f9;
+}
+
+.btn-profile-del:hover {
+    border-color: #8a2130;
+    color: #8a2130;
+    background-color: #fdf2f3;
+}

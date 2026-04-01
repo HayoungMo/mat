@@ -1,91 +1,95 @@
-/* 1. 전체 레이아웃 및 배경 */
-.login-page-container {
-    display: flex; flex-direction: column; min-height: 100vh;
-    background: #ffffff; margin: 0; padding: 0;
+/* 1. LoginPage 메인 영역 */
+.auth-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    background: #ffffff;
+    min-height: calc(100vh - 160px); /* 헤더+푸터 높이 제외 */
 }
 
-/* 2. 상단 헤더: 단색 와인(#8a2130) + 아래쪽 강한 볼륨 */
-.auth-header { 
-    background: #8a2130; padding: 25px 40px; display: flex; justify-content: center;
-    box-shadow: 0 10px 25px rgba(138, 33, 48, 0.35); 
-    position: relative; z-index: 20;
-}
-.header-inner { width: 100%; max-width: 1100px; display: flex; justify-content: space-between; align-items: center; }
-.logo-text { color: white; font-size: 24px; font-weight: 800; text-decoration: none; letter-spacing: 1px; }
-.header-right { display: flex; gap: 20px; font-size: 13px; color: rgba(255, 255, 255, 0.8); }
-.header-right span { cursor: pointer; transition: 0.2s; }
-.header-right span:hover { color: #fff; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
-.bar { opacity: 0.3; }
-
-/* 3. 중앙 메인 영역 */
-.auth-main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 80px 20px; }
+/* 2. 카드 */
 .card {
-    background: #fdfcf5; padding: 60px 50px; border-radius: 40px;
+    background: #fdfcf5;
+    padding: 60px 50px;
+    border-radius: 40px;
     box-shadow: 25px 30px 60px rgba(0, 0, 0, 0.08);
-    width: 100%; max-width: 540px; position: relative; box-sizing: border-box;
+    width: 100%;
+    max-width: 540px;
+    position: relative;
+    box-sizing: border-box;
 }
 .navy-top { border-top: 12px solid #093c71 !important; }
-.card-title { display: flex; align-items: baseline; justify-content: center; gap: 10px; font-size: 26px; font-weight: 800; color: #222; margin-bottom: 35px; }
+.card-title {
+    display: flex; align-items: baseline; justify-content: center;
+    gap: 10px; font-size: 26px; font-weight: 800; color: #222; margin-bottom: 35px;
+}
 .title-en { color: #00aaff; font-size: 12px; font-weight: 600; letter-spacing: 1px; }
 
-/* 4. 텍스트 상자(Input) 디자인 - 비밀번호 칸 기준으로 텍스트 위치 및 높이 통일 */
+/* 3. Input 디자인 */
 .input-group label { display: block; font-weight: 800; margin-bottom: 10px; color: #333; font-size: 14px; }
 
-/* 모든 입력창의 텍스트가 좌측 벽에서 20px 떨어지도록 설정 */
 .auth-input, .custom-select {
-    display: block; 
-    width: 100%; 
-    height: 52px; /* 높이 통일 */
-    padding: 0 20px !important; /* 비밀번호 칸처럼 좌측 여백 20px 강제 적용 */
-    background: #e9ecef !important; 
-    border: 2px solid #ced4da !important; 
-    border-radius: 15px; 
+    display: block; width: 100%; height: 52px;
+    padding: 0 20px !important;
+    background: #e9ecef !important;
+    border: 2px solid #ced4da !important;
+    border-radius: 15px;
     font-size: 15px; font-weight: 500; color: #333;
-    box-sizing: border-box; 
-    transition: all 0.2s ease-in-out;
+    box-sizing: border-box; transition: all 0.2s ease-in-out;
 }
-
 .auth-input:focus, .custom-select:focus {
-    background: #ffffff !important; 
-    border-color: #8a2130 !important; 
-    outline: none;
-    box-shadow: 0 0 0 5px rgba(138, 33, 48, 0.15); 
+    background: #ffffff !important; border-color: #8a2130 !important; outline: none;
+    box-shadow: 0 0 0 5px rgba(138, 33, 48, 0.15);
 }
 
-/* 한 줄에 여러 개 배치 시 뭉개짐 방지 및 정렬 비율 고정 */
+/* 가로 정렬 뭉개짐 방지 */
 .flex-row { display: flex; gap: 10px; width: 100%; align-items: center; margin-bottom: 15px; }
-.flex-row .auth-input, .flex-row .custom-select { 
-    flex: 1; 
-    min-width: 0; 
-}
+.flex-row .auth-input, .flex-row .custom-select { flex: 1; min-width: 0; }
 
-/* 5. 버튼 디자인 (가독성 보완) */
-.btn-navy, .btn-wine { border: none; padding: 18px; border-radius: 20px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 12px; transition: 0.2s; }
+/* 4. 버튼 */
+.btn-navy, .btn-wine {
+    border: none; padding: 18px; border-radius: 20px; font-weight: 700;
+    cursor: pointer; width: 100%; margin-top: 12px; transition: 0.2s;
+}
 .btn-navy { background: #093c71; color: white; }
 .btn-wine { background: #8a2130; color: white; }
 .btn-navy:hover, .btn-wine:hover { opacity: 0.95; transform: translateY(-2px); }
 
-.btn-gray { 
-    background: transparent; color: #555; 
-    border: none; cursor: pointer; width: 100%; 
-    margin-top: 25px; font-size: 14px; font-weight: 600;
+.btn-gray {
+    background: transparent; color: #555; border: none; cursor: pointer;
+    width: 100%; margin-top: 25px; font-size: 14px; font-weight: 600;
     transition: 0.2s; text-decoration: none;
 }
 .btn-gray:hover { color: #8a2130; text-decoration: underline; }
 
-/* 6. 하단 푸터: 단색 와인(#8a2130) + 위쪽 강한 볼륨 */
-.auth-footer {
-    width: 100%; background: #8a2130; padding: 60px 20px; text-align: center;
-    color: rgba(255, 255, 255, 0.7); font-size: 13px; line-height: 1.8;
-    box-shadow: 0 -10px 25px rgba(138, 33, 48, 0.35); 
+/* 5. 중복확인 버튼 */
+.btn-check {
+    height: 52px; padding: 0 16px; background: #093c71; color: white;
+    border: none; border-radius: 15px; font-weight: 700; font-size: 13px;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
 }
-.footer-inner { max-width: 1100px; margin: 0 auto; }
-.footer-info, .footer-address, .footer-contact { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
-.corp-name, .cs-number { font-weight: 700; color: #fff; }
-.footer-bar { color: rgba(255, 255, 255, 0.2); font-size: 10px; }
-.copy { margin-top: 25px; font-size: 11px; color: rgba(255, 255, 255, 0.4); letter-spacing: 0.5px; }
+.btn-check:hover { opacity: 0.85; }
+.check-ok  { color: #1a7a3c; font-size: 12px; font-weight: 600; margin-top: 6px; display: block; }
+.check-fail { color: #8a2130; font-size: 12px; font-weight: 600; margin-top: 6px; display: block; }
 
-/* 7. 가상 트레이드마크 */
+/* 6. 회원가입 유도 링크 */
+.signup-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #888;
+}
+.signup-link a {
+    color: #093c71;
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 6px;
+}
+.signup-link a:hover { text-decoration: underline; }
+
+/* 7. 트레이드마크 */
 .card-trademark-container { margin-top: 40px; text-align: center; }
 .trademark-line { width: 30px; height: 2px; background: #093c71; margin: 0 auto 15px; opacity: 0.2; }
 .card-trademark { font-size: 10px; color: #555; letter-spacing: 1px; text-transform: uppercase; }

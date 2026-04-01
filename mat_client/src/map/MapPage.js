@@ -18,6 +18,7 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
     const mapRef = useRef(null);          // 지도를 담을 div 참조
     const mapInstance = useRef(null);     // 생성된 카카오맵 객체 참조
     const markersRef = useRef([]);        // 마커들을 담을 배열
+    const bookmarkMarkersRef = useRef([]);
     const infowindowRef = useRef(null);   // 인포윈도우 객체 참조
     const [mapReady, setMapReady] = useState(false);
     const loginPath = "/login";
@@ -27,10 +28,7 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
     // 1. 지도 초기화 (최초 1회 실행)
     useEffect(() => {
 
-        removeMarker();
         
-
-       console.log(selectedPlace);
         
         if(!window.kakao || !window.kakao.maps) {
             console.error("카카오 sdk 로드 안됨");
@@ -42,6 +40,7 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
             const container = mapRef.current;
 
              removeMarker();
+             removeBookmarkMarkers();
            
             const options = {
                 center: new window.kakao.maps.LatLng(37.566826, 126.9786567), // 기본 위치 (서울시청)
@@ -104,20 +103,27 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
 
         // 1. 기존 마커 제거
         removeMarker();
+        removeBookmarkMarkers();
 
         const position = new window.kakao.maps.LatLng(selectedPlace.lat, selectedPlace.lng);
 
-        mapInstance.current.relayout();
-        mapInstance.current.setLevel(9); // 작은 맵에서도 보이게 적당히 확대
-        mapInstance.current.panTo(position);
+      
 
         // 2. 선택된 위치로 이동
         const offsetPosition = new window.kakao.maps.LatLng(
-            selectedPlace.lat - 0.15, // 살짝 아래로 중심 이동
+            selectedPlace.lat = selectedPlace.lat - 0.02, // 살짝 아래로 중심 이동
             selectedPlace.lng
         );
-        
-        mapInstance.current.panTo(offsetPosition);
+
+        mapInstance.current.relayout();
+
+        window.kakao.maps.LatLng(selectedPlace.lat, selectedPlace.lng)
+
+         setTimeout(() => {
+            mapInstance.current.setLevel(1);
+            mapInstance.current.panTo(offsetPosition); // offset 없이 정확한 위치로
+        }, 100);
+      
 
         // 3. 마커 추가
         const marker = addMarker(position, 0);
@@ -127,34 +133,66 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
 
     }, [selectedPlace, mapReady]); // 👈 mapReady도 의존성에 추가
 
-    const SEOUL_GU = [
-        "강남구","강동구","강북구","강서구","관악구","광진구","구로구",
-        "금천구","노원구","도봉구","동대문구","동작구","마포구","서대문구",
-        "서초구","성동구","성북구","송파구","양천구","영등포구","용산구",
-        "은평구","종로구","중구","중랑구"
-    ];
-    const isSeoul = keyword.includes("서울") || 
-        SEOUL_GU.some(gu => keyword.includes(gu));
+    
 
    
     const searchPlaces = (e) => {
         e.preventDefault();
         if (!keyword.trim() || !mapReady) return;
 
-        if (!isSeoul) {
-            alert("검색을 정확히 해야합니다(ex 종로구 맛집)");
-            return;
-        }
+
+       
         
         searchKeyword(keyword, (data, status) => {
-            placesSearchCB(data, status);
+
+            const seoulOnly = data.filter(place=>
+                place.address_name?.startsWith("서울")
+            )
+
+             placesSearchCB(seoulOnly, status);
+
+            if (seoulOnly.length === 0) {
+
+                const container = mapRef.current;
+
+                const options = {
+                center: new window.kakao.maps.LatLng(37.566826, 126.9786567), // 기본 위치 (서울시청)
+                level: 6,
+                };
+
+            const bounds = new window.kakao.maps.LatLngBounds(
+                new window.kakao.maps.LatLng(37.413294, 126.734086), // 서울 남서쪽 끝
+                new window.kakao.maps.LatLng(37.715133, 127.269311)  // 서울 북동쪽 끝
+            );
+
+            mapInstance.current = new window.kakao.maps.Map(container, options);
+            setMapReady(true);
+
+            mapInstance.current.setMinLevel(1); 
+            mapInstance.current.setMaxLevel(9);
+
+            window.kakao.maps.event.addListener(mapInstance.current, 'dragend', () => {
+            const center = mapInstance.current.getCenter();
+                    if (!bounds.contain(center)) {
+                        mapInstance.current.panTo(new window.kakao.maps.LatLng(37.566826, 126.9786567));
+                    }
+                });
+                alert("서울 지역 검색 결과가 없습니다.\n서울 지역 장소를 검색해주세요.");
+
+                
+                return;
+            }
         });
+
+        
     };
     //추가 북마크 마커 지도에 표시
     const displayBookmarkMarkers = (bookmarks) => {
+        removeMarker();
         bookmarks.forEach((b,i)=>{
             const position = new window.kakao.maps.LatLng(b.lat, b.lng);
             const marker = addMarker(position, i);
+            bookmarkMarkersRef.current.push(marker)
             window.kakao.maps.event.addListener(marker, "click", () => {
                 displayInfowindow(marker, b.matName, b.matTel, b.matAddr);
             })
@@ -187,6 +225,10 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
     const removeMarker = () => {
         markersRef.current.forEach((marker) => marker.setMap(null));
         markersRef.current = [];
+    };
+    const removeBookmarkMarkers = () => {
+        bookmarkMarkersRef.current.forEach(marker => marker.setMap(null));
+        bookmarkMarkersRef.current = [];
     };
 
     // 3. 마커 하나 추가하는 함수
@@ -222,6 +264,7 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
 
     // 5. 검색 결과 콜백 함수
     const placesSearchCB = (data, status) => {
+
         //status검색 확인용
         console.log("status:", status);
         console.log("data:", data);
@@ -239,6 +282,7 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
     // 7. 지도에 장소들 뿌려주는 핵심 함수
     const displayPlaces = (places) => {
         removeMarker();
+        removeBookmarkMarkers();
         const bounds = new window.kakao.maps.LatLngBounds();
 
          const SEOUL_BOUNDS = {
@@ -258,6 +302,10 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
             ) continue;
             
             const placePosition = new window.kakao.maps.LatLng(places[i].y, places[i].x);
+
+            
+
+        
             const marker = addMarker(placePosition, i);
 
             // 마커 클릭 시 부모 데이터 업데이트 및 지도 이동
@@ -291,11 +339,13 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
 
 
     useEffect(() => {
+        
     if (!mapRef.current || !mapInstance.current) return;
-
+    removeMarker();
         const observer = new ResizeObserver(() => {
             mapInstance.current.relayout();
         });
+
 
         observer.observe(mapRef.current);
         return () => observer.disconnect();
@@ -339,14 +389,25 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
                     const isThisOn = !!markedIds[place.id];
 
                     return (
-                        <li key={place.id || index} >
+                        <li key={place.id || index}style={{ 
+                                display: 'flex',
+                               alignItems: 'center',
+                               justifyContent: "center"}} >
                             {/* 정보 영역 */}
                             <div className="info"  onClick={() => {const moveLatLon = new window.kakao.maps.LatLng(place.y, place.x);
                                 mapInstance.current.panTo(moveLatLon);
                                 displayInfowindow(markersRef.current[index], place.place_name, place.phone, place.address_name);}}>
-                                <strong>{place.place_name}</strong>
-                                <div>{place.address_name}</div>
-                                <div>{place.phone}</div>
+                                    
+                                <strong><span
+                                        style={{ 
+                                            
+                                            minWidth: '24px', 
+                                            fontWeight: 'bold',
+                                        }}>
+                                        {index+1}.
+                                    </span>{place.place_name}</strong>
+                                <div id="addrInfo">{place.address_name}</div>
+                                <div id="phoneInfo">{place.phone}</div>
                             </div>
 
                             {/* 북마크 버튼 */}

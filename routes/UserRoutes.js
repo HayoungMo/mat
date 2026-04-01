@@ -3,6 +3,21 @@ const User = mongoose.model('users');
 
 module.exports = (app) => {
   
+  app.get('/api/check-id', async (req, res) => {
+    try {
+        const { userId } = req.query;
+        if (!userId) return res.send({ available: false, message: '아이디를 입력하세요' });
+        const existing = await User.findOne({ userId });
+        if (existing) {
+            res.send({ available: false, message: '이미 사용 중인 아이디입니다' });
+        } else {
+            res.send({ available: true, message: '사용 가능한 아이디입니다' });
+        }
+    } catch (err) {
+        res.status(500).send({ available: false, message: '서버 오류' });
+    }
+  });
+
   app.post('/api/register', async (req, res) => {
     try {
       const user = await User.create(req.body); // 
@@ -46,7 +61,7 @@ module.exports = (app) => {
           {new:true}
         )
 
-        res.send(200).send({error:false,user})
+        res.status(200).send({error:false,user})
         
       }catch(error){
         res.status(500).send({error : true, message: error.message})
@@ -68,12 +83,28 @@ module.exports = (app) => {
   //프로필 수정
   app.put('/api/profile', async (req,res) => {
     try{
-      const updated = await User.findByIdAndUpdate(
-        req.body.id,
-        {password: req.body.password, tel:req.body.tel, email: req.body.email},
-        {new: true}
-      )
-        return res.status(200).send(updated)
+
+      const {id,currentPassword,newPassword, tel, email} = req.body
+
+      //1. db에서 유저 찾기
+      const user = await User.findById(id)
+      if(!user) return res.status(404).send({error: true,message:'유저 없음'})
+
+      //2. 비번 검사
+      if(user.password!=currentPassword){
+        return res.status(401).send({ error: true, message: '현재 비밀번호가 일치하지 않습니다.' })
+      }
+
+      //3. 업데이트 할 정보 구성 (새 비밀번호 -> 변경 기존 -> 유지)
+      const updateData = {tel,email}
+      if(newPassword){
+        updateData.password=newPassword
+      }
+
+      //4. 정보 업데이트(기존에 존재)
+      const updated = await User.findByIdAndUpdate(id,updateData,{new:true})
+      return res.status(200).send(updated)
+
     } catch (error){
       return res.status(500).send({error:true,message:error.message})
     }
