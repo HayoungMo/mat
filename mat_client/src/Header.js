@@ -52,7 +52,7 @@ const Header = ({loginUser,onLogout}) => {
                 {/* 네비게이션 + 검색창 묶음 (중앙) */}
                 <div className="header-center">
                     <nav className="header-nav">
-                        <Link to="/" className={location.pathname === '/' ? 'active' : ''}>메인</Link>
+                        
                         <Link to="/map" className={location.pathname === '/map' ? 'active' : ''}>지도</Link>
                         <Link to="/city" className={location.pathname.startsWith('/city') ? 'active' : ''}>블로그</Link>
                         <Link to="/board" className={location.pathname === '/board' ? 'active' : ''}>게시판</Link>
