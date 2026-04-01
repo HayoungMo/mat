@@ -65,13 +65,10 @@ const Header = ({loginUser,onLogout}) => {
                         <input
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') handleSearch();
-                                // 백스페이스로 다 지우면 미리보기 닫기
-                                if (e.key === 'Backspace' && inputText.length <= 1) {
-                                    setShowSlide(false);
-                                }
-                            }}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                            // 포커스 잃으면 200ms 후 닫기 → 그 사이 클릭 가능
+                            onBlur={() => setTimeout(() => setShowSlide(false), 200)}
+                            onFocus={() => { if (previewList.length > 0) setShowSlide(true); }}
                             placeholder="검색해보세요"
                             className="header-search-input"
                         />
