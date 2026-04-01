@@ -14,7 +14,7 @@ const EMAIL_OPTION = [
 
 //헤더 링크 버튼박스 추가
 const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
-    const [step, setStep] = useState(0);
+    const [step, setStep] = useState(3);
     const navigate = useNavigate();
     const location = useLocation()
     const [form, setForm] = useState({
