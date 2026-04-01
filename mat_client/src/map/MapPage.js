@@ -351,18 +351,35 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
         return () => observer.disconnect();
     }, [mapReady]);
     const prevKeywordRef = useRef('');
+
+
     // 외부에서 키워드 받았을 때 자동 검색
     useEffect(() => {
     if (!externalKeyword || !mapReady) return;
     if (prevKeywordRef.current === externalKeyword) return;
+
+        prevKeywordRef.current = externalKeyword;
         setKeyword(externalKeyword);       // input에도 반영
 
+        
         const seoulCenter = new window.kakao.maps.LatLng(37.566826, 126.9786567);
         const ps = new window.kakao.maps.services.Places();
-        ps.keywordSearch(externalKeyword, placesSearchCB,{
-            location: seoulCenter,
-            radius: 20000,
-            sort: window.kakao.maps.services.SortBy.DISTANCE
+        ps.keywordSearch(externalKeyword, (data, status) => {
+            if(status !== window.kakao.maps.services.Status.ok){
+                placesSearchCB(data, status);
+                return;
+            }
+            
+            const seoulOnly = data.filter(place => 
+                place.address_name?.startsWith("서울")
+            );
+
+            if(seoulOnly.length === 0 ){
+                alert('서울 지역의 결과가 없습니다.');
+                return;
+            }
+
+            placesSearchCB(seoulOnly, status);
         });
 
     }, [externalKeyword, mapReady]);
