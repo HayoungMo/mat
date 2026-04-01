@@ -1,0 +1,73 @@
+/* 검색 페이지 전체 */
+.search-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* 섹션 제목 */
+.search-container .section h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* 검색 결과 없음 */
+.search-container p {
+    color: #888;
+    text-align: center;
+    margin-top: 40px;
+    font-size: 15px;
+}
+
+/* 페이징 버튼 */
+.paging-wrap {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+.paging-wrap button {
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+}
+.paging-wrap button:hover { background: #f0f0f0; }
+.paging-wrap button.active {
+    background: #8a2130;
+    color: white;
+    border-color: #8a2130;
+    font-weight: 700;
+}
+.paging-wrap button:disabled { opacity: 0.4; cursor: default; }
+
+
+/* 검색 아이템 */
+.search-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+.search-item:last-child { border-bottom: none; }
+
+.search-item-title a {
+    text-decoration: none;
+    color: #093c71;
+    font-size: 16px;
+    font-weight: 700;
+    transition: 0.2s;
+}
+.search-item-title a:hover { color: #8a2130; }
+
+.search-item-subject {
+    font-size: 14px;
+    color: #666;
+    margin-top: 6px;
+    line-height: 1.5;
+}

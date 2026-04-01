@@ -14,14 +14,16 @@ const EMAIL_OPTION = [
 
 //헤더 링크 버튼박스 추가
 const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
-    const [step, setStep] = useState(0);
+    const [step, setStep] = useState(3);
     const navigate = useNavigate();
     const location = useLocation()
     const [form, setForm] = useState({
         userId: '', password: '', telHead: '010', telMid:'', telTail:'', 
         emailId: '', emailDomain:'' , addr: '', birthYear: '', birthMonth:'', birthDay:''
-    })
-        useEffect(() => {
+    });
+    const [idCheck,setIdCheck] = useState({ msg: '', ok: null});
+        
+    useEffect(() => {
         if (!loginUser && window.location.pathname.includes('/mypage')) {
             setStep(3);
         }
@@ -40,8 +42,16 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
         }
         setForm({ ...form, [name]: value });
     };
+    
+    const onCheckId = async () => {
+        if (!userId.trim()) { alert('아이디를 입력하세요'); return;}
+        const res = await axios.get(`/api/check-id?userId=${userId}`);
+        setIdCheck({msg: res.data.message, ok: res.data.available});
+    };
 
+    //회원 가입 제출
     const onNext = async () => {
+        if(!idCheck.ok) {alert('아이디 중복확인을 해주세요'); return;}
         const tel = form.telHead + form.telMid + form.telTail;
         const birth = form.birthYear ? String(form.birthYear).slice(2) + form.birthMonth + form.birthDay : '';
         if(!userId.trim()) { alert('아이디를 입력해주세요'); return }
@@ -55,6 +65,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
         }
     };
 
+    //로그인
     const onLogin = async () => {
         try {
             const response = await axios.post('/api/login', { userId, password });
@@ -71,13 +82,14 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
         } catch (error) { alert("로그인 중 서버 오류가 발생했습니다"); }
     };
 
+    //로그아웃 내부용 form/step 초기화 포함
     const onLogout = () => {
         localStorage.removeItem('userId');
         localStorage.removeItem('user');
         setLoginUser(null);
         setLoginInfo(null);
         setForm({ userId: '', password: '', telHead: '010', telMid:'', telTail:'', emailId: '', emailDomain:'' , addr: '', birthYear: '', birthMonth:'', birthDay:'' });
-        setStep(0);
+        setStep(3);
         alert("로그아웃 되었습니다");
     };
 
@@ -95,146 +107,107 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
 
     //헤더 링크버튼 추가
     return (
-        <div className='login-page-container'>
-            <header className="auth-header">
-                <div className="header-inner">
-                    <Link to="/" className="logo-text">MAT</Link>
-                    <div className="header-right-group">
-                        <nav className="header-nav">
-                            <Link to="/">메인</Link>
-                            <Link to="/map">지도</Link>
-                            <Link to="/search">검색</Link>
-                            <Link to="/login">로그인</Link>
-                            <Link to="/mypage">마이페이지</Link>
-                            <Link to="/city">블로그</Link>
-                            <Link to="/board">게시판</Link>
-                        </nav>
-
-                        <div className="header-right">
-                        {loginUser ? (
-                            <>
-                                <span>{loginUser}님</span>
-                                <span className="bar">|</span>
-                                <span onClick={onLogout} style={{cursor:'pointer'}}>로그아웃</span>
-                            </>
-                        ) : (
-                            <>
-                                <span onClick={() => setStep(3)} style={{cursor:'pointer'}}>로그인</span>
-                                <span className="bar">|</span>
-                                <span onClick={() => setStep(1)} style={{cursor:'pointer'}}>회원가입</span>
-                            </>
-                        )}
-                    </div>
-                </div>
-                </div>
-            </header>
-
-            <main className="auth-main">
-                {step === 0 && (
-                    <div className="card navy-top">
-                        <h2 className="card-title">
-                            {loginUser ? `${loginUser}님 환영합니다!` : "서비스 선택"}
-                            {!loginUser && <span className="title-en">SELECT SERVICE</span>}
-                        </h2>
-                        <div style={{marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                            {loginUser ? (
-                                <button className="btn-wine" onClick={onLogout}>로그아웃</button>
-                            ) : (
-                                <>
-                                    <button className="btn-navy" onClick={() => setStep(3)}>로그인</button>
-                                    <button className="btn-wine" onClick={() => setStep(1)}>회원가입</button>
-                                </>
+        <main className="auth-main">
+            {/* 회원 가입 폼 */}
+            {step === 1 && (
+                <div className="card navy-top join-card">
+                    <h3 className="card-title">회원가입 <span className="title-en">SIGN UP</span></h3>
+                    <div className="input-group">
+                        <p>
+                            <label>ID</label>
+                            <div className="flex-row">
+                                <input type='text' name='userId' value={userId} onChange={onText}
+                                    placeholder="아이디 입력" className="auth-input" />
+                                <button type="button" className="btn-check" onClick={onCheckId}>중복확인</button>
+                            </div>
+                            {idCheck.msg && (
+                                <span className={idCheck.ok ? 'check-ok' : 'check-fail'}>{idCheck.msg}</span>
                             )}
-                        </div>
-                        <Trademark />
+                        </p>
+                        <p><label>PW</label>
+                            <input type='password' name='password' value={password} onChange={onText}
+                                placeholder="비밀번호 입력" className="auth-input" />
+                        </p>
+                        <p><label>연락처</label>
+                            <div className="flex-row">
+                                <select name="telHead" value={form.telHead} onChange={onText} className="custom-select">
+                                    <option value="010">010</option><option value="011">011</option>
+                                </select>
+                                <input type="text" name="telMid" value={form.telMid} onChange={onText} maxLength={4} className="auth-input" />
+                                <input type="text" name="telTail" value={form.telTail} onChange={onText} maxLength={4} className="auth-input" />
+                            </div>
+                        </p>
+                        <p>
+                            <label>이메일</label>
+                            <div className="flex-row">
+                                <input type='text' name='emailId' value={emailId} onChange={onText}
+                                    placeholder='이메일 주소' className="auth-input" />
+                                <select name="emailDomain" value={form.emailDomain} onChange={onText} className="custom-select">
+                                    {EMAIL_OPTION.map(opt => (
+                                        <option key={opt.label} value={opt.value}>{opt.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            {form.emailDomain === '' && (
+                                <input type='text' name='emailDomain' value={form.emailDomain} onChange={onText}
+                                    placeholder="@example.com(직접입력)" className="auth-input" style={{ marginTop: '8px' }} />
+                            )}
+                        </p>
+                        <p><label>생년월일</label>
+                            <div className="flex-row">
+                                <select name="birthYear" value={form.birthYear} onChange={onText} className="custom-select">
+                                    <option value="">연도</option>
+                                    {Array.from({ length: 80 }, (_, i) => 2007 - i).map(y => <option key={y} value={y}>{y}년</option>)}
+                                </select>
+                                <select name="birthMonth" value={form.birthMonth} onChange={onText} className="custom-select">
+                                    <option value="">월</option>
+                                    {Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')).map(m => <option key={m} value={m}>{m}월</option>)}
+                                </select>
+                                <select name="birthDay" value={form.birthDay} onChange={onText} className="custom-select">
+                                    <option value="">일</option>
+                                    {Array.from({ length: lastDay }, (_, i) => String(i + 1).padStart(2, '0')).map(d => <option key={d} value={d}>{d}일</option>)}
+                                </select>
+                            </div>
+                        </p>
                     </div>
-                )}
-
-                {step === 1 && (
-                    <div className="card navy-top join-card">
-                        <h3 className="card-title">회원가입 <span className="title-en">SIGN UP</span></h3>
-                        <div className="input-group">
-                            <p><label>ID</label> <input type='text' name='userId' value={userId} onChange={onText} placeholder="아이디 입력" className="auth-input"/></p>
-                            <p><label>PW</label> <input type='password' name='password' value={password} onChange={onText} placeholder="비밀번호 입력" className="auth-input"/></p>
-                            <p><label>연락처</label>
-                                <div className="flex-row">
-                                    <select name="telHead" value={form.telHead} onChange={onText} className="custom-select"><option value="010">010</option><option value="011">011</option></select>
-                                    <input type="text" name="telMid" value={form.telMid} onChange={onText} maxLength={4} className="auth-input"/>
-                                    <input type="text" name="telTail" value={form.telTail} onChange={onText} maxLength={4} className="auth-input"/>
-                                </div>
-                            </p>
-                            <p>
-                                <label>이메일</label>
-                                <div className="flex-row">
-                                    <input type='text' name='emailId' value={emailId} onChange={onText} placeholder='이메일 주소' className="auth-input"/>
-                                    <select name="emailDomain" value={form.emailDomain} onChange={onText} className="custom-select">
-                                        {EMAIL_OPTION.map(opt => (
-                                            <option key={opt.label} value={opt.value}>{opt.label}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                {form.emailDomain === '' && (
-                                    <input type='text' name='emailDomain' value={form.emailDomain} onChange={onText} placeholder="@example.com(직접입력)" className="auth-input" style={{marginTop:'8px'}}/>
-                                )}
-                            </p>
-                            <p><label>생년월일</label>
-                                <div className="flex-row">
-                                    <select name="birthYear" value={form.birthYear} onChange={onText} className="custom-select"><option value="">연도</option>{Array.from({length: 80}, (_,i) => 2007 - i).map(y => <option key={y} value={y}>{y}년</option>)}</select>
-                                    <select name="birthMonth" value={form.birthMonth} onChange={onText} className="custom-select"><option value="">월</option>{Array.from({length: 12}, (_,i) => String(i+1).padStart(2,'0')).map(m => <option key={m} value={m}>{m}월</option>)}</select>
-                                    <select name="birthDay" value={form.birthDay} onChange={onText} className="custom-select"><option value="">일</option>{Array.from({length: lastDay}, (_,i) => String(i+1).padStart(2,'0')).map(d => <option key={d} value={d}>{d}일</option>)}</select>
-                                </div>
-                            </p>
-                        </div>
-                        <button className="btn-navy" style={{marginTop:'30px'}} onClick={onNext}>가입하기</button>
-                        <button className="btn-gray" onClick={() => setStep(0)}>뒤로가기</button>
-                        <Trademark />
-                    </div>
-                )}
-
-                {step === 3 && (
-                    <div className="card navy-top">
-                        <h3 className="card-title">로그인 <span className="title-en">LOGIN</span></h3>
-                        <div className="input-group">
-                            <p><label>ID</label> <input type='text' name='userId' value={userId} onChange={onText} placeholder="아이디 입력" className="auth-input"/></p>
-                            <p><label>PW</label> <input type='password' name='password' value={password} onChange={onText} placeholder="비밀번호 입력" className="auth-input"/></p>
-                        </div>
-                        <button className="btn-navy" style={{marginTop:'30px'}} onClick={onLogin}>로그인하기</button>
-                        <button className="btn-gray" onClick={() => setStep(0)}>뒤로가기</button>
-                        <Trademark />
-                    </div>
-                )}
-
-                {step === 2 && (
-                    <div className="card navy-top">
-                    
-                        <LoginPageInfo  name={userId} onNext={() => setStep(3)} 
-        />
-        <Trademark />
-    </div>
-)}
-            </main>
-
-            <footer className="auth-footer">
-                <div className="footer-inner">
-                    <div className="footer-info">
-                        <span className="corp-name">(주) 발로란티스 시스템즈</span>
-                        <span className="footer-bar">|</span>
-                        <span>대표자: 홍길동</span>
-                        <span className="footer-bar">|</span>
-                        <span>사업자등록번호: 123-45-67890</span>
-                    </div>
-                    <div className="footer-address">
-                        <span>서울특별시 강남구 테헤란로 123 발로란티스 타워 15층</span>
-                    </div>
-                    <div className="footer-contact">
-                        <span>고객센터: <span className="cs-number">1588-1234</span></span>
-                        <span className="footer-bar">|</span>
-                        <span>이메일: support@valorantis.com</span>
-                    </div>
-                    <p className="copy">© 2024 VALORANTIS SYSTEMS. ALL RIGHTS RESERVED.</p>
+                    <button className="btn-navy" style={{ marginTop: '30px' }} onClick={onNext}>가입하기</button>
+                    <button className="btn-gray" onClick={() => setStep(3)}>뒤로가기</button>
+                    <Trademark />
                 </div>
-            </footer>
-        </div>
+            )}
+
+            {/* 로그인 폼 (기본 화면) */}
+            {step === 3 && (
+                <div className="card navy-top">
+                    <h3 className="card-title">로그인 <span className="title-en">LOGIN</span></h3>
+                    <div className="input-group">
+                        <p><label>ID</label>
+                            <input type='text' name='userId' value={userId} onChange={onText}
+                                placeholder="아이디 입력" className="auth-input" />
+                        </p>
+                        <p><label>PW</label>
+                            <input type='password' name='password' value={password} onChange={onText}
+                                placeholder="비밀번호 입력" className="auth-input" />
+                        </p>
+                    </div>
+                    <button className="btn-navy" style={{ marginTop: '30px' }} onClick={onLogin}>로그인하기</button>
+                    {/* 회원가입 유도 링크 */}
+                    <p className="signup-link">
+                        계정이 없으신가요?
+                        <a href="#!" onClick={(e) => { e.preventDefault(); setStep(1); }}>회원가입</a>
+                    </p>
+                    <Trademark />
+                </div>
+            )}
+
+            {/* 가입 완료 안내 */}
+            {step === 2 && (
+                <div className="card navy-top">
+                    <LoginPageInfo name={userId} onNext={() => setStep(3)} />
+                    <Trademark />
+                </div>
+            )}
+        </main>
     );
 };
 

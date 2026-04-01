@@ -1,114 +1,93 @@
-/* 1. 전체 레이아웃 및 배경 */
-.login-page-container {
-    display: flex; flex-direction: column; min-height: 100vh;
-    background: #ffffff; margin: 0; padding: 0;
+/* 1. LoginPage 메인 영역 */
+.auth-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    background: #ffffff;
+    min-height: calc(100vh - 160px); /* 헤더+푸터 높이 제외 */
 }
 
-/* 2. 상단 헤더: 로고(좌) + 메뉴버튼(좌측배열) + 로그인정보(우) */
-.auth-header { 
-    background: #8a2130; padding: 15px 40px; display: flex; justify-content: center;
-    box-shadow: 0 10px 25px rgba(138, 33, 48, 0.35); 
-    position: relative; z-index: 20;
-}
-.header-inner { 
-    width: 100%; max-width: 1400px; 
-    display: flex; align-items: center; 
-}
-
-/* 로고 스타일 */
-.logo-text { 
-    color: white; font-size: 28px; font-weight: 900; 
-    text-decoration: none; letter-spacing: 2px; 
-    flex-shrink: 0;
-}
-
-/* 💡 메뉴와 로그인 정보를 담는 그룹 */
-.header-right-group { 
-    display: flex; align-items: center; flex: 1; 
-    margin-left: 50px; /* 로고와 메뉴 사이 간격 */
-}
-
-/* 💡 내비게이션 메뉴: 왼쪽 배열 및 버튼 박스 디자인 */
-.header-nav { display: flex; gap: 12px; }
-.header-nav a { 
-    color: rgba(255, 255, 255, 0.85); 
-    text-decoration: none; 
-    font-size: 14px; font-weight: 700; 
-    padding: 10px 20px; 
-    border-radius: 12px; 
-    background: rgba(255, 255, 255, 0.1); /* 은은한 버튼 박스 배경 */
-    transition: all 0.3s ease; 
-}
-
-/* 💡 메뉴 버튼 호버 효과 */
-.header-nav a:hover { 
-    background: #ffffff; 
-    color: #8a2130; /* 마우스 올리면 와인색 글자 */
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* 💡 로그인/로그아웃 정보: 오른쪽 끝으로 밀기 */
-.header-right { 
-    margin-left: auto; 
-    display: flex; gap: 20px; font-size: 13px; 
-    color: rgba(255, 255, 255, 0.8); align-items: center; 
-}
-.bar { opacity: 0.3; }
-
-/* 3. 중앙 메인 영역 */
-.auth-main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 60px 20px; }
+/* 2. 카드 */
 .card {
-    background: #fdfcf5; padding: 60px 50px; border-radius: 40px;
+    background: #fdfcf5;
+    padding: 60px 50px;
+    border-radius: 40px;
     box-shadow: 25px 30px 60px rgba(0, 0, 0, 0.08);
-    width: 100%; max-width: 540px; position: relative; box-sizing: border-box;
+    width: 100%;
+    max-width: 540px;
+    position: relative;
+    box-sizing: border-box;
 }
 .navy-top { border-top: 12px solid #093c71 !important; }
-.card-title { display: flex; align-items: baseline; justify-content: center; gap: 10px; font-size: 26px; font-weight: 800; color: #222; margin-bottom: 35px; }
+.card-title {
+    display: flex; align-items: baseline; justify-content: center;
+    gap: 10px; font-size: 26px; font-weight: 800; color: #222; margin-bottom: 35px;
+}
 .title-en { color: #00aaff; font-size: 12px; font-weight: 600; letter-spacing: 1px; }
 
-/* 4. 텍스트 상자(Input) 디자인 - 비밀번호 칸 기준 (여백 20px) */
+/* 3. Input 디자인 */
 .input-group label { display: block; font-weight: 800; margin-bottom: 10px; color: #333; font-size: 14px; }
 
 .auth-input, .custom-select {
-    display: block; width: 100%; height: 52px; 
-    padding: 0 20px !important; /* 💡 비밀번호 칸처럼 좌측 여백 20px 통일 */
-    background: #e9ecef !important; 
-    border: 2px solid #ced4da !important; 
-    border-radius: 15px; 
+    display: block; width: 100%; height: 52px;
+    padding: 0 20px !important;
+    background: #e9ecef !important;
+    border: 2px solid #ced4da !important;
+    border-radius: 15px;
     font-size: 15px; font-weight: 500; color: #333;
     box-sizing: border-box; transition: all 0.2s ease-in-out;
 }
-
 .auth-input:focus, .custom-select:focus {
     background: #ffffff !important; border-color: #8a2130 !important; outline: none;
-    box-shadow: 0 0 0 5px rgba(138, 33, 48, 0.15); 
+    box-shadow: 0 0 0 5px rgba(138, 33, 48, 0.15);
 }
 
-/* 가로 정렬 영역 뭉개짐 방지 */
+/* 가로 정렬 뭉개짐 방지 */
 .flex-row { display: flex; gap: 10px; width: 100%; align-items: center; margin-bottom: 15px; }
 .flex-row .auth-input, .flex-row .custom-select { flex: 1; min-width: 0; }
 
-/* 5. 버튼 디자인 */
-.btn-navy, .btn-wine { border: none; padding: 18px; border-radius: 20px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 12px; transition: 0.2s; }
+/* 4. 버튼 */
+.btn-navy, .btn-wine {
+    border: none; padding: 18px; border-radius: 20px; font-weight: 700;
+    cursor: pointer; width: 100%; margin-top: 12px; transition: 0.2s;
+}
 .btn-navy { background: #093c71; color: white; }
 .btn-wine { background: #8a2130; color: white; }
 .btn-navy:hover, .btn-wine:hover { opacity: 0.95; transform: translateY(-2px); }
 
-.btn-gray { background: transparent; color: #555; border: none; cursor: pointer; width: 100%; margin-top: 25px; font-size: 14px; font-weight: 600; transition: 0.2s; text-decoration: none; }
+.btn-gray {
+    background: transparent; color: #555; border: none; cursor: pointer;
+    width: 100%; margin-top: 25px; font-size: 14px; font-weight: 600;
+    transition: 0.2s; text-decoration: none;
+}
 .btn-gray:hover { color: #8a2130; text-decoration: underline; }
 
-/* 6. 하단 푸터 */
-.auth-footer {
-    width: 100%; background: #8a2130; padding: 60px 20px; text-align: center;
-    color: rgba(255, 255, 255, 0.7); font-size: 13px; line-height: 1.8;
-    box-shadow: 0 -10px 25px rgba(138, 33, 48, 0.35); 
+/* 5. 중복확인 버튼 */
+.btn-check {
+    height: 52px; padding: 0 16px; background: #093c71; color: white;
+    border: none; border-radius: 15px; font-weight: 700; font-size: 13px;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
 }
-.footer-inner { max-width: 1100px; margin: 0 auto; }
-.footer-info, .footer-address, .footer-contact { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
-.corp-name, .cs-number { font-weight: 700; color: #fff; }
-.footer-bar { color: rgba(255, 255, 255, 0.2); font-size: 10px; }
-.copy { margin-top: 25px; font-size: 11px; color: rgba(255, 255, 255, 0.4); letter-spacing: 0.5px; }
+.btn-check:hover { opacity: 0.85; }
+.check-ok  { color: #1a7a3c; font-size: 12px; font-weight: 600; margin-top: 6px; display: block; }
+.check-fail { color: #8a2130; font-size: 12px; font-weight: 600; margin-top: 6px; display: block; }
+
+/* 6. 회원가입 유도 링크 */
+.signup-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #888;
+}
+.signup-link a {
+    color: #093c71;
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 6px;
+}
+.signup-link a:hover { text-decoration: underline; }
 
 /* 7. 트레이드마크 */
 .card-trademark-container { margin-top: 40px; text-align: center; }
