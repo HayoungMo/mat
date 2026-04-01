@@ -12,6 +12,7 @@ const EMAIL_OPTION = [
     {value: '@nate.com', label:'@nate.com'},
 ]
 
+//헤더 링크 버튼박스 추가
 const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
     const [step, setStep] = useState(0);
     const navigate = useNavigate();
@@ -92,6 +93,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
         </div>
     );
 
+    //헤더 링크버튼 추가
     return (
         <div className='login-page-container'>
             <header className="auth-header">
