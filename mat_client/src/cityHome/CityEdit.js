@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { FaTrashCan } from "react-icons/fa6";
+import './CityEdit.css'
 
 const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
 
