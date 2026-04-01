@@ -16,7 +16,6 @@ const cityNames = {
 
 const CityHome = ({loginUser,loginInfo}) => {
 
-    
     const {cityName} = useParams()
     const [myCityName,setMyCityName] = useState('')
     const displayTitle = cityNames[cityName] || "우리 동네";
@@ -31,10 +30,14 @@ const CityHome = ({loginUser,loginInfo}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5; //한페이지에 5개
 
+    //글 쓰기 버튼 보이는가 
+    const [isAddShow, setIsAddShow] = useState(false)
+
     //cityName이 바뀌면 1페이지로 리셋하게 한다
     useEffect(() => {
         onData()
         setCurrentPage(1)
+        setIsAddShow(false)
     },[cityName])
 
     //현재 페이지에 해당하는 그 구하는거... java에서 했던거
@@ -72,6 +75,7 @@ const CityHome = ({loginUser,loginInfo}) => {
         await onData()
 
         onShow('글 추가')
+        setIsAddShow(false)
     }
     const onDel =async(item)=>{
         
@@ -89,21 +93,49 @@ const CityHome = ({loginUser,loginInfo}) => {
         setIsShow(true)
     }
     return (
-        <div className="magazine-home-container">
-            {/* 매거진 타이틀 */}
-            <div className="magazine-header-section">
-                <h1 className="magazine-main-title">{displayTitle} <span className="title-highlight">맛집 칼럼</span></h1>
+        <div className="magazine-home-container"> 
+            
+            
+            <div className="magazine-header-section" style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'flex-end', 
+                padding: '0 10px 15px 10px' 
+            }}>
+                
+                <h1 className="magazine-main-title" style={{ margin: 0, lineHeight: '1' }}>
+                    {displayTitle} <span className="title-highlight">맛집 칼럼</span>
+                </h1>
+                
+                {myCityName === cityName && (
+                    <button 
+                        className="btn-submit" 
+                        style={{ 
+                            padding: '8px 16px', 
+                            borderRadius: '6px', 
+                            margin: 0,
+                            fontWeight: 'bold',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
+                        }}
+                        onClick={() => setIsAddShow(!isAddShow)}
+                    >
+                        {isAddShow ? '글 숨기기' : '기사 작성'}
+                    </button>
+                )}
             </div>
             
-            {myCityName === cityName &&
-                <CityAdd onAdd={onAdd} loginUser={loginUser}/>
-            }
+            
+            {isAddShow && myCityName === cityName && (
+                <div style={{ marginBottom: '40px' }}>
+                    <CityAdd onAdd={onAdd} loginUser={loginUser}/>
+                </div>
+            )}
             
             {
                 isShow && <CityMessage msg={msg} isShow={isShow} setIsShow={setIsShow}/>
             }
             
-            {/* 리스트 컴포넌트 호출 */}
+            
             <CityList 
                 articles={currentArticles} 
                 currentPage={currentPage} 

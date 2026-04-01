@@ -3,7 +3,7 @@ const router = express.Router();
 const path = require('path');
 const controller  = require('../controller/bookmarkController');
 
-console.log("bookmarkRoutes 로드됨");
+
 
 router.get('/', controller.getBookmarks);
 

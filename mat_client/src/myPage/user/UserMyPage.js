@@ -189,7 +189,8 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
                 </div>
                
                  <div className="bookmark-map-area"> 
-                    <MapPage selectedPlace={selectedPlace}/>
+                    <MapPage selectedPlace={selectedPlace}
+                    showSearch={false}/>
                     </div>  
                 </div>
             

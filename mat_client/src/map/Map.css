@@ -1,0 +1,127 @@
+/* 전체 지도 래퍼 */
+.map_wrap {
+    width: 100%;
+    height: 1000px;
+    position: relative;
+}
+
+/* 검색 + 리스트 패널 */
+#menu_wrap {
+    width: 380px;
+    position: absolute;
+    max-height: 800px;
+    overflow-y: auto;
+    z-index: 10;
+    top: 10px;
+    left: 10px;
+
+    background-color: rgba(255, 255, 255, 0.95); /* 배경 */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+}
+
+/* 검색 영역 */
+.option {
+    padding: 6px 0;
+}
+
+.option form {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+}
+
+.option input[type="text"] {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 13px;
+    outline: none;
+    width: 200px;
+}
+
+.option input[type="text"]:focus {
+    border-color: #093c71;
+}
+
+.option button {
+    padding: 4px 10px;
+    background-color: #093c71;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.option button:hover {
+    background-color: #357abd;
+}
+
+/* 구분선 */
+#menu_wrap hr {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 8px 0;
+}
+
+/* 장소 리스트 */
+#placesList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#placesList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+}
+
+#placesList li:last-child {
+    border-bottom: none;
+}
+
+#placesList li:hover {
+    background-color: #f5f8ff;
+    border-radius: 4px;
+}
+
+/* 장소 정보 영역 */
+.info {
+    flex: 1;
+    padding-right: 8px;
+}
+
+.info strong {
+    font-size: 13px;
+    color: #222;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.info div {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+}
+
+/* 북마크 버튼 */
+.on,
+.off {
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 4px;
+    flex-shrink: 0;
+}
+
+.on span,
+.off span {
+    font-size: 20px;
+}

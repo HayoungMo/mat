@@ -68,12 +68,28 @@ module.exports = (app) => {
   //프로필 수정
   app.put('/api/profile', async (req,res) => {
     try{
-      const updated = await User.findByIdAndUpdate(
-        req.body.id,
-        {password: req.body.password, tel:req.body.tel, email: req.body.email},
-        {new: true}
-      )
-        return res.status(200).send(updated)
+
+      const {id,currentPassword,newPassword, tel, email} = req.body
+
+      //1. db에서 유저 찾기
+      const user = await User.findById(id)
+      if(!user) return res.status(404).send({error: true,message:'유저 없음'})
+
+      //2. 비번 검사
+      if(user.password!=currentPassword){
+        return res.status(401).send({ error: true, message: '현재 비밀번호가 일치하지 않습니다.' })
+      }
+
+      //3. 업데이트 할 정보 구성 (새 비밀번호 -> 변경 기존 -> 유지)
+      const updateData = {tel,email}
+      if(newPassword){
+        updateData.password=newPassword
+      }
+
+      //4. 정보 업데이트(기존에 존재)
+      const updated = await User.findByIdAndUpdate(id,updateData,{new:true})
+      return res.status(200).send(updated)
+
     } catch (error){
       return res.status(500).send({error:true,message:error.message})
     }

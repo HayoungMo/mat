@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import LoginPageInfo from './LoginPageInfo';
 import './loginpage.css';
 
@@ -12,13 +12,21 @@ const EMAIL_OPTION = [
     {value: '@nate.com', label:'@nate.com'},
 ]
 
+//헤더 링크 버튼박스 추가
 const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
     const [step, setStep] = useState(0);
     const navigate = useNavigate();
+    const location = useLocation()
     const [form, setForm] = useState({
         userId: '', password: '', telHead: '010', telMid:'', telTail:'', 
         emailId: '', emailDomain:'' , addr: '', birthYear: '', birthMonth:'', birthDay:''
-    });
+    })
+        useEffect(() => {
+        if (!loginUser && window.location.pathname.includes('/mypage')) {
+            setStep(3);
+        }
+    }, [loginUser, location]);
+    
 
     const { userId, password, emailId, emailDomain } = form;
 
@@ -85,12 +93,24 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
         </div>
     );
 
+    //헤더 링크버튼 추가
     return (
         <div className='login-page-container'>
             <header className="auth-header">
                 <div className="header-inner">
                     <Link to="/" className="logo-text">MAT</Link>
-                    <div className="header-right">
+                    <div className="header-right-group">
+                        <nav className="header-nav">
+                            <Link to="/">메인</Link>
+                            <Link to="/map">지도</Link>
+                            <Link to="/search">검색</Link>
+                            <Link to="/login">로그인</Link>
+                            <Link to="/mypage">마이페이지</Link>
+                            <Link to="/city">블로그</Link>
+                            <Link to="/board">게시판</Link>
+                        </nav>
+
+                        <div className="header-right">
                         {loginUser ? (
                             <>
                                 <span>{loginUser}님</span>
@@ -105,6 +125,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                             </>
                         )}
                     </div>
+                </div>
                 </div>
             </header>
 
@@ -196,17 +217,17 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
             <footer className="auth-footer">
                 <div className="footer-inner">
                     <div className="footer-info">
-                        <span className="corp-name">MAT (VALORANTIS SYSTEMS)</span>
+                        <span className="corp-name">(주) 발로란티스 시스템즈</span>
                         <span className="footer-bar">|</span>
-                        <span>대표자: 발로란티스</span>
+                        <span>대표자: 홍길동</span>
                         <span className="footer-bar">|</span>
-                        <span>사업자등록번호: 000-00-00000</span>
+                        <span>사업자등록번호: 123-45-67890</span>
                     </div>
                     <div className="footer-address">
-                        <span>서울특별시 강남구 혁신로 123 발로란티스 타워 24F</span>
+                        <span>서울특별시 강남구 테헤란로 123 발로란티스 타워 15층</span>
                     </div>
                     <div className="footer-contact">
-                        <span>고객센터: <span className="cs-number">1588-0000</span></span>
+                        <span>고객센터: <span className="cs-number">1588-1234</span></span>
                         <span className="footer-bar">|</span>
                         <span>이메일: support@valorantis.com</span>
                     </div>

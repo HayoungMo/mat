@@ -2,9 +2,12 @@ import React, { useEffect, useState, useRef } from 'react';
 import { toggleBookmark, getBookmarks } from '../services/bookmarkService'; // ← 추가
 import { useNavigate } from 'react-router-dom';
 import {searchKeyword} from '../services/SearchMapService.js';
+import Search from './Search.js';
+import './Map.css';
+
 
 const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace,
-    className}) => {
+    showSearch = true}) => {
 
     
 
@@ -21,15 +24,10 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
 
     
     const navigate = useNavigate();
-
     // 1. 지도 초기화 (최초 1회 실행)
     useEffect(() => {
 
-        // if (!window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
-        // console.error("카카오 SDK 아직 로드 안됨");
-        // return;
-        // }
-
+        removeMarker();
         
 
        console.log(selectedPlace);
@@ -42,13 +40,33 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
         window.kakao.maps.load(async () => {
             if(!mapRef.current) return;
             const container = mapRef.current;
+
+             removeMarker();
            
             const options = {
                 center: new window.kakao.maps.LatLng(37.566826, 126.9786567), // 기본 위치 (서울시청)
-                level: 3,
+                level: 8,
             };
+
+            const bounds = new window.kakao.maps.LatLngBounds(
+                new window.kakao.maps.LatLng(37.413294, 126.734086), // 서울 남서쪽 끝
+                new window.kakao.maps.LatLng(37.715133, 127.269311)  // 서울 북동쪽 끝
+            );
+
             mapInstance.current = new window.kakao.maps.Map(container, options);
             setMapReady(true);
+
+            mapInstance.current.setMinLevel(6);  // 너무 확대 못하게
+            mapInstance.current.setMaxLevel(9);
+
+            window.kakao.maps.event.addListener(mapInstance.current, 'dragend', () => {
+        const center = mapInstance.current.getCenter();
+                if (!bounds.contain(center)) {
+                    mapInstance.current.panTo(new window.kakao.maps.LatLng(37.566826, 126.9786567));
+                }
+            });
+
+            
             infowindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
 
             
@@ -87,9 +105,19 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
         // 1. 기존 마커 제거
         removeMarker();
 
-        // 2. 선택된 위치로 이동
         const position = new window.kakao.maps.LatLng(selectedPlace.lat, selectedPlace.lng);
+
+        mapInstance.current.relayout();
+        mapInstance.current.setLevel(9); // 작은 맵에서도 보이게 적당히 확대
         mapInstance.current.panTo(position);
+
+        // 2. 선택된 위치로 이동
+        const offsetPosition = new window.kakao.maps.LatLng(
+            selectedPlace.lat - 0.15, // 살짝 아래로 중심 이동
+            selectedPlace.lng
+        );
+        
+        mapInstance.current.panTo(offsetPosition);
 
         // 3. 마커 추가
         const marker = addMarker(position, 0);
@@ -99,10 +127,24 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
 
     }, [selectedPlace, mapReady]); // 👈 mapReady도 의존성에 추가
 
+    const SEOUL_GU = [
+        "강남구","강동구","강북구","강서구","관악구","광진구","구로구",
+        "금천구","노원구","도봉구","동대문구","동작구","마포구","서대문구",
+        "서초구","성동구","성북구","송파구","양천구","영등포구","용산구",
+        "은평구","종로구","중구","중랑구"
+    ];
+    const isSeoul = keyword.includes("서울") || 
+        SEOUL_GU.some(gu => keyword.includes(gu));
+
    
     const searchPlaces = (e) => {
         e.preventDefault();
         if (!keyword.trim() || !mapReady) return;
+
+        if (!isSeoul) {
+            alert("검색을 정확히 해야합니다(ex 종로구 맛집)");
+            return;
+        }
         
         searchKeyword(keyword, (data, status) => {
             placesSearchCB(data, status);
@@ -199,7 +241,22 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
         removeMarker();
         const bounds = new window.kakao.maps.LatLngBounds();
 
+         const SEOUL_BOUNDS = {
+            minLat: 37.413294,
+            maxLat: 37.715133,
+            minLng: 126.734086,
+            maxLng: 127.269311,
+        };
+
         for (let i = 0; i < places.length; i++) {
+            const lat = parseFloat(places[i].y);
+            const lng = parseFloat(places[i].x);
+
+             if (
+                lat < SEOUL_BOUNDS.minLat || lat > SEOUL_BOUNDS.maxLat ||
+                lng < SEOUL_BOUNDS.minLng || lng > SEOUL_BOUNDS.maxLng
+            ) continue;
+            
             const placePosition = new window.kakao.maps.LatLng(places[i].y, places[i].x);
             const marker = addMarker(placePosition, i);
 
@@ -231,46 +288,50 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
         mapInstance.current.setBounds(bounds);
         setFilteredPlaces(places); // 리스트 UI 업데이트용
     };
+
+
+    useEffect(() => {
+    if (!mapRef.current || !mapInstance.current) return;
+
+        const observer = new ResizeObserver(() => {
+            mapInstance.current.relayout();
+        });
+
+        observer.observe(mapRef.current);
+        return () => observer.disconnect();
+    }, [mapReady]);
     const prevKeywordRef = useRef('');
     // 외부에서 키워드 받았을 때 자동 검색
     useEffect(() => {
     if (!externalKeyword || !mapReady) return;
     if (prevKeywordRef.current === externalKeyword) return;
         setKeyword(externalKeyword);       // input에도 반영
+
+        const seoulCenter = new window.kakao.maps.LatLng(37.566826, 126.9786567);
         const ps = new window.kakao.maps.services.Places();
-        ps.keywordSearch(externalKeyword, placesSearchCB);
+        ps.keywordSearch(externalKeyword, placesSearchCB,{
+            location: seoulCenter,
+            radius: 20000,
+            sort: window.kakao.maps.services.SortBy.DISTANCE
+        });
 
     }, [externalKeyword, mapReady]);
 
 
     
    return (
-        <div className="map_wrap" style={{width:"500px", height:"500px",
-            position: "relative",  
-           display:'flex' }} >
+        <div className="map_wrap">
 
-            {/* 임시 css */}
-            <div id="menu_wrap" style={{width : "300px",
-                position: "absolute", maxHeight: "450px",
-                overflowY: "auto",
-                zIndex: 10,
-                overflowY: "auto",
-                top: "10px",
-            left: "10px",
-             
-            }}>
+            
+            {showSearch && (
+            <div id="menu_wrap">
+                
                 <div className="option">
-                    <form onSubmit={searchPlaces}>
-                        키워드 : 
-                        <input 
-                            type="text" 
-                            value={keyword} 
-                            onChange={(e) => setKeyword(e.target.value)} 
-                            size="15" 
-                        /> 
-                        <button type="submit">검색하기</button> 
-                    </form>
+                    
+                    <Search keyword={keyword} setKeyword={setKeyword} onSearch={searchPlaces} />
+                    
                 </div>
+                
                 <hr />
                 <ul id="placesList">
                     {filteredPlaces.map((place, index) => {
@@ -323,8 +384,11 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
             
             
             </div>
+            )}
             {/* 1. 지도 영역 (배경처럼 깔림) */}
-                <div ref={mapRef}   style={{width:"100%", height:"500px", display:"flex"}}></div>
+                <div ref={mapRef}   style={{width:"100%", height:"1000px", display:"flex"}}>
+
+                </div>
         </div>
     );
 };
