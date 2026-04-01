@@ -78,7 +78,7 @@ const AboutUs = () => {
  
         .about-hero-text {
           font-family: 'Playfair Display', serif;
-          font-size: clamp(26px, 3vw, 38px);
+          font-size: clamp(26px, 3vw, 35px);
           font-weight: 400;
           line-height: 1.55;
           color: var(--color-sub);

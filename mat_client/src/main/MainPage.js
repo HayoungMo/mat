@@ -10,6 +10,7 @@ import AboutUs from './AboutUs.js';
 
 
 
+
 const MainPage = ({loginUser, setLoginUser, setLoginInfo}) => {
   //총합검색어
   const [keyword, setKeyword] = useState('');
@@ -110,13 +111,15 @@ const externalKeyword = useMemo(() =>
   "Yongsan-gu":"용산구",
   };
 
+
+
  return (
     <div className='mainContainer' style={{
 
       position: 'sticky',
       top: 0,
       zIndex: 1,
-      backgroundColor: '#6b2737', /* 톤온톤 색상 */
+      backgroundColor: '#ffffff', /* 톤온톤 색상 */
     
     }}  >
 
@@ -151,7 +154,9 @@ const externalKeyword = useMemo(() =>
         </div>
       </header>
 
-
+      {/* 배너 */}
+      {/* 상단에서 서서히 나타나는 배너 */}
+    
       {/* ── 레이어 1: 지도 + 리스트 (뒤에 고정) ── */}
       <div style={{             
         
@@ -189,7 +194,7 @@ const externalKeyword = useMemo(() =>
             <div className="listItem">
               {list.map((item, index) => (
                 <div key={index}>
-                  <div className="place-name" onClick={() => moveArticle(item)}>{item.place_name}</div>
+                  <div className="place-title" onClick={() => moveArticle(item)}>{item.place_name}</div>
                   <div className="place-category">{item.category_name}</div>
                   <div className="place-address">{item.address_name}</div>
                   <span style={{ color: "#888" }} className="place-phone">{item.phone}</span>
