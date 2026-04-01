@@ -28,7 +28,8 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
      const [isUserDel, setIsUserDel] = useState(false) //모하영 탈퇴유저 추가
      const [current,setCurrent] =useState({})
      const [bookmark,setBookmark] = useState([])
-     const [selectedPlace, setSelectedPlace] = useState(null);
+     const [selectedPlace, setSelectedPlace] = useState(null)
+     const [toast,setToast] = useState(null)
 
      console.log('loginUser 확인',loginUser)
      console.log(selectedPlace);
@@ -39,6 +40,28 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
              onProfile()
          },[])
                  
+        useEffect(()=>{
+            if(!request || !loginUser) return
+
+            const {status} = request
+            if(status !== 'approved' && status !=='rejected') return
+            
+            const notifyKey = `notified_${loginUser}_${status}`
+            if(localStorage.getItem(notifyKey)) return
+            
+            if(status === 'rejected'){
+                setToast({message:'등업 신청이 거절됐습니다.',type:'rejected'})
+                const timer = setTimeout(()=>setToast(null),5000)
+                return ()=> clearTimeout(timer)
+            }
+
+            if(status === 'approved'){
+                localStorage.setItem('pendingToast', '등업 신청이 승인됐습니다.')
+                localStorage.setItem('pendingToastType','approved')
+            }
+            
+        },[request,loginUser])
+
          const onEdit = (user) => {
             console.log('onEdit 받은 데이터:',user)
             setCurrent(user)
@@ -91,14 +114,18 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
                 //등업 신청 데이터도 같이 삭제 : 모하영
                 await fetch('/api/upgrade', {
                     method: 'DELETE',
-                    headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({userId: loginUser})
-                });
-                
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: loginUser })
+                 });
+
                 await profileService.deleteProfile(profile._id)
                 //localStorage 정리
                 localStorage.removeItem('userId')
                 localStorage.removeItem('user')
+
+                localStorage.removeItem(`notified_${loginUser}_approved`)
+                localStorage.removeItem(`notified_${loginUser}_rejected`)
+
                 alert('탈퇴가 완료 되었습니다.')
                 window.location.href = '/' //메인으로 이동 + 새로고침
             }catch (err) {
@@ -166,6 +193,14 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
     return (
         <div className='mypage-wrapper'>
          
+         {
+            toast &&(
+                <div className={`toast-notification toast-${toast.type}`}>
+                    <span>{toast.message}</span>
+                    <button onClick={()=>setToast(null)}>✕</button>
+                </div>
+            )
+         }
 
             <div className='mypage-body'>
             

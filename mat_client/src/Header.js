@@ -53,9 +53,9 @@ const Header = ({loginUser,onLogout}) => {
                 <div className="header-center">
                     <nav className="header-nav">
                         
-                        <Link to="/map" className={location.pathname === '/map' ? 'active' : ''}>지도</Link>
-                        <Link to="/city" className={location.pathname.startsWith('/city') ? 'active' : ''}>블로그</Link>
-                        <Link to="/board" className={location.pathname === '/board' ? 'active' : ''}>게시판</Link>
+                        <span onClick={() => navigate('/map')} className={location.pathname === '/map' ? 'active' : ''}>지도</span>
+                        <span onClick={() => navigate('/city')} className={location.pathname.startsWith('/city') ? 'active' : ''}>블로그</span>
+                        <span onClick={() => navigate('/board')} className={location.pathname === '/board' ? 'active' : ''}>게시판</span>
                     </nav>
 
                     {/* 검색창 - 마우스가 벗어나면 미리보기 닫기 */}
@@ -96,7 +96,12 @@ const Header = ({loginUser,onLogout}) => {
                         <>
                             <span>{loginUser}님</span>
                             <span className="bar">|</span>
-                            <Link to="/mypage">마이페이지</Link>
+                            <span
+                                onClick={() => navigate('/mypage')}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                마이페이지
+                            </span>
                             <span className="bar">|</span>
                             <span onClick={onLogout}>로그아웃</span>
                         </>

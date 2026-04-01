@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CityMyhome from './CityMyhome';
 import { useNavigate } from 'react-router-dom';
 import './CityPage.css'; 
 import axios from 'axios';
 
-const CityPage = ({ loginUser, loginInfo }) => {
+const CityPage = ({ loginUser, loginInfo,setLoginInfo,setLoginUser }) => {
     const navigate = useNavigate();
     
     // 🌟 정보수정 폼을 열고 닫는 스위치 (기본값: false = 숨김)
@@ -15,12 +15,39 @@ const CityPage = ({ loginUser, loginInfo }) => {
         setIsEditingProfile(!isEditingProfile); 
     };
 
+    const [toast, setToast] = useState(null);
+
+    useEffect(()=>{
+        const message = localStorage.getItem('pendingToast')
+        const type = localStorage.getItem('pendingToastType')
+
+        if (message){
+            setToast({message,type})
+            localStorage.removeItem('pendingToast')
+            localStorage.removeItem('pendingToastType')
+        
+            const timer = setTimeout(()=>setToast(null),5000)
+            return ()=> clearTimeout(timer)
+        }
+    },[])
     const handleDeleteAccount = async() => {
-        if(window.confirm('정말로 기자 계정을 삭제(탈퇴)하시겠습니까? 작성한 기사의 저작권은 영구적으로 Eat-log 팀에 귀속됩니다.')) {
+        if(window.confirm('정말로 기자 계정을 삭제(탈퇴)하시겠습니까? 작성한 기사의 저작권은 영구적으로 Eat=log 팀에 귀속됩니다.')) {
             try{
+                //등업 신청 데이터도 같이 삭제
+
+                await axios.delete('/api/upgrade',{
+                    data: {userId:loginUser}
+                });
                 await axios.delete('/api/profile',{
                     data: {id: loginInfo._id}
                 });
+
+                //localStorage 정리와 전역 상태 초기화
+                localStorage.removeItem('userId');
+                localStorage.removeItem('user');
+                setLoginUser(null);
+                setLoginInfo(null);
+
                 alert('계정이 삭제되었습니다. 그동안 감사했습니다.');
                 window.location.href = '/'; 
             }catch(error){
@@ -32,6 +59,13 @@ const CityPage = ({ loginUser, loginInfo }) => {
 
     return (
         <div className="city-page-wrapper">
+            {toast && (
+                <div className={`toast-notification toast-${toast.type}`}>
+                <span>{toast.message}</span>
+                <button onClick={() => setToast(null)}>✕</button>
+                </div>
+            )}
+
             <div className="city-profile-banner">
                 <div className="city-profile-left">
                     <div className="city-profile-avatar">
