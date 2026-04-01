@@ -3,11 +3,14 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom"
 import SearchItem from "./totSearch/SearchItem";
 
-const Header = ({loginUser}) => {
+
+
+const Header = ({loginUser,onLogout}) => {
     const navigate = useNavigate();
     const [inputText, setInputText] = useState('');
     const [previewList, setPreviewList] = useState([]);
     const [showSlide, setShowSlide] = useState(false);
+  
 
     //실시간 보기 (3~5개)
     useEffect(() => {
@@ -24,6 +27,7 @@ const Header = ({loginUser}) => {
         return () => clearTimeout(timer);
     },[inputText]);
 
+    
     //엔터치면 검색 페이지로 이동하기
     const handleSearch = () => {
         if (!inputText.trim()) return;
@@ -32,43 +36,62 @@ const Header = ({loginUser}) => {
     };
 
     return(
-        <header style={{ borderBottom: '1px solid #ccc', padding: '10px' }}>
-            <nav>
-                <Link to='/'><button>메인</button></Link>
-                <Link to='/map'><button>지도</button></Link>
-                <Link to='/search'><button>검색</button></Link>
-                {/* 추가된코드 */}
-                <Link to='/login'><button>{loginUser ? `${loginUser}님` : '로그인'}</button></Link>
-                <Link to='/mypage'><button>마이 페이지</button></Link>
-                <Link to='/city'><button>블로그 홈</button></Link>
-                <Link to='/board'><button>게시판</button></Link>
-            </nav>
+         <header className="auth-header">
+            <div className="header-inner">
+                <Link to="/" className="logo-text">MAT</Link>
+
+                <div className="header-right-group">
+                    <nav className="header-nav">
+                        <Link to="/">메인</Link>
+                        <Link to="/map">지도</Link>
+                        <Link to="/search">검색</Link>
+                        <Link to="/login">로그인</Link>
+                        <Link to="/mypage">마이페이지</Link>
+                        <Link to="/city">블로그</Link>
+                        <Link to="/board">게시판</Link>
+                    </nav>
 
         {/* 검색 영역 */}
-        <div style={{ position: 'relative', marginTop: '10px' }}>
-            <input 
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            placeholder="미리보기 검색"
-        />
-        <button onClick={handleSearch}>검색</button>
+           <div style={{ position: 'relative', marginLeft: '20px' }}>
+                        <input
+                            value={inputText}
+                            onChange={(e) => setInputText(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                            placeholder="검색어 입력"
+                            className="header-search-input"
+                        />
+            <button onClick={handleSearch} className="header-search-btn">검색</button>
         {/* 미리보기 */}
-            {showSlide && previewList.length > 0 && (
-                <div className="preview-slide" style={{
-                    position: 'absolute', background: 'white', border: '1px solid #ddd', 
-                    zIndex: 100, width: '300px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                }}>
-                {previewList.map(item => (
-                    <div key={item._id} onClick={() => setShowSlide(false)}>
-                        <SearchItem item={item} keyword={inputText} />
+             {showSlide && previewList.length > 0 && (
+                            <div className="preview-slide">
+                                {previewList.map(item => (
+                                    <div key={item._id} onClick={() => setShowSlide(false)}>
+                                        <SearchItem item={item} keyword={inputText} />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
-                ))}
-            </div>
-            )}
+
+                    <div className="header-right">
+                        {loginUser ? (
+                            <>
+                                <span>{loginUser}님</span>
+                                <span className="bar">|</span>
+                                <span onClick={onLogout} style={{ cursor: 'pointer' }}>로그아웃</span>
+                            </>
+                        ) : (
+                            <>
+                                <Link to="/login" style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none' }}>로그인</Link>
+                                <span className="bar">|</span>
+                                <Link to="/login" style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none' }}>회원가입</Link>
+                            </>
+                        )}
+                    </div>
+                </div>
             </div>
         </header>
-    )
-}
+    );
+};
 
 export default Header;

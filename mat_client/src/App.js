@@ -40,6 +40,15 @@ function App() {
     }
 }, [loginUser, loginInfo]);
 
+    const onLogout = () => {
+        localStorage.removeItem('userId');
+        localStorage.removeItem('user');
+        setLoginUser(null);
+        setLoginInfo(null);
+        alert("로그아웃 되었습니다")
+    }
+
+
   return (
     <div>
       
