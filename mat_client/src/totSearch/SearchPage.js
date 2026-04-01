@@ -1,3 +1,4 @@
+import './search.css'
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import SearchBar from './SearchBar';
@@ -87,9 +88,9 @@ const subjectMatches = currentItems.filter(item =>
 const totalPages = Math.ceil(sortedTotalList.length / itemsPerPage);
 
 return (
-    <div>
+    <div className="search-container">
         <button onClick={() => navigate(-1)}>뒤로가기</button>
-        <SearchBar keyword={inputText} setKeyword={setInputText} onSearch={() => onSearch(inputText)}/>
+        {/* <SearchBar keyword={inputText} setKeyword={setInputText} onSearch={() => onSearch(inputText)}/> */}
             {/* 검색 결과 출력 */}
            {urlKeyword && list.length > 0 ? (
                 <>
@@ -115,16 +116,13 @@ return (
 
                     {/* 페이징 버튼 UI */}
                     {totalPages > 1 && (
-                        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '5px' }}>
+                        <div className="paging-wrap">
                             <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>이전</button>
                             {Array.from({ length: totalPages }, (_, i) => (
                                 <button 
                                     key={i + 1} 
                                     onClick={() => setCurrentPage(i + 1)}
-                                    style={{ 
-                                        fontWeight: currentPage === i + 1 ? 'bold' : 'normal',
-                                        backgroundColor: currentPage === i + 1 ? '#eee' : '#fff'
-                                    }}
+                                    className={currentPage === i + 1 ? 'active' : ''}
                                 >
                                     {i + 1}
                                 </button>
