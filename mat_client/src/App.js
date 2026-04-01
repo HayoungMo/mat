@@ -8,8 +8,6 @@ import Board from './board/boardList/Board';
 import React, { useState,useEffect } from 'react'; // ★ React와 useState 추가
 import CityAll from './cityHome/CityAll';
 import axios from 'axios';
-import Header from './Header';
-import Footer from './Footer'
 
 function App() {
 
@@ -40,19 +38,18 @@ function App() {
     }
 }, [loginUser, loginInfo]);
 
-    const onLogout = () => {
-        localStorage.removeItem('userId');
-        localStorage.removeItem('user');
-        setLoginUser(null);
-        setLoginInfo(null);
-        alert("로그아웃 되었습니다")
-    }
-
-
   return (
     <div>
-      
-      <Header loginUser={loginUser} />
+      <p>
+        <Link to='/'><button>메인</button></Link>
+        <Link to='/map'><button>지도</button></Link>
+        <Link to='/search'><button>검색</button></Link>
+        {/* 추가된코드 */}
+        <Link to='/login'><button>{loginUser ? `${loginUser}님` : '로그인'}</button></Link>
+        <Link to='/mypage'><button>마이 페이지</button></Link>
+        <Link to='/city'><button>블로그 홈</button></Link>
+        <Link to='/board'><button>게시판</button></Link>
+      </p>
 
       <Routes>
         <Route path="/" element={<MainPage loginUser={loginUser} setLoginUser={setLoginUser}/>} exact></Route>
@@ -62,12 +59,11 @@ function App() {
         {/* 팀원 로그인정보 전달코드 */}
         <Route path="/mypage/*" element={loginUser ? 
         <MyPage loginUser={loginUser} setLoginUser={setLoginUser} loginInfo={loginInfo}/> :
-        <LoginPage setLoginUser={setLoginUser} setLoginInfo={setLoginInfo}/>
+        <LoginPage setLoginUser={setLoginUser}/>
         } ></Route> 
         <Route path="/city/*" element={<CityAll loginUser={loginUser} loginInfo={loginInfo}/>} ></Route>
-        <Route path="/board" element={<Board loginUser={loginUser} setLoginUser={setLoginUser} setLoginInfo={setLoginInfo}/>} ></Route>
+        <Route path="/board/*" element={<Board loginUser={loginUser} setLoginUser={setLoginUser} />} ></Route>
       </Routes>
-      <Footer/>
     </div>
   );
 }
