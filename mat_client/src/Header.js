@@ -52,15 +52,16 @@ const Header = ({loginUser,onLogout}) => {
                 {/* 네비게이션 + 검색창 묶음 (중앙) */}
                 <div className="header-center">
                     <nav className="header-nav">
-                        <Link to="/map">지도</Link>
-                        <Link to="/city">블로그</Link>
-                        <Link to="/board">게시판</Link>
+                        
+                        <Link to="/map" className={location.pathname === '/map' ? 'active' : ''}>지도</Link>
+                        <Link to="/city" className={location.pathname.startsWith('/city') ? 'active' : ''}>블로그</Link>
+                        <Link to="/board" className={location.pathname === '/board' ? 'active' : ''}>게시판</Link>
                     </nav>
 
                     {/* 검색창 - 마우스가 벗어나면 미리보기 닫기 */}
                     <div
                         className="header-search-wrap"
-                        onMouseLeave={() => setShowSlide(false)}
+                        
                     >
                         <input
                             value={inputText}
@@ -102,8 +103,8 @@ const Header = ({loginUser,onLogout}) => {
                     ) : (
                         <>
                             <Link to="/login">로그인</Link>
-                            <span className="bar">|</span>
-                            <Link to="/login">회원가입</Link>
+                            {/* <span className="bar">|</span> */}
+                            {/* <Link to="/login">회원가입</Link> */}
                         </>
                     )}
                 </div>
