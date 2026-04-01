@@ -16,7 +16,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0;
-    height: 110px; /* 90px → 110px */
+    height: 90px; /* 높이 넉넉하게 */
 }
 
 /* 로고 */
@@ -34,7 +34,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px; /* 10px → 12px */
+    gap: 10px;
     flex: 1;
     margin: 0 40px;
 }
@@ -99,24 +99,6 @@
 }
 .header-search-btn:hover { background: #0a4d91; }
 
-/* 미리보기 아이템 */
-.preview-slide a {
-    text-decoration: none;
-    color: #222;
-}
-.preview-slide > div {
-    padding: 10px 16px;
-    border-bottom: 1px solid #f0f0f0;
-    cursor: pointer;
-    transition: background 0.15s;
-}
-.preview-slide > div:last-child {
-    border-bottom: none;
-}
-.preview-slide > div:hover {
-    background: #f8f8f8;
-}
-
 /* 미리보기 드롭다운 */
 .preview-slide {
     position: absolute;
@@ -175,6 +157,41 @@
 .copy { margin-top: 25px; font-size: 11px; color: rgba(255, 255, 255, 0.4); letter-spacing: 0.5px; }
 
 
+
+/* 추가라인업들 */
+
+/* ① 현재 페이지 네비 하이라이트 */
+.header-nav a.active {
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+}
+
+/* ② 페이지 전환 페이드인 */
+@keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.auth-main {
+    animation: pageFadeIn 0.35s ease both;
+}
+
+/* ③ 스크롤바 스타일 */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #8a2130; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #6d1a27; }
+
+/* ④ 푸터 텍스트 호버 */
+.footer-info span,
+.footer-contact span {
+    transition: color 0.2s;
+}
+.footer-info span:hover,
+.footer-contact span:hover {
+    color: #fff;
+}
+
+/* ⑤ 카카오 문의 링크 */
 .cs-link {
     text-decoration: none;
     color: #fff;
@@ -184,9 +201,4 @@
 .cs-link:hover {
     border-bottom-color: #fff;
 }
-
-
-/* 추가라인업들 */
-
-
 
