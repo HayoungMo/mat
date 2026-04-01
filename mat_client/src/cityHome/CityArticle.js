@@ -5,7 +5,7 @@ import articleServices from '../services/articleServices';
 import { useNavigate } from 'react-router-dom';
 import { toggleBookmark} from '../services/bookmarkService';
 import { searchKeyword } from '../services/SearchMapService';
-import style from './CityArticle.css';
+import style from './CityArticle.css'
 import { TiStarOutline, TiStarFullOutline  } from "react-icons/ti";
 
 
