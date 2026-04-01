@@ -154,11 +154,12 @@ const externalKeyword = useMemo(() =>
 
       {/* ── 레이어 1: 지도 + 리스트 (뒤에 고정) ── */}
       <div style={{             
-        backgroundColor: '#8a2130',
+        
         position: 'sticky',
         top: 0,
         zIndex: 1,
         height: '600px',
+        
       }}>
         <div className='mainInner'>
 
