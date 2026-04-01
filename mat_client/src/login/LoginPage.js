@@ -75,7 +75,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                 setLoginUser(response.data.userId);
                 setLoginInfo(response.data.user);
                 alert(`${response.data.userId}님, 환영합니다!`);
-                setStep(0); 
+                navigate('/');
             } else {
                 alert(response.data.message || "아이디 또는 비밀번호가 틀렸습니다");
             }
