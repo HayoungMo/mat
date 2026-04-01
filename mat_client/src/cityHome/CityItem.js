@@ -4,6 +4,7 @@ import { toggleBookmark } from '../services/bookmarkService';
 import { searchKeyword } from '../services/SearchMapService';
 import axios from 'axios';
 import { TiStarOutline, TiStarFullOutline  } from "react-icons/ti";
+import { TbMapPinFilled } from "react-icons/tb";
 
 const CityItem = ({ item, displayNo, onDel, onEdit, loginUser, loginInfo }) => {
     const navigate = useNavigate(); // 페이지 이동을 위해 추가
@@ -85,7 +86,7 @@ const CityItem = ({ item, displayNo, onDel, onEdit, loginUser, loginInfo }) => {
                             <span style={{ color: '#8a2130', marginRight: '8px' }}>{displayNo}.</span>
                             {title}
                         </h2>
-                        <p className="column-excerpt" style={{ fontWeight: '600' }}>📍 {matName}</p>
+                        <p className="column-excerpt" style={{ fontWeight: '600' }}><TbMapPinFilled /> {matName}</p>
                     </div>
 
                     {/* 북마크 별 아이콘 (노란색에서 매거진 컨셉에 맞게 버건디 포인트로 변경) */}
