@@ -35,8 +35,10 @@ const CityAll = ({loginUser,loginInfo}) => {
     
 
     useEffect(() => {
-          setSelectedCity(null)
-    },[])
+  if (location.pathname === '/city') {
+    setSelectedCity(null)
+  }
+}, [location.pathname])
 
 
 
