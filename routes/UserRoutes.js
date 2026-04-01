@@ -46,7 +46,7 @@ module.exports = (app) => {
           {new:true}
         )
 
-        res.send(200).send({error:false,user})
+        res.status(200).send({error:false,user})
         
       }catch(error){
         res.status(500).send({error : true, message: error.message})

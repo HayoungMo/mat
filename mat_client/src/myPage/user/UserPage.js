@@ -1,14 +1,9 @@
-import React,{useEffect,useState} from 'react';
-import LevelupStart from './levelup/LevelupStart';
+import React, { useEffect, useState } from 'react';
 import upgradeService from '../../services/upgradeServices';
 import UserMyPage from './UserMyPage';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import LevelupAdd from './levelup/LevelupAdd';
-import LevelupPending from './levelup/LevelupPending';
-import LevelupRejected from './levelup/LevelupRejected';
 
 const UserPage = ({loginUser}) => {
-
     const [ugUsers, setUgUsers] = useState([])
     const [loading, setLoading] = useState(true)
     const location = useLocation()
@@ -21,9 +16,7 @@ const UserPage = ({loginUser}) => {
             setUgUsers(myRequest)
             setLoading(false)
         }
-
         fetchData()
-    
     },[loginUser,location.state])
 
     if (loading) return <div>로딩중... </div>
@@ -31,14 +24,8 @@ const UserPage = ({loginUser}) => {
     return (
         <div>
             <Routes>
-        {/*마이페이지 홈 -> UserMyPage */}
-            <Route path='/' element ={<UserMyPage loginUser={loginUser} ugUsers={ugUsers}/>}/>
-
-        {/*등업 관련 */}
-                <Route path='/levelup-check' element={<LevelupStart loginUser={loginUser} ugUsers={ugUsers}/>}/>
-                <Route path='/levelup' element={<LevelupAdd loginUser={loginUser}/>}/>
-                <Route path='/pending' element={<LevelupPending/>}/>
-                <Route path='/rejected' element={<LevelupRejected/>}/>
+                {/* 🌟 핵심: 하위 라우팅은 UserMyPage 안에서 처리하도록 와일드카드(/*)를 씁니다 */}
+                <Route path='/*' element ={<UserMyPage loginUser={loginUser} ugUsers={ugUsers}/>}/>
             </Routes>
         </div>
     );

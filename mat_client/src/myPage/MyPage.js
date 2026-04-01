@@ -8,10 +8,12 @@ const MyPage = ({loginUser,loginInfo}) => {
     
    const role = loginInfo?.role;
 
+   console.log('현재 로그인한 유저의 권한은:',role)
+
    const renderPage = ()=>{
         switch (role) {
             case 'admin':
-                return <AdminPage/>
+                return <AdminPage loginInfo={loginInfo} loginUser={loginUser}/>
             case 'city':
                 return <CityPage loginInfo={loginInfo} loginUser={loginUser}/>
             default:

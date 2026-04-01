@@ -47,7 +47,7 @@ function App() {
         {/* 추가된코드 */}
         <Link to='/login'><button>{loginUser ? `${loginUser}님` : '로그인'}</button></Link>
         <Link to='/mypage'><button>마이 페이지</button></Link>
-        <Link to='/city'><button>블로그 홈</button></Link>
+        <Link to='/city'><button>지역</button></Link>
         <Link to='/board'><button>게시판</button></Link>
       </p>
 
