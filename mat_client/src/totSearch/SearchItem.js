@@ -1,7 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 
 const SearchItem = ({item, keyword}) => {
+
+    const navigate = useNavigate();
     //하이라이트 로직 함수 : 텍스트에서 키워드를 찾아 <mark> 태그를 입힌다.
     const getHighlightedText = (text, query) => {
         if (!query) return text;
@@ -15,20 +17,25 @@ const SearchItem = ({item, keyword}) => {
         : part
         );
     };
+
+    //박스 전체 클릭 시 이동
+    const handleClick = () => {
+        navigate (`/city/${item.cityName}/article/${item._id}`);
+    };
     return (
-       
-        <div className="search-item">
+       <div
+            onClick={handleClick}
+            style={{ marginBottom: '20px', cursor: 'pointer' }} // cursor로 클릭 가능 표시
+        >
             {/* 제목 하이라이트 */}
-            <div className="search-item-title">
-                <Link to={`/city/${item.cityName}/article/${item._id}`}>
-                    <strong>{getHighlightedText(item.title, keyword)}</strong>
-                </Link>
+            <div>
+                <strong>{getHighlightedText(item.title, keyword)}</strong>
             </div>
-            
-            {/* 본문 하이라이트 (제목 밑에 본문이 나옵니다) */}
-            <div className="search-item-subject">
+
+            {/* 본문 하이라이트 */}
+            <div style={{ fontSize: '0.9em', color: '#666' }}>
                 {getHighlightedText(
-                    item.subject.length > 80 ? item.subject.substring(0, 80) + '...' : item.subject, 
+                    item.subject.length > 80 ? item.subject.substring(0, 80) + '...' : item.subject,
                     keyword
                 )}
             </div>

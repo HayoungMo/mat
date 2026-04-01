@@ -77,6 +77,41 @@
   background: rgba(0,0,0,0.55);
 }
 
+.city-selected {
+  width: 100%;
+}
+
 .city-selected .city-overlay {
   opacity: 0;
+}
+
+/* 선택된 상태에서 배너 크게 + 선명하게 */
+.city-selected .city-card {
+  transform: none;
+  opacity: 1;
+  pointer-events: none; /* 선택 후 클릭 안 되게 */
+  border-radius: 0;
+}
+
+.city-selected .city-card img {
+  height: 320px; /* 원하는 크기로 조절 */
+  transform: none; /* 이미지 확대 효과 제거 */
+}
+
+.city-selected .city-card::after {
+  background: rgba(0,0,0,0.15); /* 오버레이 연하게 */
+}
+
+/* 선택된 상태에서 hover 효과 완전히 제거 */
+.city-selected .city-card:hover {
+  transform: none;
+  opacity: 1;
+}
+
+.city-selected .city-card:hover img {
+  transform: none;
+}
+
+.city-selected .city-card:hover::after {
+  background: rgba(0,0,0,0.15);
 }
