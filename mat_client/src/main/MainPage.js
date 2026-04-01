@@ -136,6 +136,7 @@ const externalKeyword = useMemo(() =>
         zIndex: 1,
         height: '600px',
         
+        
       }}>
         <div className='mainInner'>
 
@@ -163,13 +164,18 @@ const externalKeyword = useMemo(() =>
             </div>
 
             <div className="listItem">
-              {list.map((item, index) => (
-                <div key={index}>
+              {list
+              .filter(item=> item.place_name)
+              .map((item, index) => (
+              
+                <div key={index} className='list-row'>
+                  <div className="list-info">
                   <div className="place-title" onClick={() => moveArticle(item)}>{item.place_name}</div>
-                  <div className="place-category">{item.category_name}</div>
                   <div className="place-address">{item.address_name}</div>
+                  <div className="place-category">{item.category_name}</div>
+                  
                   <span style={{ color: "#888" }} className="place-phone">{item.phone}</span>
-                  <hr className="item-divider"/>
+                  </div>
                 </div>
               ))}
               {list.length === 0 && (
@@ -188,7 +194,8 @@ const externalKeyword = useMemo(() =>
         </div>
       </div>
       {/* ── 레이어 1 끝 ── */}
-
+      
+              
 
       {/* ── 레이어 2: AboutUs (위로 올라오며 덮음) ── */}
       <div style={{
@@ -198,6 +205,8 @@ const externalKeyword = useMemo(() =>
         overflow: 'hidden',
         marginTop: '-28px',
         boxShadow: '0 -8px 32px rgba(0,0,0,0.12)',
+        marginTop: "80px"
+
       }}>
         <AboutUs />
       </div>

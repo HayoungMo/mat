@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import MainPage from './main/MainPage';
 import MapPage from './map/MapPage';
 import SearchPage from './totSearch/SearchPage';
@@ -38,6 +38,7 @@ function App() {
 
   return (
     <div>
+      
       <Header loginUser={loginUser} onLogout={onLogout} />
 
       <Routes>
@@ -46,7 +47,7 @@ function App() {
         <Route path="/search" element={<SearchPage loginUser={loginUser} setLoginUser={setLoginUser} />} />
         <Route path="/login" element={<LoginPage loginUser={loginUser} loginInfo={loginInfo} setLoginInfo={setLoginInfo} setLoginUser={setLoginUser} />} />
         <Route path="/mypage/*" element={loginUser ?
-          <MyPage loginUser={loginUser} setLoginUser={setLoginUser} loginInfo={loginInfo} /> :
+          <MyPage loginUser={loginUser} setLoginUser={setLoginUser} loginInfo={loginInfo} setLoginInfo={setLoginInfo}/> :
           <LoginPage setLoginUser={setLoginUser} setLoginInfo={setLoginInfo} />
         } />
         <Route path="/city/*" element={<CityAll loginUser={loginUser} loginInfo={loginInfo} />} />

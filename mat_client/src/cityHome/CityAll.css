@@ -1,0 +1,82 @@
+/* 전체 컨테이너 */
+.city-container {
+  width: 70%;
+  margin: 50px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* 카드 */
+.city-card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 20px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.article-list {
+  position: relative;
+  z-index: 2;
+}
+
+/* 이미지 */
+.city-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+/* 어두운 오버레이 */
+.city-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  transition: 0.3s;
+}
+
+/* 텍스트 */
+.city-overlay {
+  position: absolute;
+  bottom: 20px;
+  left: 25px;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  z-index: 2;
+  letter-spacing: 1px;
+  pointer-events: none;
+}
+
+/* 선택 안 된 상태에서만 hover 축소 효과 적용 */
+.city-container:not(.city-selected):hover .city-card:not(:hover) {
+  transform: scale(0.97);
+  opacity: 0.75;
+}
+
+/* 현재 카드 강조 */
+.city-card:hover {
+  transform: scale(1.05);
+  opacity: 1;
+}
+
+/* 이미지 확대 */
+.city-card:hover img {
+  transform: scale(1.1);
+}
+
+/* 오버레이 진하게 */
+.city-card:hover::after {
+  background: rgba(0,0,0,0.55);
+}
+
+.city-selected .city-overlay {
+  opacity: 0;
+}

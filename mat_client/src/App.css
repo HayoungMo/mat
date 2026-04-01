@@ -155,3 +155,20 @@
 .corp-name, .cs-number { font-weight: 700; color: #fff; }
 .footer-bar { color: rgba(255, 255, 255, 0.2); font-size: 10px; }
 .copy { margin-top: 25px; font-size: 11px; color: rgba(255, 255, 255, 0.4); letter-spacing: 0.5px; }
+
+
+.cs-link {
+    text-decoration: none;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    transition: 0.2s;
+}
+.cs-link:hover {
+    border-bottom-color: #fff;
+}
+
+
+/* 추가라인업들 */
+
+
+
