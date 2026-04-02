@@ -9,6 +9,51 @@ import './AboutUs.js'
 import AboutUs from './AboutUs.js';
 import Footer from '../Footer.js';
 
+const FEATURED_ITEMS = [
+  {
+    id: 1,
+    large: true,
+    emoji: '🥩',
+    tag: '이달의 픽',
+    title: '강강술래 청담점',
+    addr : "서울 강남구 청담동 125-165",
+    desc: '청담동 한복판에서 만나는 정통 한우 갈비. 두툼하게 잘린 고기가 숯불 위에서 노릇하게 익어가는 순간, 진짜 미식의 의미를 알게 됩니다.',
+    area: '강남구',
+    cityId : 'Gangnam',
+    category: '한식 · 갈비',
+  },
+  {
+    id: 2,
+    large: false,
+    tag: '카페',
+    title: '바밀스톤커피',
+    desc: '',
+    cityId : 'Gangnam',
+    area: '강남구',
+    category: '카페',
+  },
+  {
+    id: 3,
+    large: false,
+    tag: '점심 추천',
+    title: '반포식스 논현점',
+    desc: '',
+    cityId : 'Gangnam',
+    area: '강남구',
+    category: '아시아음식',
+  },
+  {
+    id: 4,
+    large: false,
+    tag: '저녁 추천',
+    title: '리북집 논현직영점',
+    desc: '',
+    cityId : 'Gangnam',
+    area: '강남구',
+    category: '한식 · 보쌈',
+  },
+];
+
 
 
 
@@ -47,7 +92,7 @@ const externalKeyword = useMemo(() =>
     }
     fetchArticles();
   },[])
-//useEffect 무한 루프
+
  
 
   const moveArticle =(place) =>{
@@ -70,16 +115,9 @@ const externalKeyword = useMemo(() =>
   }
 
 
-   const onLogout = () => {
-    localStorage.removeItem('userId');
-    localStorage.removeItem('user');
-    // props로 setter를 받았다면 상태를 비워줍니다.
-    if (setLoginUser) setLoginUser(null);
-    if (setLoginInfo) setLoginInfo(null);
-    alert("로그아웃 되었습니다");
-    // 상태 변경 후 화면 갱신이 안 될 경우를 대비해 새로고침을 할 수도 있습니다.
-    // window.location.reload(); 
-  };
+
+
+   
 
   //25개의 구 데이터
   //한글패치
@@ -115,29 +153,33 @@ const externalKeyword = useMemo(() =>
 
 
  return (
+
+
     <div className='mainContainer' style={{
 
       position: 'sticky',
       top: 0,
       zIndex: 1,
-      backgroundColor: '#ffffff', /* 톤온톤 색상 */
+      backgroundColor: '#ffffff', 
     
     }}  >
 
+      <div className="heroHeadline">
+        <h1>서울의 <em>진짜 맛</em>을 찾아서</h1>
+        <span className="heroSub">Seoul Restaurant Guide</span>
+      </div>
 
-      {/* 배너 */}
-      {/* 상단에서 서서히 나타나는 배너 */}
+
+      
     
       {/* ── 레이어 1: 지도 + 리스트 (뒤에 고정) ── */}
       <div style={{             
         
-        position: 'sticky',
         top: 0,
-        zIndex: 1,
         height: '600px',
+        zIndex: 10,
         
-        
-      }}>
+        }}>
         <div className='mainInner'>
 
           <div className='SeoulCont'>
@@ -179,7 +221,7 @@ const externalKeyword = useMemo(() =>
                 </div>
               ))}
               {list.length === 0 && (
-                <div className="empty-msg">데이터 없음</div>
+                <div className="empty-msg">지도에서 구를 선택하거나 버튼을 눌러보세요</div>
               )}
             </div>
 
@@ -194,20 +236,59 @@ const externalKeyword = useMemo(() =>
         </div>
       </div>
       {/* ── 레이어 1 끝 ── */}
+
+      {/* ══════════════════════════════════
+          ★ 새 섹션: 오늘의 추천 맛집
+      ══════════════════════════════════ */}
+      <section className="featuredSection">
+        <div className="sectionHeader">
+          <h2>에디터가 고른 <em>이달의 맛집</em></h2>
+          <span className="sectionTag">Editor's Pick</span>
+        </div>
+
+        <div className="featuredGrid">
+          {FEATURED_ITEMS.map((item) => (
+            
+            <div
+              key={item.id}
+              className={`featuredCard${item.large ? ' large' : ''}`}
+              onClick={() =>navigate('/city')}
+            >
+              <div className="featuredCardBody">
+                <div className="featuredCardTag">{item.tag}</div>
+                <div className="featuredCardTitle">{item.title}</div>
+                {item.desc && (
+                  <div className="featuredCardDesc">{item.desc}</div>
+                )}
+                <div className="featuredCardMeta">
+                  <span>{item.area}</span>
+                  <span className="dot" />
+                  <span>{item.category}</span>
+                </div>
+              </div>
+            </div>
+
+          ))}
+        </div>
+      </section>
+      {/* ── 추천 섹션 끝 ── */}
+
+       <div style={{
+        position: 'relative',
+        zIndex: 10,
+        borderRadius: '0 0',
+        overflow: 'hidden',
+        boxShadow: '0 -8px 32px rgba(0,0,0,0.5)',
+        marginTop: "0",
+        
+
+      }}>
+      
       
               
 
       {/* ── 레이어 2: AboutUs (위로 올라오며 덮음) ── */}
-      <div style={{
-        position: 'relative',
-        zIndex: 2,
-        borderRadius: '28px 28px 0 0',
-        overflow: 'hidden',
-        marginTop: '-28px',
-        boxShadow: '0 -8px 32px rgba(0,0,0,0.12)',
-        marginTop: "80px"
-
-      }}>
+     
         <AboutUs />
       </div>
       {/* ── 레이어 2 끝 ── */}
