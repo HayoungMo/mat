@@ -269,7 +269,7 @@ const CityArticle = ({loginUser,loginInfo}) => {
                     <div className="review-notice">
                         {!loginUser && '로그인 후 리뷰를 작성할 수 있습니다.'}
                         {loginUser && loginInfo?.role !== 'user' && '일반 독자 회원만 리뷰를 작성할 수 있습니다.'}
-                        {alreadyReviewed && '이미 이 기사에 리뷰를 남기셨습니다. 고맙습니다!'}
+                        {alreadyReviewed && '이미 이 기사에 리뷰를 남기셨습니다.'}
                     </div>
                 )}
 
