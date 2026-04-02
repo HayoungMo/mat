@@ -49,6 +49,8 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
             const notifyKey = `notified_${loginUser}_${status}`
             if(localStorage.getItem(notifyKey)) return
             
+            localStorage.setItem(notifyKey, 'true')
+            
             if(status === 'rejected'){
                 setToast({message:'등업 신청이 거절됐습니다.',type:'rejected'})
                 const timer = setTimeout(()=>setToast(null),5000)

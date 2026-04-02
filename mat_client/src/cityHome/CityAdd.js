@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {searchKeyword} from '../services/SearchMapService.js';
 import axios from 'axios';
-import style from './CitAdd.css'
+import './CitAdd.css'
 
 const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
 
@@ -207,7 +207,7 @@ const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
 
             {/* 작게 우측 정렬된 버튼 그룹 */}
             <div className="button-group">
-                <button type="submit" className="btn-submit">기사 송고</button>
+                <button type="submit" className="btn-submit">기사 투고</button>
                 <button type="button" className="btn-cancel" onClick={handleCancel}>작성 취소</button>
             </div>
         </form>

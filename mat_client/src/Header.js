@@ -1,121 +1,106 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import SearchItem from "./totSearch/SearchItem";
 
-
-
-const Header = ({loginUser,onLogout}) => {
+const Header = ({ loginUser, onLogout }) => {
     const navigate = useNavigate();
-    const location = useLocation(); //페이지 이동 감지용
+    const location = useLocation();
     const [inputText, setInputText] = useState('');
     const [previewList, setPreviewList] = useState([]);
     const [showSlide, setShowSlide] = useState(false);
-  
 
-    //페이지 이동하면 검색어 초기화
+    // 페이지 이동하면 검색어 초기화
     useEffect(() => {
         setInputText('');
         setPreviewList([]);
         setShowSlide(false);
-    },[location.pathname]);
+    }, [location.pathname]);
 
-    //실시간 보기 (3~5개)
+    // 실시간 미리보기 (5개)
     useEffect(() => {
-        if(!inputText.trim()) {
+        if (!inputText.trim()) {
             setPreviewList([]);
             setShowSlide(false);
             return;
         }
         const timer = setTimeout(async () => {
             const res = await axios.get(`/api/article?keyword=${inputText}`);
-            setPreviewList(res.data.slice(0, 5) || []); //5개만 보여줌
+            setPreviewList(res.data.slice(0, 5) || []);
             setShowSlide(true);
-        },300);
+        }, 300);
         return () => clearTimeout(timer);
-    },[inputText]);
+    }, [inputText]);
 
-    
-    //엔터치면 검색 페이지로 이동하기
+    // 검색 실행
     const handleSearch = () => {
-        if (!inputText.trim()) return;
+        if (!inputText.trim()) {
+            const input = document.querySelector('.header-search-input');
+            input.classList.add('shake');
+            setTimeout(() => input.classList.remove('shake'), 500);
+            return;
+        }
         setShowSlide(false);
         navigate(`/search?q=${inputText}`);
     };
 
-    return(
-         <header className="auth-header">
-            <div className="header-inner">
-                {/* 로고 */}
-                <Link to="/" className="logo-text">MAT</Link>
+    return (
+    <header className="auth-header">
 
-                {/* 네비게이션 + 검색창 묶음 (중앙) */}
-                <div className="header-center">
-                    <nav className="header-nav">
-                        
-                        <span onClick={() => navigate('/map')} className={location.pathname === '/map' ? 'active' : ''}>지도</span>
-                        <span onClick={() => navigate('/city')} className={location.pathname.startsWith('/city') ? 'active' : ''}>블로그</span>
-                        <span onClick={() => navigate('/board')} className={location.pathname === '/board' ? 'active' : ''}>게시판</span>
-                    </nav>
-
-                    {/* 검색창 - 마우스가 벗어나면 미리보기 닫기 */}
-                    <div
-                        className="header-search-wrap"
-                        
-                    >
-                        <input
-                            value={inputText}
-                            onChange={(e) => setInputText(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                            // 포커스 잃으면 200ms 후 닫기 → 그 사이 클릭 가능
-                            onBlur={() => setTimeout(() => setShowSlide(false), 200)}
-                            onFocus={() => { if (previewList.length > 0) setShowSlide(true); }}
-                            placeholder="검색해보세요"
-                            className="header-search-input"
-                        />
-                        <button onClick={handleSearch} className="header-search-btn">검색</button>
-                        {/* 미리보기 */}
-                        {showSlide && previewList.length > 0 && (
-                            <div className="preview-slide">
-                                {previewList.map(item => (
-                                    <div key={item._id} onClick={() => {
-                                        setShowSlide(false);
-                                        setInputText('');
-                                    }}>
-                                        <SearchItem item={item} keyword={inputText} />
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* 로그인 상태 */}
-                <div className="header-right">
-                    {loginUser ? (
-                        <>
-                            <span>{loginUser}님</span>
-                            <span className="bar">|</span>
-                            <span
-                                onClick={() => navigate('/mypage')}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                마이페이지
-                            </span>
-                            <span className="bar">|</span>
-                            <span onClick={onLogout}>로그아웃</span>
-                        </>
-                    ) : (
-                        <>
-                            <Link to="/login">로그인</Link>
-                            {/* <span className="bar">|</span> */}
-                            {/* <Link to="/login">회원가입</Link> */}
-                        </>
-                    )}
-                </div>
+        {/* 1줄: MAT(중앙) + 로그인(우) */}
+        <div className="header-top">
+            <Link to="/" className="logo-text">MAT</Link>
+            <div className="header-right">
+                {loginUser ? (
+                    <>
+                        <span>{loginUser}님</span>
+                        <span className="bar">|</span>
+                        <span onClick={() => navigate('/mypage')}>마이페이지</span>
+                        <span className="bar">|</span>
+                        <span onClick={onLogout}>로그아웃</span>
+                    </>
+                ) : (
+                    <Link to="/login">로그인</Link>
+                )}
             </div>
-        </header>
-    );
+        </div>
+
+        {/* 2줄: 네비 + 검색 */}
+        <div className="header-bottom">
+            <nav className="header-nav">
+                <span onClick={() => navigate('/map')} className={location.pathname === '/map' ? 'active' : ''}>지도</span>
+                <span onClick={() => navigate('/city')} className={location.pathname.startsWith('/city') ? 'active' : ''}>칼럼</span>
+                <span onClick={() => navigate('/board')} className={location.pathname === '/board' ? 'active' : ''}>게시판</span>
+            </nav>
+
+            <div className="header-search-wrap">
+                <input
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    onBlur={() => setTimeout(() => setShowSlide(false), 200)}
+                    onFocus={() => { if (previewList.length > 0) setShowSlide(true); }}
+                    placeholder="검색해보세요"
+                    className="header-search-input"
+                />
+                <button onClick={handleSearch} className="header-search-btn">검색</button>
+                {showSlide && previewList.length > 0 && (
+                    <div className="preview-slide">
+                        {previewList.map(item => (
+                            <div key={item._id} onClick={() => {
+                                setShowSlide(false);
+                                setInputText('');
+                            }}>
+                                <SearchItem item={item} keyword={inputText} />
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+
+    </header>
+);
 };
 
 export default Header;
