@@ -55,7 +55,7 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
             mapInstance.current = new window.kakao.maps.Map(container, options);
             setMapReady(true);
 
-            mapInstance.current.setMinLevel(6);  // 너무 확대 못하게
+            mapInstance.current.setMinLevel(6); 
             mapInstance.current.setMaxLevel(9);
 
             window.kakao.maps.event.addListener(mapInstance.current, 'dragend', () => {
@@ -77,7 +77,7 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
             const bookmarks = await getBookmarks(loginUser);
             
 
-            //kakaoid들을 markedIds state에 반ㅇ영
+            //kakaoid들을 markedIds state에 반영
             const savedMarks = {};
             bookmarks.forEach(b=> {savedMarks[b.kakaoId]=true;});
             setMarkedIds(savedMarks);
@@ -95,9 +95,9 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
     useEffect(() => {
         if (!selectedPlace || !mapInstance.current) return;
         console.log("key", keyword);
-        console.log("selectedPlace:", selectedPlace); // 👈
-        console.log("mapInstance:", mapInstance.current); // 👈
-        console.log("mapReady:", mapReady); // 👈
+        console.log("selectedPlace:", selectedPlace); 
+        console.log("mapInstance:", mapInstance.current); 
+        console.log("mapReady:", mapReady);
 
      
 
@@ -131,7 +131,7 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
         // 4. 인포윈도우 표시
         displayInfowindow(marker, selectedPlace.matName, selectedPlace.matTel, selectedPlace.matAddr);
 
-    }, [selectedPlace, mapReady]); // 👈 mapReady도 의존성에 추가
+    }, [selectedPlace, mapReady]); 
 
     
 
@@ -200,12 +200,12 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
 
         
         console.log("userId:", loginUser);
-        console.log("place 객체:", place);  // ← 이게 뭐가 찍히나요?
+        console.log("place 객체:", place);  
         console.log("place.id:", place?.id);
         console.log("place.y:", place?.y);
         console.log("place.x:", place?.x);
         try {
-        const data = await toggleBookmark(loginUser, place); // ← fetch 대신
+        const data = await toggleBookmark(loginUser, place);
         console.log("결과:", data);
         setMarkedIds(prev => ({
             ...prev,
