@@ -5,6 +5,12 @@ import { searchKeyword } from '../services/SearchMapService';
 import axios from 'axios';
 import { TiStarOutline, TiStarFullOutline  } from "react-icons/ti";
 import { TbMapPinFilled } from "react-icons/tb";
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarIcon from '@mui/icons-material/Star';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 
 const CityItem = ({ item, displayNo, onDel, onEdit, loginUser, loginInfo }) => {
     const navigate = useNavigate(); // 페이지 이동을 위해 추가
@@ -91,10 +97,15 @@ const CityItem = ({ item, displayNo, onDel, onEdit, loginUser, loginInfo }) => {
 
                     {/* 북마크 별 아이콘 (노란색에서 매거진 컨셉에 맞게 버건디 포인트로 변경) */}
                     {loginInfo?.role !== 'city' && (
-                        <div onClick={(e) => { e.stopPropagation(); handleBookmarkToggle(item); }}>
-                            <span style={{ color: bookmarked ? '#f6e055' : '#dddddd', cursor:'pointer', fontSize: '40px', transition: 'color 0.2s' }}>
-                                {bookmarked ? <TiStarFullOutline /> : <TiStarOutline />}
-                            </span>
+                        <div 
+                            onClick={(e) => { e.stopPropagation(); handleBookmarkToggle(item); }}
+                            style={{ cursor: 'pointer', display: 'inline-flex' }} // div에 커서 스타일 추가
+                        >
+                            {bookmarked ? (
+                                <StarIcon sx={{ color: '#f6e055', fontSize: 40, transition: 'color 0.2s' }} />
+                            ) : (
+                                <StarBorderIcon sx={{ color: '#ddd', fontSize: 40, transition: 'color 0.2s' }} />
+                            )}
                         </div>
                     )}
                 </div>
@@ -108,8 +119,18 @@ const CityItem = ({ item, displayNo, onDel, onEdit, loginUser, loginInfo }) => {
                     {/* 작성자 전용 수정/삭제 버튼 */}
                     {canEdit && (
                         <div style={{ display: 'flex', gap: '8px' }}>
-                            <button className="btn-mini btn-edit" onClick={() => onEdit(item)}>수정</button>
-                            <button className="btn-mini btn-del" onClick={() => onDel(item)}>삭제</button>
+                            <Tooltip title="수정">
+                                <IconButton size="small" onClick={(e) => { e.stopPropagation(); onEdit(item); }}
+                                    sx={{ color: '#093c71' }}>
+                                    <EditIcon fontSize="small"/>
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="삭제">
+                                <IconButton size="small" onClick={(e) => { e.stopPropagation(); onDel(item); }}
+                                    sx={{ color: '#8a2130' }}>
+                                    <DeleteIcon fontSize="small"/>
+                                </IconButton>
+                            </Tooltip>
                         </div>
                     )}
                 </div>

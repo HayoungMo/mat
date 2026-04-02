@@ -269,3 +269,99 @@
     position: relative; /* 로그인 absolute 기준 */
     justify-content: center;
 }
+
+/* 카드 hover 그림자 (전체 공통) */
+.card:hover {
+    box-shadow: 30px 35px 70px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* 버튼 클릭 시 눌리는 효과 */
+.btn-navy:active, .btn-wine:active {
+    transform: scale(0.97);
+}
+
+/* 링크 hover 시 부드러운 색상 전환 */
+a { transition: color 0.2s ease; }
+
+/* 입력창 focus 시 라벨 강조 */
+.input-group p:focus-within label {
+    color: #8a2130;
+    transition: color 0.2s;
+}
+
+/* 페이지 로드 시 카드 등장 애니메이션 */
+@keyframes cardFadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.column-card {
+    animation: cardFadeUp 0.4s ease both;
+}
+.column-card:nth-child(1) { animation-delay: 0.05s; }
+.column-card:nth-child(2) { animation-delay: 0.1s; }
+.column-card:nth-child(3) { animation-delay: 0.15s; }
+.column-card:nth-child(4) { animation-delay: 0.2s; }
+.column-card:nth-child(5) { animation-delay: 0.25s; }
+
+/* 사이드바 아이템 hover */
+.sidebar-item:hover {
+    transform: translateX(4px);
+    transition: transform 0.2s ease;
+}
+
+/* 북마크 별 hover 시 크게 */
+.bookmark-btn:hover {
+    transform: scale(1.2) rotate(10deg);
+    transition: transform 0.2s ease;
+}
+
+/* 검색 결과 미리보기 아이템 슬라이드 */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.preview-slide {
+    animation: slideDown 0.2s ease both;
+}
+
+/* 페이지 버튼 hover */
+.page-num-btn:hover {
+    transform: scale(1.1);
+    transition: transform 0.15s ease;
+}
+
+/* 네비 active 밑줄 슬라이드 효과 */
+.header-nav span {
+    position: relative;
+}
+.header-nav span::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: white;
+    transition: width 0.2s ease;
+}
+.header-nav span:hover::after,
+.header-nav span.active::after {
+    width: 100%;
+}
+.toast-message {
+    position: fixed;
+    bottom: 80px;        /* top → bottom으로 변경 */
+    left: 50%;
+    transform: translateX(-50%);
+    background: #093c71;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 25px;
+    z-index: 9999;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    animation: pageFadeIn 0.3s ease both;
+}

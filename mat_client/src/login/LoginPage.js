@@ -5,11 +5,12 @@ import LoginPageInfo from './LoginPageInfo';
 import './loginpage.css';
 
 const EMAIL_OPTION = [
-    {value: '', label: '직접입력'},
+    {value: 'none', label: '--- 선택 ---'}, 
     {value: '@naver.com', label:'@naver.com'},
     {value: '@gmail.com', label:'@gmail.com'},
     {value: '@daum.net', label:'@daum.net'},
     {value: '@nate.com', label:'@nate.com'},
+    {value: '', label: '직접입력'},
 ]
 
 //헤더 링크 버튼박스 추가
@@ -19,9 +20,10 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
     const location = useLocation()
     const [form, setForm] = useState({
         userId: '', password: '', telHead: '010', telMid:'', telTail:'', 
-        emailId: '', emailDomain:'' , addr: '', birthYear: '', birthMonth:'', birthDay:''
+        emailId: '', emailDomain:'none' , addr: '', birthYear: '', birthMonth:'', birthDay:''
     });
     const [idCheck,setIdCheck] = useState({ msg: '', ok: null});
+    const [isDirectInput,setIsDirectInput] = useState(false);
         
     useEffect(() => {
         if (!loginUser && window.location.pathname.includes('/mypage')) {
@@ -30,18 +32,35 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
     }, [loginUser, location]);
     
 
-    const { userId, password, emailId, emailDomain } = form;
+    const { userId, password, emailId, emailDomain} = form;
 
+    
     const onText = (evt) => {
-        const { value, name } = evt.target;
-        if((name === 'telMid' || name === 'telTail') && isNaN(value)){
-            alert('숫자만 입력하세요'); return;
-        }
-        if((name === 'userId' || name === 'emailId') && /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value)){
-            alert('한글은 입력할 수 없습니다'); return;
-        }
+    const { value, name } = evt.target;
+    if ((name === 'telMid' || name === 'telTail') && isNaN(value)) {
+        alert('숫자만 입력하세요'); return;
+    }
+    if ((name === 'userId' || name === 'emailId') && /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value)) {
+        alert('한글은 입력할 수 없습니다'); return;
+    }
+    if (name === 'userId') {
+    // 영문, 숫자, 언더스코어만 허용 - 특수기호는 아예 입력 안 됨
+    if (/[^a-zA-Z0-9_]/.test(value)) return; // ← alert 없이 그냥 무시
+    setIdCheck({ msg: '', ok: null });
+    }
+    
+    // emailDomain select 변경 시에만 isDirectInput 세팅
+    // input으로 직접 입력할 때는 건드리지 않음
+    if (name === 'emailDomain' && evt.target.tagName === 'SELECT') {
+    setIsDirectInput(value === '');
+    // 직접입력 선택 시 emailDomain을 ''로 초기화해서 입력 받을 준비
+    if (value === '') {
+        setForm({ ...form, emailDomain: '' });
+        return; // ← return으로 아래 setForm 막기
+    }
+}
         setForm({ ...form, [name]: value });
-    };
+};
     
     const onCheckId = async () => {
         if (!userId.trim()) { alert('아이디를 입력하세요'); return;}
@@ -68,7 +87,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
         
         const birth = form.birthYear ? String(form.birthYear).slice(2) + form.birthMonth + form.birthDay : '';
         try {
-            const email = emailId ? emailId + emailDomain : '';
+            const email = (emailId && emailDomain && emailDomain !== 'none') ? emailId + emailDomain : '';
             const response = await axios.post('/api/register', { userId, password, tel, email, addr: form.addr, birth });
             if(response.data.success) setStep(2);
         } catch (error) {
@@ -78,20 +97,20 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
 
     //로그인
     const onLogin = async () => {
-        try {
-            const response = await axios.post('/api/login', { userId, password });
-            if (response.data.success) {
-                localStorage.setItem('userId', response.data.userId);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
-                setLoginUser(response.data.userId);
-                setLoginInfo(response.data.user);
-                // alert(`${response.data.userId}님, 환영합니다!`);
-                navigate('/');
-            } else {
-                alert(response.data.message || "아이디 또는 비밀번호가 틀렸습니다");
-            }
-        } catch (error) { alert("로그인 중 서버 오류가 발생했습니다"); }
-    };
+    try {
+        const response = await axios.post('/api/login', { userId, password });
+        if (response.data.success) {
+            localStorage.setItem('userId', response.data.userId);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+            setLoginUser(response.data.userId);
+            setLoginInfo(response.data.user);
+            window.scrollTo({ top: 0, behavior: 'instant' }); // ← 추가
+            navigate('/');
+        } else {
+            alert(response.data.message || "아이디 또는 비밀번호가 틀렸습니다");
+        }
+    } catch (error) { alert("로그인 중 서버 오류가 발생했습니다"); }
+};
 
     //로그아웃 내부용 form/step 초기화 포함
     const onLogout = () => {
@@ -178,7 +197,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                                     ))}
                                 </select>
                             </div>
-                            {form.emailDomain === '' && (
+                            {isDirectInput && (
                                 <input type='text' name='emailDomain' value={form.emailDomain} onChange={onText}
                                     placeholder="@example.com(직접입력)" className="auth-input" style={{ marginTop: '8px' }} />
                             )}

@@ -57,14 +57,7 @@ function App() {
     <div>
       {/* 토스트 메시지 */}
         {toast && (
-            <div style={{
-                position: 'fixed', top: '20px', right: '20px',
-                background: toast.type === 'info' ? '#093c71' : '#8a2130',
-                color: 'white', padding: '14px 20px', borderRadius: '8px',
-                zIndex: 9999, fontSize: '14px', fontWeight: '600',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                animation: 'pageFadeIn 0.3s ease'
-            }}>
+            <div className="toast-message">
                 {toast.msg}
             </div>
         )}

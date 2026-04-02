@@ -8,7 +8,8 @@ import { searchKeyword } from '../services/SearchMapService';
 import style from './CityArticle.css'
 import { TiStarOutline, TiStarFullOutline  } from "react-icons/ti";
 import Loading from '../Loading';
-
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarIcon from '@mui/icons-material/Star';
 
 const CityArticle = ({loginUser,loginInfo}) => {
 
@@ -183,13 +184,14 @@ const CityArticle = ({loginUser,loginInfo}) => {
                     
                     {loginInfo?.role !== 'city' && (
                         <div 
-                            className="bookmark-btn" 
                             onClick={(e) => { e.stopPropagation(); handleBookmarkToggle(data); }}
-                            title={bookmarked ? "북마크 해제" : "북마크 추가"}
+                            style={{ cursor: 'pointer', display: 'inline-flex' }} // div에 커서 스타일 추가
                         >
-                            <span style={{ color: bookmarked ? '#f6e055' : '#cccccc' }}>
-                                {bookmarked ? <TiStarFullOutline /> : <TiStarOutline />}
-                            </span>
+                            {bookmarked ? (
+                                <StarIcon sx={{ color: '#f6e055', fontSize: 40, transition: 'color 0.2s' }} />
+                            ) : (
+                                <StarBorderIcon sx={{ color: '#ddd', fontSize: 40, transition: 'color 0.2s' }} />
+                            )}
                         </div>
                     )}
                 </div>
