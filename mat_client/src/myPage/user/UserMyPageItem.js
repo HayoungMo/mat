@@ -33,7 +33,7 @@ const UserMyPageItem = ({item,loginUser,onDel}) => {
     return (
         <tr>
             <td onClick={goToArticle} 
-                style={{cursor:'pointer', color:'blue', textDecoration:'underline'}}>
+                style={{cursor:'pointer'}}>
                     <div className='title-cell'>
                 {content}
                 </div>
