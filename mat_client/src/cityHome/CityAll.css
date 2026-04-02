@@ -1,7 +1,7 @@
 /* 전체 컨테이너 */
 .city-container {
   width: 70%;
-  margin: 50px auto;
+  margin: 0px auto;
   display: flex;
   flex-direction: column;
   gap: 25px;

@@ -91,17 +91,23 @@ const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
 
         const formData = new FormData()
 
+        //images, __v, _id 제외하고 텍스트만 담기
+        const skipKeys = ['image','__v']
         Object.entries(article).forEach(([key,value])=>{
+            if(skipKeys.includes(key)) return;
+            if(value == null || value === undefined) return;
             formData.append(key,value)
         })
 
+        //새 이미지 파일 추가
         newImages.forEach(file=>{
             formData.append("images",file)
         })
 
-        deletedImages.forEach(img=>{
-            formData.append("deletedImages",JSON.stringify(img))
-        })
+        //삭제할 이미지 목록(배열 통째로 JSON 한번만)
+        
+        formData.append("deletedImages",JSON.stringify(deletedImages))
+        
 
         onUpdate(article._id,formData)
 
