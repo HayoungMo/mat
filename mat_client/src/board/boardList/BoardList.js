@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import BoardForm from './BoardForm';
-// ✅ MdAccessTime(시계 아이콘) 추가 임포트
+// ✅ 리액트 아이콘 임포트 (MdChatBubbleOutline 확인)
 import { 
     MdPoll, MdChevronLeft, MdChevronRight, MdHowToVote, 
     MdSearch, MdPerson, MdVisibility, MdGridView, MdViewList,
-    MdStar, MdStarBorder, MdLocationOn, MdAccessTime, 
-    MdHistoryEdu
+    MdStar, MdStarBorder, MdLocationOn,
+    MdChatBubbleOutline 
 } from "react-icons/md";
 
 const SURVEY_PER_PAGE = 3;
@@ -69,17 +69,7 @@ const BoardList = ({
             return detectRegionInPost(item, city);
         }).length;
     };
-    const getRemainingTime = (sysdate) => {
-    const end = new Date(sysdate).getTime() + (3 * 24 * 60 * 60 * 1000); // 3일 후
-    const now = new Date().getTime();
-    const diff = end - now;
 
-    if (diff <= 0) return "투표 종료";
-
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    return `${hours}시간 ${minutes}분 남음`;
-};
     return (
         <div className="list-container" style={{ padding: '20px' }}>
 
@@ -122,17 +112,7 @@ const BoardList = ({
                                         {opt} ({getPercent(votes, idx, total)}%)
                                     </div>
                                     ))}
-                                    <div className="survey-timer">
-                                        {/* 왼쪽: 남은 시간 */}
-                                        <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                                            <MdAccessTime size={13} /> {getRemainingTime(item.sysdate)}
-                                        </span>
-
-                                        {/* 오른쪽: 총 참여 인원 */}
-                                        <span className="total-count">
-                                            총 {total}명 참여
-                                        </span>
-                                    </div>
+                                    <p style={{ fontSize: '11px', color: '#093c71', margin: '8px 0 0', textAlign: 'right' }}>총 {total}명 참여</p>
                                 </div>
                             );
                         })}
@@ -140,11 +120,12 @@ const BoardList = ({
                 </div>
             )}
 
-            {/* 이하 검색바, 지역 필터, 게시글 목록 코드는 동일 */}
+            {/* ── 검색바 ── */}
             <div className="search-section" style={{ marginBottom: '20px' }}>
                 <BoardForm onSearch={(kw) => { onSearch(kw); setCurrentPage(1); }} />
             </div>
 
+            {/* ── 지역 필터 탭 ── */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '25px', flexWrap: 'wrap' }}>
                 {cities.map(city => {
                     const count = getCityCount(city);
@@ -173,6 +154,7 @@ const BoardList = ({
                 })}
             </div>
 
+            {/* ── 뷰 타입 컨트롤 ── */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', alignItems: 'center' }}>
                 <span style={{ fontWeight: 'bold', fontSize: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     게시글 ({filteredList.length})
@@ -204,6 +186,7 @@ const BoardList = ({
                 </div>
             </div>
 
+            {/* ── 메인 게시글 목록 ── */}
             {pagedList.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '60px', color: '#bbb', fontSize: '15px' }}>
                     {viewType === 'bookmark'
@@ -259,6 +242,7 @@ const BoardList = ({
                                             cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '3px',
                                             marginLeft: '6px', flexShrink: 0, padding: '2px 8px', borderRadius: '20px',
                                             fontSize: '12px', fontWeight: 'bold',
+                                          
                                             background: isItemBookmarked(item) ? '#fff0f0' : '#f5f5f5',
                                             border: `1px solid ${isItemBookmarked(item) ? '#f5f5f5' : '#e0e0e0'}`,
                                             color: isItemBookmarked(item) ? '#8a2130' : '#aaa',
@@ -276,7 +260,17 @@ const BoardList = ({
 
                                 <div style={{ fontSize: '12px', color: '#093c71', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
                                     <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><MdPerson /> {item.userId}</span>
-                                    <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><MdVisibility /> {item.readCount || 0}</span>
+                                    
+                                    {/* ✅ 수정 포인트: 조회수와 댓글수를 나란히 표시 */}
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                                            <MdVisibility /> {item.readCount || 0}
+                                        </span>
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                                            <MdChatBubbleOutline size={13} /> 
+                                            {Array.isArray(item.comments) ? item.comments.length : (item.commentCount || 0)}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -284,6 +278,7 @@ const BoardList = ({
                 </div>
             )}
 
+            {/* ── 페이지네이션 ── */}
             {totalPages > 1 && (
                 <div style={{ textAlign: 'center', marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '5px' }}>
                     <button

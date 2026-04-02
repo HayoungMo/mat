@@ -1,9 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { MdSearch } from "react-icons/md";
 
-const BoardForm = ({ onSearch }) => {
+const BoardForm = ({ onSearch ,lang}) => {
     const [search, setSearch] = useState('');
     const debounceRef = useRef(null); // 타이머를 저장할 객체
+    const placeholderText = lang === 'ko' 
+        ? "맛집명, 지역, 제목으로 검색하세요" 
+        : "Search by restaurant, area, or title";
 
     const handleChange = (e) => {
         const val = e.target.value;
@@ -41,7 +44,7 @@ const BoardForm = ({ onSearch }) => {
                 <input
                     type="text"
                     className="search-input"
-                    placeholder="맛집명, 지역, 제목으로 검색하세요" 
+                    placeholder={placeholderText} 
                     style={{ paddingLeft: '45px' }}
                     value={search}
                     onChange={handleChange}
@@ -50,7 +53,7 @@ const BoardForm = ({ onSearch }) => {
             {search && (
                 <button type="button" onClick={handleClear} className="btn-clear-search">✕</button>
             )}
-            <button type="submit" className="btn-search">검색</button>
+            <button type="submit" className="btn-search">{lang === 'ko' ? '검색' : 'Search'}</button>
         </form>
     );
 };
