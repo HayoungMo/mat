@@ -105,10 +105,14 @@ const Board = ({ loginUser }) => {
                             fetchList();
                         }
                     }}
+                   
+                    onBookmark={async (id) => {
+                        await BoardService.updateBookmark(id, loginUser);
+                        fetchList(); // 북마크 후 리스트 정보도 갱신
+                    }}
                     postStyle={postStyle}
                 />
             )}
-
             {/* [4] 수정하기 화면 */}
             {isEdit && (
                 <BoardEdit
