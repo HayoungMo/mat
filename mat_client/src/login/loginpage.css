@@ -39,6 +39,10 @@
     font-size: 15px; font-weight: 500; color: #333;
     box-sizing: border-box; transition: all 0.2s ease-in-out;
 }
+.custom-select {
+    position: relative;
+    z-index: 1;
+}
 .auth-input:focus, .custom-select:focus {
     background: #ffffff !important; border-color: #8a2130 !important; outline: none;
     box-shadow: 0 0 0 5px rgba(138, 33, 48, 0.15);

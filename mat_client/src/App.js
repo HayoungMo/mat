@@ -10,6 +10,8 @@ import React, { useState, useEffect } from 'react';
 import CityAll from './cityHome/CityAll';
 import Header from './Header';
 import Footer from './Footer';
+import ScrollButton from './ScrollButton';
+import axios from 'axios';
 
 function App() {
 
@@ -20,12 +22,24 @@ function App() {
     catch { return null; }
   });
 
-  useEffect(() => {
-    if (loginUser) { localStorage.setItem('userId', loginUser); }
-    else { localStorage.removeItem('userId'); }
-    if (loginInfo) { localStorage.setItem('user', JSON.stringify(loginInfo)); }
-    else { localStorage.removeItem('user'); }
-  }, [loginUser, loginInfo]);
+    useEffect(() => {
+    const checkSession = async () => {
+        if (!loginUser) return;
+        try {
+            await axios.get('/api/profile/' + loginUser);
+        } catch (err) {
+            // 서버 응답 없으면 로그아웃 처리
+            if (err.code === 'ERR_NETWORK' || err.response?.status === 404) {
+                localStorage.removeItem('userId');
+                localStorage.removeItem('user');
+                setLoginUser(null);
+                setLoginInfo(null);
+            }
+        }
+    };
+    checkSession();
+}, []);
+
 
   // 헤더용 로그아웃 함수
   const onLogout = () => {
@@ -53,7 +67,7 @@ function App() {
         <Route path="/city/*" element={<CityAll loginUser={loginUser} loginInfo={loginInfo} />} />
         <Route path="/board/*" element={<Board loginUser={loginUser} setLoginUser={setLoginUser} />} />
       </Routes>
-
+      <ScrollButton/>
       <Footer />
     </div>
   );

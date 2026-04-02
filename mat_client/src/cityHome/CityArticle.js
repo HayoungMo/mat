@@ -311,7 +311,11 @@ const CityArticle = ({loginUser,loginInfo}) => {
                                     )}
                                 </div>
                                 <div className="review-content">
-                                    {review.content}
+                                   {review.content.split(/(https?:\/\/[^\s]+)/g).map((part, i) =>
+                                    /^https?:\/\//.test(part)
+                                        ? <a key={i} href={part} target="_blank" rel="noreferrer">{part}</a>
+                                        : part
+                                    )}
                                 </div>
                             </li>
                         ))
@@ -327,10 +331,13 @@ const CityArticle = ({loginUser,loginInfo}) => {
             ) : (
                 relatedArticles.map(item => (
                     <div
-                        key={item._id}
-                        className="sidebar-item"
-                        onClick={() => navigate(`/city/${item.cityName}/article/${item._id}`)}
-                    >
+                            key={item._id}
+                            className="sidebar-item"
+                            onClick={() => {
+                                window.scrollTo({ top: 0, behavior: 'smooth' }); // ← 추가
+                                navigate(`/city/${item.cityName}/article/${item._id}`);
+                            }}
+                        >
                         {item.images?.[0] ? (
                             <img src={`/uploads/${item.images[0].saveFileName}`} alt={item.matName} />
                         ) : (

@@ -4,7 +4,7 @@ import axios from 'axios';
 import SearchBar from './SearchBar';
 import SearchItem from './SearchItem';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 const SearchPage = () => {
 
@@ -90,7 +90,18 @@ const totalPages = Math.ceil(sortedTotalList.length / itemsPerPage);
 
 return (
     <div className="search-container">
-        <button onClick={() => navigate(-1)}>뒤로가기</button>
+        <button
+                onClick={() => navigate(-1)}
+                style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '4px',
+                    color: '#8a2130', fontWeight: '600', fontSize: '14px',
+                    padding: '8px 0', marginBottom: '16px'
+                }}
+                 >
+                <ArrowBackIosNewIcon style={{ fontSize: '16px' }} />
+                뒤로가기
+            </button>
         {/* <SearchBar keyword={inputText} setKeyword={setInputText} onSearch={() => onSearch(inputText)}/> */}
             {/* 검색 결과 출력 */}
            {urlKeyword && list.length > 0 ? (

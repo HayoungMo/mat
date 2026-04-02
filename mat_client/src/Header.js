@@ -45,12 +45,12 @@ const Header = ({ loginUser, onLogout }) => {
     };
 
     return (
-    <header className="auth-header">
+    <header className="auth-header" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
 
-        {/* 1줄: MAT(중앙) + 로그인(우) */}
-        <div className="header-top">
+        {/* 1줄: MAT(중앙) + 로그인(우) onClick={(e) => e.stopPropagation()} = 네비 검색 로그인 할때 누름 방지 이벤트 버블링 막아주기*/}
+        <div className="header-top" onClick={(e) => e.stopPropagation()}>
             <Link to="/" className="logo-text">MAT</Link>
-            <div className="header-right">
+            <div className="header-right"  >
                 {loginUser ? (
                     <>
                         <span>{loginUser}님</span>
@@ -66,7 +66,7 @@ const Header = ({ loginUser, onLogout }) => {
         </div>
 
         {/* 2줄: 네비 + 검색 */}
-        <div className="header-bottom">
+        <div className="header-bottom" onClick={(e) => e.stopPropagation()}>
             <nav className="header-nav">
                 <span onClick={() => navigate('/map')} className={location.pathname === '/map' ? 'active' : ''}>지도</span>
                 <span onClick={() => navigate('/city')} className={location.pathname.startsWith('/city') ? 'active' : ''}>칼럼</span>
