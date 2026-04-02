@@ -11,26 +11,26 @@
 }
 
 /* 1줄: MAT(중앙) + 로그인 제거 → MAT만 */
+/* 1줄: MAT */
 .header-top {
     width: 100%;
     max-width: 1400px;
     display: flex;
-    justify-content: center;
-    align-items: flex-end; /* ← center → flex-end */
-    padding: 20px 0 12px 0; /* ← 아래 패딩 늘림 */
+    justify-content: flex-end;
+    align-items: center;
+    padding: 36px 0 30px 0; /* ← 더 늘림 */
     box-sizing: border-box;
     position: relative;
 }
 
-/* 2줄: 네비 + 로그인 + 검색 */
 .header-bottom {
-     width: 100%;
+    width: 100%;
     max-width: 1400px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 8px 0 18px 0;
-    gap: 12px;
+    padding: 10px 0 20px 0; /* ← 더 늘림 */
+    gap: 20px; /* ← 18px → 24px */
     box-sizing: border-box;
 }
 
@@ -59,22 +59,26 @@
     text-decoration: none;
     letter-spacing: 3px;
     flex-shrink: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* 로그인/로그아웃: 오른쪽 */
 .header-right {
-    position: absolute;
-    right: 40px; /* padding과 동일하게 */
+    position: absolute; /* 오른쪽 끝 고정 */
+    right: 0;
     display: flex;
-    gap: 16px;
+    gap: 8px;
     color: rgba(255, 255, 255, 0.8);
     align-items: center;
     flex-shrink: 0;
+    white-space: nowrap;
 }
 .header-right a {
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 16px;
+    font-size: 13px; /* 16px → 13px (약 20% 축소) */
     font-weight: 600;
     transition: 0.2s;
 }
@@ -82,7 +86,7 @@
 .header-right span {
     transition: 0.2s;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 600;
 }
 .header-right span:hover { color: #fff; }
@@ -114,24 +118,15 @@
     color: #ffffff;
     border-bottom: 2px solid #ffffff;
 }
-.header-nav-row {
-     width: 100%;
-    max-width: 1400px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    padding: 0 40px; /* 양쪽 여백 */
-    box-sizing: border-box;
-}
+
 
 /* 검색창 */
 .header-search-wrap {
     position: relative;
     display: flex;
     gap: 8px;
-    width: 100%;
-    max-width: 460px;
+    width: 400px;
+    flex-shrink: 0;
 }
 .header-search-input {
     flex: 1;
@@ -265,4 +260,12 @@
 .header-search-input.shake {
     animation: shake 0.5s ease;
     border: 1px solid rgba(255, 255, 255, 0.8) !important;
+}
+
+.header-search-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative; /* 로그인 absolute 기준 */
+    justify-content: center;
 }
