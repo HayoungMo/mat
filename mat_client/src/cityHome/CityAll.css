@@ -98,10 +98,8 @@ body{
 
 /* 선택된 상태에서 배너 크게 + 선명하게 */
 .city-selected .city-card {
-  transform: none;
-  opacity: 1;
-  pointer-events: none; /* 선택 후 클릭 안 되게 */
-  border-radius: 0;
+ pointer-events: auto; /* none → auto 로 변경 */
+    cursor: pointer;
 }
 
 .city-selected .city-card img {

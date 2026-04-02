@@ -10,9 +10,11 @@ import React, { useState, useEffect } from 'react';
 import CityAll from './cityHome/CityAll';
 import Header from './Header';
 import Footer from './Footer';
+import ScrollButton from './ScrollButton';
+import axios from 'axios';
 
 function App() {
-
+  const [toast, setToast] = useState(null);
   const [loginUser, setLoginUser] = useState(localStorage.getItem('userId'));
   const [loginInfo, setLoginInfo] = useState(() => {
     const saved = localStorage.getItem('user');
@@ -20,24 +22,52 @@ function App() {
     catch { return null; }
   });
 
-  useEffect(() => {
-    if (loginUser) { localStorage.setItem('userId', loginUser); }
-    else { localStorage.removeItem('userId'); }
-    if (loginInfo) { localStorage.setItem('user', JSON.stringify(loginInfo)); }
-    else { localStorage.removeItem('user'); }
-  }, [loginUser, loginInfo]);
+    useEffect(() => {
+    const checkSession = async () => {
+        if (!loginUser) return;
+        try {
+            await axios.get('/api/profile/' + loginUser);
+        } catch (err) {
+            // 서버 응답 없으면 로그아웃 처리
+            if (err.code === 'ERR_NETWORK' || err.response?.status === 404) {
+                localStorage.removeItem('userId');
+                localStorage.removeItem('user');
+                setLoginUser(null);
+                setLoginInfo(null);
+            }
+        }
+    };
+    checkSession();
+}, []);
+
 
   // 헤더용 로그아웃 함수
   const onLogout = () => {
+    const ok = window.confirm('정말 로그아웃 하시겠습니까?');
+    if (!ok) return;
     localStorage.removeItem('userId');
     localStorage.removeItem('user');
     setLoginUser(null);
     setLoginInfo(null);
-    alert("로그아웃 되었습니다");
+    setToast({ msg: '로그아웃 되었습니다', type: 'info' });
+    setTimeout(() => setToast(null), 3000);
   };
 
   return (
     <div>
+      {/* 토스트 메시지 */}
+        {toast && (
+            <div style={{
+                position: 'fixed', top: '20px', right: '20px',
+                background: toast.type === 'info' ? '#093c71' : '#8a2130',
+                color: 'white', padding: '14px 20px', borderRadius: '8px',
+                zIndex: 9999, fontSize: '14px', fontWeight: '600',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                animation: 'pageFadeIn 0.3s ease'
+            }}>
+                {toast.msg}
+            </div>
+        )}
       
       <Header loginUser={loginUser} onLogout={onLogout} />
 
@@ -53,7 +83,7 @@ function App() {
         <Route path="/city/*" element={<CityAll loginUser={loginUser} loginInfo={loginInfo} />} />
         <Route path="/board/*" element={<Board loginUser={loginUser} setLoginUser={setLoginUser} />} />
       </Routes>
-
+      <ScrollButton/>
       <Footer />
     </div>
   );
