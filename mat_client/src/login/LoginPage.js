@@ -122,7 +122,10 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
             {/* 회원 가입 폼 */}
             {step === 1 && (
                 <div className="card navy-top join-card">
-                    <h3 className="card-title">회원가입 <span className="title-en">SIGN UP</span></h3>
+                    <h3 className="card-title" style={{ flexDirection: 'column', gap: '4px' }}>
+                        회원가입
+                        <span className="title-en">SIGN UP</span>
+                    </h3>
                     <div className="input-group">
                         <p>
                             <label>ID</label>
