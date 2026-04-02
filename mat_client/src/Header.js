@@ -5,7 +5,7 @@ import SearchItem from "./totSearch/SearchItem";
 
 const Header = ({ loginUser, onLogout }) => {
     const navigate = useNavigate();
-    const location = useLocation(); // 페이지 이동 감지용
+    const location = useLocation();
     const [inputText, setInputText] = useState('');
     const [previewList, setPreviewList] = useState([]);
     const [showSlide, setShowSlide] = useState(false);
@@ -26,59 +26,53 @@ const Header = ({ loginUser, onLogout }) => {
         }
         const timer = setTimeout(async () => {
             const res = await axios.get(`/api/article?keyword=${inputText}`);
-            setPreviewList(res.data.slice(0, 5) || []); // 5개만 보여줌
+            setPreviewList(res.data.slice(0, 5) || []);
             setShowSlide(true);
         }, 300);
         return () => clearTimeout(timer);
     }, [inputText]);
 
-    // 엔터치면 검색 페이지로 이동
+    // 검색 실행
     const handleSearch = () => {
-    if (!inputText.trim()) {
-        // 입력창 흔들기 효과
-        const input = document.querySelector('.header-search-input');
-        input.classList.add('shake');
-        setTimeout(() => input.classList.remove('shake'), 500);
-        return;
-    }
-    setShowSlide(false);
-    navigate(`/search?q=${inputText}`);
-};
+        if (!inputText.trim()) {
+            const input = document.querySelector('.header-search-input');
+            input.classList.add('shake');
+            setTimeout(() => input.classList.remove('shake'), 500);
+            return;
+        }
+        setShowSlide(false);
+        navigate(`/search?q=${inputText}`);
+    };
 
     return (
     <header className="auth-header">
 
-        {/* 1줄: MAT만 중앙 */}
+        {/* 1줄: MAT(중앙) + 로그인(우) */}
         <div className="header-top">
             <Link to="/" className="logo-text">MAT</Link>
+            <div className="header-right">
+                {loginUser ? (
+                    <>
+                        <span>{loginUser}님</span>
+                        <span className="bar">|</span>
+                        <span onClick={() => navigate('/mypage')}>마이페이지</span>
+                        <span className="bar">|</span>
+                        <span onClick={onLogout}>로그아웃</span>
+                    </>
+                ) : (
+                    <Link to="/login">로그인</Link>
+                )}
+            </div>
         </div>
 
-        {/* 2줄: 네비(좌중앙) + 로그인(우) */}
+        {/* 2줄: 네비 + 검색 */}
         <div className="header-bottom">
-            <div className="header-nav-row">
-                <nav className="header-nav">
-       
-                    <span onClick={() => navigate('/map')} className={location.pathname === '/map' ? 'active' : ''}>지도</span>
-                    <span onClick={() => navigate('/city')} className={location.pathname.startsWith('/city') ? 'active' : ''}>블로그</span>
-                    <span onClick={() => navigate('/board')} className={location.pathname === '/board' ? 'active' : ''}>게시판</span>
-                 </nav>
+            <nav className="header-nav">
+                <span onClick={() => navigate('/map')} className={location.pathname === '/map' ? 'active' : ''}>지도</span>
+                <span onClick={() => navigate('/city')} className={location.pathname.startsWith('/city') ? 'active' : ''}>칼럼</span>
+                <span onClick={() => navigate('/board')} className={location.pathname === '/board' ? 'active' : ''}>게시판</span>
+            </nav>
 
-                <div className="header-right">
-                    {loginUser ? (
-                        <>
-                            <span>{loginUser}님</span>
-                            <span className="bar">|</span>
-                            <span onClick={() => navigate('/mypage')}>마이페이지</span>
-                            <span className="bar">|</span>
-                            <span onClick={onLogout}>로그아웃</span>
-                        </>
-                    ) : (
-                        <Link to="/login">로그인</Link>
-                    )}
-                </div>
-            </div>
-
-            {/* 검색창 */}
             <div className="header-search-wrap">
                 <input
                     value={inputText}

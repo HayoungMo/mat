@@ -140,48 +140,45 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
         e.preventDefault();
         if (!keyword.trim() || !mapReady) return;
 
-
-       
-        
         searchKeyword(keyword, (data, status) => {
-
+            // 1. [오류 방지 로직 추가] 통신이 성공(OK)했을 때만 filter를 실행
+            if (status !== window.kakao.maps.services.Status.OK) {
+                placesSearchCB(data, status); // 결과가 없거나 에러인 경우 기존 로직에 맡김
+                return; 
+            }
+            // 2. 정상적으로 데이터를 받아왔을 때만 서울 지역 필터링
             const seoulOnly = data.filter(place=>
                 place.address_name?.startsWith("서울")
             )
 
-             placesSearchCB(seoulOnly, status);
-
             if (seoulOnly.length === 0) {
-
+                
                 const container = mapRef.current;
-
                 const options = {
                 center: new window.kakao.maps.LatLng(37.566826, 126.9786567), // 기본 위치 (서울시청)
                 level: 6,
                 };
 
-            const bounds = new window.kakao.maps.LatLngBounds(
-                new window.kakao.maps.LatLng(37.413294, 126.734086), // 서울 남서쪽 끝
+                const bounds = new window.kakao.maps.LatLngBounds(
+                    new window.kakao.maps.LatLng(37.413294, 126.734086), // 서울 남서쪽 끝
                 new window.kakao.maps.LatLng(37.715133, 127.269311)  // 서울 북동쪽 끝
             );
 
             mapInstance.current = new window.kakao.maps.Map(container, options);
             setMapReady(true);
-
             mapInstance.current.setMinLevel(1); 
             mapInstance.current.setMaxLevel(9);
-
+            
             window.kakao.maps.event.addListener(mapInstance.current, 'dragend', () => {
-            const center = mapInstance.current.getCenter();
-                    if (!bounds.contain(center)) {
-                        mapInstance.current.panTo(new window.kakao.maps.LatLng(37.566826, 126.9786567));
-                    }
-                });
-                alert("서울 지역 검색 결과가 없습니다.\n서울 지역 장소를 검색해주세요.");
-
-                
-                return;
-            }
+                const center = mapInstance.current.getCenter();
+                if (!bounds.contain(center)) {
+                    mapInstance.current.panTo(new window.kakao.maps.LatLng(37.566826, 126.9786567));
+                }
+            });
+            alert("서울 지역 검색 결과가 없습니다.\n서울 지역 장소를 검색해주세요.");  
+            return;
+          }
+        placesSearchCB(seoulOnly, status);
         });
 
         
@@ -387,7 +384,7 @@ const MapPage = ({setAddress, setList, externalKeyword, loginUser, selectedPlace
 
     
    return (
-        <div className="map_wrap">
+        <div className="map_page_container">
 
             
             {showSearch && (
