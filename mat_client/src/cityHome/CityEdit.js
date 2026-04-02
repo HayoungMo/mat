@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { FaTrashCan } from "react-icons/fa6";
+import './CityEdit.css'
+import Loading from '../Loading';
 
 const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
 
@@ -36,7 +38,7 @@ const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
         }
     },[article])
 
-    if(!article) return <div> 로딩중... </div>;
+    if(!article) return <Loading/>
 
     const {
     userId = loginUser,

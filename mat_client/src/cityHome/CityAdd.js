@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {searchKeyword} from '../services/SearchMapService.js';
 import axios from 'axios';
-import style from './CitAdd.css'
+import './CitAdd.css'
 
 const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
 

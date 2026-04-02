@@ -7,6 +7,7 @@ import { toggleBookmark} from '../services/bookmarkService';
 import { searchKeyword } from '../services/SearchMapService';
 import style from './CityArticle.css'
 import { TiStarOutline, TiStarFullOutline  } from "react-icons/ti";
+import Loading from '../Loading';
 
 
 const CityArticle = ({loginUser,loginInfo}) => {
@@ -19,6 +20,25 @@ const CityArticle = ({loginUser,loginInfo}) => {
     const [reviews, setReviews] =useState([])
     const [reviewForm, setReviewForm] =useState({content: '',rating:5})
     // const {placeId} = data
+    const [relatedArticles,setRelatedArticles] = useState([]);
+
+  useEffect(() => {
+    if (!cityName) return;
+    const fetchRelated = async () => {
+        try {
+            // 전체 가져와서 cityName으로 필터링
+            const res = await axios.get('/api/article');
+            const filtered = res.data
+                .filter(a => a.cityName === cityName && a._id !== id)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+            setRelatedArticles(filtered);
+        } catch (err) {
+            console.error('관련 맛집 불러오기 실패:', err);
+        }
+    };
+    fetchRelated();
+}, [cityName, id]);
 
     useEffect(()=>{
         if(data?.no){
@@ -87,7 +107,7 @@ const CityArticle = ({loginUser,loginInfo}) => {
                 checkBookmarked();
             }, [loginUser, data]);
 
-    if(!data) return <div>로딩중... </div>
+    if(!data) return <Loading/>
 
     const {no,title,subject,userId,matAddr,matName,matTel} = data
 
@@ -155,23 +175,24 @@ const CityArticle = ({loginUser,loginInfo}) => {
             }
 
     return (
-        <div className="article-read-container">
-            {/* 1. 기사 헤더 영역 (제목 및 북마크) */}
-            <div className="article-read-header">
-                <h2 className="article-title">{title}</h2>
-                
-                {loginInfo?.role !== 'city' && (
-                    <div 
-                        className="bookmark-btn" 
-                        onClick={(e) => { e.stopPropagation(); handleBookmarkToggle(data); }}
-                        title={bookmarked ? "북마크 해제" : "북마크 추가"}
-                    >
-                        <span style={{ color: bookmarked ? '#f6e055' : '#cccccc' }}>
-                            {bookmarked ? <TiStarFullOutline /> : <TiStarOutline />}
-                        </span>
-                    </div>
-                )}
-            </div>
+        <div className="article-page-layout">
+            <div className="article-read-container">
+                {/* 1. 기사 헤더 영역 (제목 및 북마크) */}
+                <div className="article-read-header">
+                    <h2 className="article-title">{title}</h2>
+                    
+                    {loginInfo?.role !== 'city' && (
+                        <div 
+                            className="bookmark-btn" 
+                            onClick={(e) => { e.stopPropagation(); handleBookmarkToggle(data); }}
+                            title={bookmarked ? "북마크 해제" : "북마크 추가"}
+                        >
+                            <span style={{ color: bookmarked ? '#f6e055' : '#cccccc' }}>
+                                {bookmarked ? <TiStarFullOutline /> : <TiStarOutline />}
+                            </span>
+                        </div>
+                    )}
+                </div>
 
             {/* 2. 기사 메타 및 맛집 정보 박스 */}
             <div className="article-info-box">
@@ -298,6 +319,37 @@ const CityArticle = ({loginUser,loginInfo}) => {
                 </ul>
             </div>
         </div>
+        {/* 사이드바 */}
+        <aside className="article-sidebar">
+            <div className="sidebar-title">이 동네 다른 맛집</div>
+            {relatedArticles.length === 0 ? (
+                <p style={{ fontSize: '13px', color: '#999' }}>관련 맛집이 없습니다.</p>
+            ) : (
+                relatedArticles.map(item => (
+                    <div
+                        key={item._id}
+                        className="sidebar-item"
+                        onClick={() => navigate(`/city/${item.cityName}/article/${item._id}`)}
+                    >
+                        {item.images?.[0] ? (
+                            <img src={`/uploads/${item.images[0].saveFileName}`} alt={item.matName} />
+                        ) : (
+                            <div style={{
+                                width: '70px', height: '70px', background: '#f0f0f0',
+                                borderRadius: '6px', flexShrink: 0,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '11px', color: '#aaa'
+                            }}>No Img</div>
+                        )}
+                        <div className="sidebar-item-text">
+                            <p className="sidebar-item-title">{item.title}</p>
+                            <p className="sidebar-item-mat">{item.matName}</p>
+                        </div>
+                    </div>
+                ))
+            )}
+        </aside>
+    </div>
     );
 };
 

@@ -2,7 +2,7 @@
 
 /* 전체 에디터 컨테이너 (흰색 70% 비중) */
 .editor-form {
-    max-width: 800px;
+    max-width: 1500px !important;
     margin: 40px auto;
     padding: 50px;
     background-color: #ffffff;
