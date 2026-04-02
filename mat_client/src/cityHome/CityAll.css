@@ -126,3 +126,16 @@ body{
 .city-selected .city-card:hover::after {
   background: rgba(0,0,0,0.15);
 }
+
+.editor-form {
+    width: 90%;
+    max-width: 900px;
+    margin: 40px auto;
+    display: block;
+}
+
+.city-container:has(.editor-form) {
+    width: 100%;
+    margin: 0;
+    display: block; 
+}

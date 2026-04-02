@@ -126,7 +126,7 @@ const CityHome = ({loginUser,loginInfo}) => {
             
             
             {isAddShow && myCityName === cityName && (
-                <div style={{ marginBottom: '40px' }}>
+                <div style={{ marginBottom: '40px', width: '100%' }}>
                     <CityAdd onAdd={onAdd} loginUser={loginUser}/>
                 </div>
             )}
