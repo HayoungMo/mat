@@ -1,10 +1,17 @@
 /* 전체 컨테이너 */
+
+body{
+  margin: 0;
+  padding: 0;
+}
 .city-container {
   width: 70%;
   margin: 0px auto;
   display: flex;
   flex-direction: column;
   gap: 25px;
+   padding-bottom: 40px;
+   padding-top: 30px;
 }
 
 /* 카드 */
@@ -17,11 +24,6 @@
   color: inherit;
   transition: all 0.3s ease;
   z-index: 1;
-}
-
-.article-list {
-  position: relative;
-  z-index: 2;
 }
 
 /* 이미지 */
@@ -79,6 +81,10 @@
 
 .city-selected {
   width: 100%;
+   margin: 0; 
+  padding: 0;
+  gap: 0;
+
 }
 
 .city-selected .city-overlay {
