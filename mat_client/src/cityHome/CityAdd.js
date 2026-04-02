@@ -207,7 +207,7 @@ const CityAdd = ({onAdd,loginUser,cityNameProp}) => {
 
             {/* 작게 우측 정렬된 버튼 그룹 */}
             <div className="button-group">
-                <button type="submit" className="btn-submit">기사 송고</button>
+                <button type="submit" className="btn-submit">기사 투고</button>
                 <button type="button" className="btn-cancel" onClick={handleCancel}>작성 취소</button>
             </div>
         </form>
