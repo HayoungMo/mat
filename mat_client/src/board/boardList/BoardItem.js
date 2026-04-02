@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import BoardService from './BoardService';
 import {
     MdEdit, MdDelete, MdArrowBack, MdPushPin, MdPerson,
@@ -23,9 +23,6 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
     const [commentText, setCommentText] = useState('');
     const [commentLoading, setCommentLoading] = useState(false);
     const [commentSubmitting, setCommentSubmitting] = useState(false);
-
-    // ✅ loginUser가 객체일 경우를 대비해 ID 문자열 추출
-    const currentUserId = loginUser?.userId || loginUser?.id || (typeof loginUser === 'string' ? loginUser : null);
 
     // 1. 상세 데이터 로드
     useEffect(() => {
@@ -125,38 +122,31 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
     const votes = detail?.votedCount || options.map(() => 0);
     const totalVotes = votes.reduce((a, b) => Number(a) + Number(b), 0);
     const getPercent = (count) => (totalVotes === 0 ? 0 : Math.round((Number(count) / totalVotes) * 100));
-    
-    // ✅ 투표 여부 확인 (userId 문자열로 비교)
-    const isAlreadyVoted = (detail?.voters && detail.voters.includes(currentUserId)) || hasVotedThisSession;
+    const isAlreadyVoted = (detail?.voters && detail.voters.includes(loginUser)) || hasVotedThisSession;
 
     // 투표 핸들러
     const handleVote = async (index) => {
-        if (!currentUserId) { alert("로그인 후 투표에 참여해주세요! 😊"); return; }
+        if (!loginUser) { alert("로그인 후 투표에 참여해주세요! 😊"); return; }
         if (isAlreadyVoted) { alert("이미 이 설문에 참여하셨습니다! 🙏"); return; }
         if (timeLeft === "투표가 마감되었습니다.") { alert("마감된 투표에는 참여할 수 없습니다."); return; }
         try {
-            // ✅ BoardService.updateVote에 currentUserId를 세 번째 인자로 확실히 전달
-            await BoardService.updateVote(detail._id, index, currentUserId);
+            await BoardService.updateVote(detail._id, index, loginUser);
             setHasVotedThisSession(true);
             const updated = await BoardService.getDetail(detail._id);
             if (updated) setDetail(updated);
             alert("투표가 완료되었습니다! ✨");
             if (onVoteSuccess) onVoteSuccess();
-        } catch (e) { 
-            console.error(e);
-            alert("투표 처리 중 오류가 발생했습니다."); 
-        }
+        } catch (e) { alert("투표 처리 중 오류가 발생했습니다."); }
     };
 
     // 북마크 핸들러
-    const isMyBookmark = Boolean(currentUserId && Array.isArray(detail?.isBookmarked) && detail.isBookmarked.some(id => String(id) === String(currentUserId)));
+    const isMyBookmark = Boolean(loginUser && Array.isArray(detail?.isBookmarked) && detail.isBookmarked.some(id => String(id) === String(loginUser)));
     const handleBookmarkClick = async () => {
-        if (!currentUserId) { alert("로그인이 필요한 서비스입니다. 😊"); return; }
+        if (!loginUser) { alert("로그인이 필요한 서비스입니다. 😊"); return; }
         if (isUpdating) return;
         setIsUpdating(true);
         try {
-            // ✅ 부모(Board.js)에서 내려온 onBookmark 함수에 ID 전달
-            await onBookmark(detail._id, currentUserId);
+            await onBookmark(detail._id);
             const updated = await BoardService.getDetail(detail._id);
             if (updated) setDetail(updated);
         } finally { setIsUpdating(false); }
@@ -164,11 +154,11 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
 
     // 💬 댓글 등록
     const handleCommentSubmit = async () => {
-        if (!currentUserId) { alert("로그인이 필요한 서비스입니다. 😊"); return; }
+        if (!loginUser) { alert("로그인이 필요한 서비스입니다. 😊"); return; }
         if (!commentText.trim()) { alert("댓글 내용을 입력해주세요."); return; }
         setCommentSubmitting(true);
         try {
-            await BoardService.addComment(detail._id, { userId: currentUserId, content: commentText.trim() });
+            await BoardService.addComment(detail._id, { userId: loginUser, content: commentText.trim() });
             setCommentText('');
             const updated = await BoardService.getComments(detail._id);
             setComments(Array.isArray(updated) ? updated : []);
@@ -184,7 +174,7 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
     const handleCommentDelete = async (commentId) => {
         if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
         try {
-            await BoardService.deleteComment(detail._id, commentId, currentUserId);
+            await BoardService.deleteComment(detail._id, commentId, loginUser);
             const updated = await BoardService.getComments(detail._id);
             setComments(Array.isArray(updated) ? updated : []);
         } catch (e) {
@@ -234,17 +224,18 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
             <div className="detail-body" style={{ minHeight: '300px', padding: '20px 0' }}>
                 {detail.type === 'survey' ? (
                     <div className="survey-vote-container" style={{ background: '#f9f9f9', padding: '30px', borderRadius: '15px', border: '1px dashed #ddd' }}>
+                        {/* 🕒 실시간 타이머 */}
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '15px', color: isUrgent ? '#ff4d4f' : '#8a2130', fontWeight: 'bold', fontSize: '15px' }}>
                             <MdAccessTime size={20} className={isUrgent ? "pulse-animation" : ""} />
                             <span>{timeLeft}</span>
                         </div>
 
                         <h3 style={{ fontSize: '18px', marginBottom: '20px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                            {currentUserId ? (isAlreadyVoted ? <><MdHowToVote color="#666" /> 투표 결과</> : <><MdHowToVote color="#8a2130" /> 투표하세요!</>) : <><MdLock color="#666" /> 로그인 필요</>}
+                            {loginUser ? (isAlreadyVoted ? <><MdHowToVote color="#666" /> 투표 결과</> : <><MdHowToVote color="#8a2130" /> 투표하세요!</>) : <><MdLock color="#666" /> 로그인 필요</>}
                         </h3>
                         {options.map((opt, idx) => (
-                            <div key={idx} onClick={() => handleVote(idx)} className={`survey-option-item ${currentUserId && !isAlreadyVoted ? 'active' : 'disabled'}`} style={{ background: '#fff', border: '1px solid #ddd', padding: '15px', borderRadius: '12px', marginBottom: '15px', cursor: (currentUserId && !isAlreadyVoted) ? 'pointer' : 'default', display: 'flex', alignItems: 'center', gap: '15px', opacity: (isAlreadyVoted || timeLeft.includes("마감")) ? 0.7 : 1 }}>
-                                <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '2px solid #8a2130', background: (currentUserId && !isAlreadyVoted) ? '#fff' : '#f0f0f0', flexShrink: 0 }}></div>
+                            <div key={idx} onClick={() => handleVote(idx)} className={`survey-option-item ${loginUser && !isAlreadyVoted ? 'active' : 'disabled'}`} style={{ background: '#fff', border: '1px solid #ddd', padding: '15px', borderRadius: '12px', marginBottom: '15px', cursor: (loginUser && !isAlreadyVoted) ? 'pointer' : 'default', display: 'flex', alignItems: 'center', gap: '15px', opacity: (isAlreadyVoted || timeLeft.includes("마감")) ? 0.7 : 1 }}>
+                                <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '2px solid #8a2130', background: (loginUser && !isAlreadyVoted) ? '#fff' : '#f0f0f0', flexShrink: 0 }}></div>
                                 <div style={{ flex: 1 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '15px' }}>
                                         <span style={{ fontWeight: '500' }}>{opt}</span>
@@ -283,7 +274,7 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
                 <button className="btn-back" onClick={onBack} style={{ padding: '10px 20px', backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}>
                     <MdArrowBack style={{ marginRight: '5px' }} /> 목록
                 </button>
-                {currentUserId && detail.userId === currentUserId && (
+                {loginUser && detail.userId === loginUser && (
                     <div style={{ display: 'inline-block', marginLeft: '10px' }}>
                         <button className="btn-edit" onClick={onEdit} style={{ padding: '10px 20px', backgroundColor: '#8a2130', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginRight: '10px' }}>수정</button>
                         <button className="btn-delete" onClick={() => onDelete(detail._id)} style={{ padding: '10px 20px', backgroundColor: '#093c71', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>삭제</button>
@@ -291,7 +282,9 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
                 )}
             </div>
 
-            {/* 댓글 섹션 */}
+            {/* ─────────────────────────────────────────────
+                💬 댓글 섹션 (text / image 타입만 노출)
+            ───────────────────────────────────────────── */}
             {(detail.type === 'text' || detail.type === 'image') && (
                 <div className="comment-section">
                     <h4 className="comment-title">
@@ -299,17 +292,18 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
                         댓글 <span className="comment-count">{comments.length}</span>
                     </h4>
 
+                    {/* 댓글 입력창 */}
                     <div className="comment-input-wrap">
                         <span className="comment-author-badge">
                             <MdPerson size={14} />
-                            {currentUserId || '비로그인'}
+                            {loginUser || '비로그인'}
                         </span>
                         <textarea
                             className="comment-textarea"
-                            placeholder={currentUserId ? "댓글을 입력하세요..." : "로그인 후 댓글을 남길 수 있습니다."}
+                            placeholder={loginUser ? "댓글을 입력하세요..." : "로그인 후 댓글을 남길 수 있습니다."}
                             value={commentText}
                             onChange={(e) => setCommentText(e.target.value)}
-                            disabled={!currentUserId || commentSubmitting}
+                            disabled={!loginUser || commentSubmitting}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter' && !e.shiftKey) {
                                     e.preventDefault();
@@ -320,13 +314,14 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
                         <button
                             className="comment-submit-btn"
                             onClick={handleCommentSubmit}
-                            disabled={!currentUserId || commentSubmitting || !commentText.trim()}
+                            disabled={!loginUser || commentSubmitting || !commentText.trim()}
                         >
                             <MdSend size={16} />
                             {commentSubmitting ? '등록 중...' : '등록'}
                         </button>
                     </div>
 
+                    {/* 댓글 목록 */}
                     {commentLoading ? (
                         <div className="comment-loading">댓글 불러오는 중...</div>
                     ) : comments.length === 0 ? (
@@ -342,7 +337,7 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
                                         <span className="comment-item-date">
                                             {new Date(c.createdAt).toLocaleString()}
                                         </span>
-                                        {currentUserId === c.userId && (
+                                        {loginUser === c.userId && (
                                             <button
                                                 className="comment-delete-btn"
                                                 onClick={() => handleCommentDelete(c._id)}
