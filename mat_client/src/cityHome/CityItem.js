@@ -119,18 +119,8 @@ const CityItem = ({ item, displayNo, onDel, onEdit, loginUser, loginInfo }) => {
                     {/* 작성자 전용 수정/삭제 버튼 */}
                     {canEdit && (
                         <div style={{ display: 'flex', gap: '8px' }}>
-                            <Tooltip title="수정">
-                                <IconButton size="small" onClick={(e) => { e.stopPropagation(); onEdit(item); }}
-                                    sx={{ color: '#093c71' }}>
-                                    <EditIcon fontSize="small"/>
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="삭제">
-                                <IconButton size="small" onClick={(e) => { e.stopPropagation(); onDel(item); }}
-                                    sx={{ color: '#8a2130' }}>
-                                    <DeleteIcon fontSize="small"/>
-                                </IconButton>
-                            </Tooltip>
+                            <button className="btn-mini btn-edit" onClick={() => onEdit(item)}>수정</button>
+                            <button className="btn-mini btn-del" onClick={() => onDel(item)}>삭제</button>
                         </div>
                     )}
                 </div>
