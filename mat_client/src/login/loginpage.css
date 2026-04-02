@@ -22,8 +22,16 @@
 }
 .navy-top { border-top: 12px solid #093c71 !important; }
 .card-title {
-    display: flex; align-items: baseline; justify-content: center;
-    gap: 10px; font-size: 26px; font-weight: 800; color: #222; margin-bottom: 35px;
+    display: flex;
+    align-items: center; /* baseline → center */
+    justify-content: center;
+    flex-direction: column; /* ← 세로로 */
+    gap: 4px;
+    font-size: 26px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 35px;
+    text-align: center;
 }
 .title-en { color: #00aaff; font-size: 12px; font-weight: 600; letter-spacing: 1px; }
 
@@ -31,13 +39,24 @@
 .input-group label { display: block; font-weight: 800; margin-bottom: 10px; color: #333; font-size: 14px; }
 
 .auth-input, .custom-select {
-    display: block; width: 100%; height: 52px;
+    display: block;
+    width: 100%;
+    height: 52px;
     padding: 0 20px !important;
     background: #e9ecef !important;
     border: 2px solid #ced4da !important;
     border-radius: 15px;
-    font-size: 15px; font-weight: 500; color: #333;
-    box-sizing: border-box; transition: all 0.2s ease-in-out;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    box-sizing: border-box;
+    transition: all 0.2s ease-in-out;
+    position: relative; /* ← 추가 */
+    z-index: 1; /* ← 추가 */
+}
+.custom-select {
+    position: relative;
+    z-index: 1;
 }
 .auth-input:focus, .custom-select:focus {
     background: #ffffff !important; border-color: #8a2130 !important; outline: none;

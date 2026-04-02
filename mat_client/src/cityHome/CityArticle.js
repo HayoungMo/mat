@@ -247,7 +247,7 @@ const CityArticle = ({loginUser,loginInfo}) => {
                 <div className="left-actions">
                     <button 
                         className="btn-list" 
-                        onClick={() => navigate(`/city/${cityName}`)}
+                        onClick={() => {navigate(`/city/${cityName}`); window.scrollTo(0, 0);}}
                     >
                         ← 목록으로
                     </button>
@@ -296,7 +296,10 @@ const CityArticle = ({loginUser,loginInfo}) => {
                 {/* 리뷰 목록 */}
                 <ul className="review-list">
                     {reviews.length === 0 ? (
-                        <li className="no-review">아직 작성된 리뷰가 없습니다. 첫 번째 리뷰를 남겨보세요!</li>
+                        <li className="no-review">
+                            아직 작성된 리뷰가 없습니다.<br/>
+                            <span style={{ fontSize: '12px', color: '#bbb' }}>첫 번째 리뷰를 남겨보세요!</span>
+                        </li>
                     ) : (
                         reviews.map(review => (
                             <li className="review-item" key={review._id}>
@@ -311,7 +314,11 @@ const CityArticle = ({loginUser,loginInfo}) => {
                                     )}
                                 </div>
                                 <div className="review-content">
-                                    {review.content}
+                                   {review.content.split(/(https?:\/\/[^\s]+)/g).map((part, i) =>
+                                    /^https?:\/\//.test(part)
+                                        ? <a key={i} href={part} target="_blank" rel="noreferrer">{part}</a>
+                                        : part
+                                    )}
                                 </div>
                             </li>
                         ))
@@ -327,10 +334,13 @@ const CityArticle = ({loginUser,loginInfo}) => {
             ) : (
                 relatedArticles.map(item => (
                     <div
-                        key={item._id}
-                        className="sidebar-item"
-                        onClick={() => navigate(`/city/${item.cityName}/article/${item._id}`)}
-                    >
+                            key={item._id}
+                            className="sidebar-item"
+                            onClick={() => {
+                                window.scrollTo({ top: 0, behavior: 'smooth' }); // ← 추가
+                                navigate(`/city/${item.cityName}/article/${item._id}`);
+                            }}
+                        >
                         {item.images?.[0] ? (
                             <img src={`/uploads/${item.images[0].saveFileName}`} alt={item.matName} />
                         ) : (

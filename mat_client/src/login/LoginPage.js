@@ -55,6 +55,11 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
         if(!userId.trim()) { alert('아이디를 입력해주세요'); return; }
         if(!password.trim()) { alert('비밀번호를 입력해주세요'); return; }
 
+
+        // 이메일 앞부분 입력했는데 도메인 없는 경우 체크
+        if (emailId && !emailDomain) {
+            alert('이메일 도메인을 선택하거나 직접 입력해주세요'); return;
+        }
         //생년월일 필수 체크 추가
         if(!form.birthYear || !form.birthMonth || !form.birthDay){
             alert('생년월일을 모두 선택해주세요'); return;
@@ -80,7 +85,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 setLoginUser(response.data.userId);
                 setLoginInfo(response.data.user);
-                alert(`${response.data.userId}님, 환영합니다!`);
+                // alert(`${response.data.userId}님, 환영합니다!`);
                 navigate('/');
             } else {
                 alert(response.data.message || "아이디 또는 비밀번호가 틀렸습니다");
@@ -117,7 +122,10 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
             {/* 회원 가입 폼 */}
             {step === 1 && (
                 <div className="card navy-top join-card">
-                    <h3 className="card-title">회원가입 <span className="title-en">SIGN UP</span></h3>
+                    <h3 className="card-title" style={{ flexDirection: 'column', gap: '4px' }}>
+                        회원가입
+                        <span className="title-en">SIGN UP</span>
+                    </h3>
                     <div className="input-group">
                         <p>
                             <label>ID</label>

@@ -244,6 +244,13 @@
     color: #444444;
     line-height: 1.6;
 }
+.review-content a {
+    color: #8a2130 !important;
+    text-decoration: underline;
+}
+.review-content a:hover {
+    color: #093c71 !important;
+}
 
 .btn-review-del {
     background: transparent;
@@ -369,4 +376,13 @@
     color: #8a2130;
     font-weight: 600;
     margin: 0;
+}
+
+
+/* 빈 북마크 */
+.no-review {
+    text-align: center;
+    padding: 40px 0;
+    color: #999999;
+    font-size: 14px;
 }

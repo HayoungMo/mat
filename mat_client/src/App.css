@@ -125,7 +125,7 @@
     position: relative;
     display: flex;
     gap: 8px;
-    width: 400px;
+    width: 560px;  /*검색창 넓이*/
     flex-shrink: 0;
 }
 .header-search-input {
