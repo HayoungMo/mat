@@ -247,7 +247,7 @@ const CityArticle = ({loginUser,loginInfo}) => {
                 <div className="left-actions">
                     <button 
                         className="btn-list" 
-                        onClick={() => navigate(`/city/${cityName}`)}
+                        onClick={() => {navigate(`/city/${cityName}`); window.scrollTo(0, 0);}}
                     >
                         ← 목록으로
                     </button>

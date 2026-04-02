@@ -5,6 +5,7 @@ import SearchBar from './SearchBar';
 import SearchItem from './SearchItem';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+
 const SearchPage = () => {
 
 //주소 창의 파라미터를 읽고 쓰기 위한 도구

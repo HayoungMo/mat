@@ -244,6 +244,13 @@
     color: #444444;
     line-height: 1.6;
 }
+.review-content a {
+    color: #8a2130;
+    text-decoration: underline;
+}
+.review-content a:hover {
+    color: #093c71;
+}
 
 .btn-review-del {
     background: transparent;
