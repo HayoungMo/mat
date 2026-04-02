@@ -48,14 +48,7 @@ const CityAll = ({loginUser,loginInfo}) => {
             {!hideBanner && (
                 <>
             <Link to={'/city'}>
-            {selectedCity && (
-                <button 
-                style={{width:100, height:40}}
-                onClick={()=> setSelectedCity(null)}
-                >
-                돌아가기
-                </button>
-            )}
+            
             </Link>
 
             {(!selectedCity || selectedCity==='Gangnam')&&(
