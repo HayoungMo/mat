@@ -40,7 +40,6 @@ const BoardService = {
     updateBookmark: async (id, userId) => {
         return await axiosWithCreds.patch(`${API_URL}/${id}/bookmark`, { userId });
     },
-
     updateVote: async (id, index) => {
         return await axiosWithCreds.patch(`${API_URL}/${id}/vote`, { index });
     },
@@ -56,11 +55,11 @@ const BoardService = {
         return res.data;
     },
 
-    // ✅ userId를 body에 담아 서버로 전송 (세션 없이 본인 확인)
+   
     deleteComment: async (boardId, commentId, userId) => {
         const res = await axiosWithCreds.delete(
             `${API_URL}/${boardId}/comments/${commentId}`,
-            { data: { userId } }   // axios DELETE에서 body는 { data: {} }로 전달
+            { data: { userId } }   
         );
         return res.data;
     },
