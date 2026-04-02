@@ -17,30 +17,29 @@ const BoardEdit = ({ item, onUpdate, onCancel }) => {
     const [image, setImage] = useState(null);
     const [submitting, setSubmitting] = useState(false);
 
-    // ✅ 서식 상태 (수정 시 기존 설정을 복원하기 위함)
+    // ✅ 서식 상태
     const [font, setFont] = useState('Pretendard');
     const [align, setAlign] = useState('left');
     const [weight, setWeight] = useState('400');
 
+    // 💡 BoardWrite.js와 동일한 폰트 옵션으로 통일 (매칭 오류 방지)
     const fontOptions = [
-        { label: '기본(프리텐다드)', value: 'Pretendard' },
-        { label: '몽글몽글(주아체)', value: 'Jua' },
-        { label: '감성손글씨(나눔펜)', value: 'Nanum Pen Script' },
-        { label: '레트로(도현체)', value: 'Do Hyeon' },
-        { label: '클래식(궁서)', value: 'Gungsuh' }
+        { label: '기본설정(Pretendard)', value: 'Pretendard' },
+        { label: '나눔고딕체', value: 'Nanum Gothic' },
+        { label: '본고딕체', value: 'Noto Sans KR' },
+        { label: '궁서체', value: 'Gungsuh' },
+        { label: '함초롬바탕체', value: 'Batang' }
     ];
 
-    // ✅ [데이터 로드 로직] 기존 데이터를 불러와서 서식과 내용을 분리
     useEffect(() => {
         if (!item) return;
 
         let contentText = item.subject || '';
         
-        // 1. 텍스트나 이미지 타입일 경우 JSON 파싱 시도
+        // 데이터 복원 로직
         if (item.type !== 'survey') {
             try {
                 const parsedSubject = JSON.parse(item.subject);
-                // 저장된 데이터가 객체 형태({content, font...})인지 확인
                 if (parsedSubject && typeof parsedSubject === 'object' && parsedSubject.content !== undefined) {
                     contentText = parsedSubject.content;
                     setFont(parsedSubject.font || 'Pretendard');
@@ -48,8 +47,17 @@ const BoardEdit = ({ item, onUpdate, onCancel }) => {
                     setWeight(parsedSubject.weight || '400');
                 }
             } catch (e) {
-                // 일반 문자열일 경우 그대로 사용
+                // JSON이 아닌 일반 텍스트일 경우
                 contentText = item.subject;
+            }
+        } else {
+            // 설문 타입일 경우 옵션 배열 추출
+            try {
+                const parsed = JSON.parse(item.subject);
+                if (Array.isArray(parsed)) setOptions(parsed);
+            } catch {
+                const arr = (item.subject || "").split('^').filter(Boolean);
+                setOptions(arr.length >= 2 ? arr : ['', '']);
             }
         }
 
@@ -59,17 +67,6 @@ const BoardEdit = ({ item, onUpdate, onCancel }) => {
             subject: contentText,
             type: item.type || 'text',
         });
-
-        // 2. 설문 타입일 경우 옵션 배열 추출
-        if (item.type === 'survey') {
-            try {
-                const parsed = JSON.parse(item.subject);
-                if (Array.isArray(parsed)) setOptions(parsed);
-            } catch {
-                const arr = item.subject.split('^').filter(Boolean);
-                setOptions(arr.length >= 2 ? arr : ['', '']);
-            }
-        }
     }, [item]);
 
     const changeInput = (e) => {
@@ -107,7 +104,6 @@ const BoardEdit = ({ item, onUpdate, onCancel }) => {
         formData.append('title', board.title);
         formData.append('type', board.type);
 
-        // ✅ [데이터 저장 로직] 내용과 서식을 다시 JSON 문자열로 결합
         if (board.type === 'survey') {
             const filtered = options.filter(o => o.trim() !== '');
             if (filtered.length < 2) return alert("설문 옵션을 최소 2개 입력해주세요.");
@@ -207,7 +203,6 @@ const BoardEdit = ({ item, onUpdate, onCancel }) => {
                                 </div>
                             ) : (
                                 <div className="editor-container">
-                                    {/* ✅ 텍스트에어리어 바로 위에 위치한 툴바 */}
                                     <div className="editor-toolbar" style={{ 
                                         display: 'flex', gap: '8px', padding: '8px', background: '#f1f3f5', 
                                         border: '1px solid #ccc', borderBottom: 'none', borderRadius: '4px 4px 0 0' 
@@ -275,10 +270,10 @@ const BoardEdit = ({ item, onUpdate, onCancel }) => {
             </table>
             
             <div className="form-footer" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                <button type="submit" className="btn-submit" disabled={submitting} style={{ padding: '10px 25px' }}>
+                <button type="submit" className="btn-submit" disabled={submitting} style={{ padding: '10px 25px', background: '#8a2130', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
                     {submitting ? '저장 중...' : '수정 완료'}
                 </button>
-                <button type="button" className="btn-cancel" onClick={onCancel} disabled={submitting} style={{ padding: '10px 25px' }}>
+                <button type="button" className="btn-cancel" onClick={onCancel} disabled={submitting} style={{ padding: '10px 25px', background: '#093c71', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
                     취소
                 </button>
             </div>

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import BoardService from './BoardService';
-import { 
-    MdEdit, MdDelete, MdArrowBack, MdPushPin, MdPerson, 
-    MdCalendarToday, MdSync, MdStar, MdStarBorder, 
+import {
+    MdEdit, MdDelete, MdArrowBack, MdPushPin, MdPerson,
+    MdCalendarToday, MdSync, MdStar, MdStarBorder,
     MdHowToVote, MdLock, MdHistoryEdu, MdVisibility,
-    MdAccessTime // 🕒 시계 아이콘 추가
+    MdAccessTime, MdComment, MdSend
 } from "react-icons/md";
 
 const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, viewType, onVoteSuccess }) => {
@@ -13,12 +13,18 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
     const [isUpdating, setIsUpdating] = useState(false);
     const [relatedPosts, setRelatedPosts] = useState({ prev: [], next: [] });
     const [hasVotedThisSession, setHasVotedThisSession] = useState(false);
-    
-    // ⏰ 타이머 및 긴급 상태를 위한 상태값
-    const [timeLeft, setTimeLeft] = useState("");
-    const [isUrgent, setIsUrgent] = useState(false); 
 
-    // 1. 상세 데이터 로드 (최신 상태 동기화)
+    // ⏰ 타이머 및 긴급 상태
+    const [timeLeft, setTimeLeft] = useState("");
+    const [isUrgent, setIsUrgent] = useState(false);
+
+    // 💬 댓글 관련 상태
+    const [comments, setComments] = useState([]);
+    const [commentText, setCommentText] = useState('');
+    const [commentLoading, setCommentLoading] = useState(false);
+    const [commentSubmitting, setCommentSubmitting] = useState(false);
+
+    // 1. 상세 데이터 로드
     useEffect(() => {
         if (!item?._id) return;
         setLoadingDetail(true);
@@ -36,7 +42,6 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
             const sameTypePosts = data
                 .filter(p => p.type === detail.type)
                 .sort((a, b) => new Date(a.sysdate) - new Date(b.sysdate));
-            
             const currentIndex = sameTypePosts.findIndex(p => p._id === detail._id);
             setRelatedPosts({
                 prev: sameTypePosts.slice(Math.max(0, currentIndex - 2), currentIndex),
@@ -45,14 +50,13 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
         });
     }, [detail?._id, detail?.type]);
 
-    // ⏰ 3. 실시간 카운트다운 로직 (설문 전용)
+    // ⏰ 3. 실시간 카운트다운 (설문 전용)
     useEffect(() => {
         if (!detail?.sysdate || detail.type !== 'survey') return;
-
         const timer = setInterval(() => {
             const now = new Date();
             const writeDate = new Date(detail.sysdate);
-            const limitDate = new Date(writeDate.getTime() + 3 * 24 * 60 * 60 * 1000); // 3일 후 마감
+            const limitDate = new Date(writeDate.getTime() + 3 * 24 * 60 * 60 * 1000);
             const diff = limitDate - now;
 
             if (diff <= 0) {
@@ -64,14 +68,10 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
                 const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
                 const m = Math.floor((diff / (1000 * 60)) % 60);
                 const s = Math.floor((diff / 1000) % 60);
-                
-                // 1시간 미만으로 남았을 때 긴급 강조 (빨간색)
                 setIsUrgent(diff < 1000 * 60 * 60);
-
                 if (d > 0) {
                     setTimeLeft(`${d}일 ${h}시간 ${m}분 ${s}초 남음`);
                 } else {
-                    // 24시간 이내일 때는 시계 스타일로 표시
                     setTimeLeft(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')} 남음`);
                 }
             }
@@ -79,16 +79,23 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
         return () => clearInterval(timer);
     }, [detail?.sysdate, detail?.type]);
 
+    // 💬 4. 댓글 로드 (text/image 타입만)
+    useEffect(() => {
+        if (!detail?._id) return;
+        if (detail.type === 'survey') return;
+        setCommentLoading(true);
+        BoardService.getComments(detail._id)
+            .then(data => setComments(Array.isArray(data) ? data : []))
+            .catch(err => console.error('댓글 로드 실패', err))
+            .finally(() => setCommentLoading(false));
+    }, [detail?._id, detail?.type]);
+
     // ---------------------------------------------------------
-    // ✅ 데이터 파싱 로직 (설문 vs 일반글)
+    // 데이터 파싱
     // ---------------------------------------------------------
     let options = [];
     let displayContent = detail?.subject || '';
-    let displayStyle = {
-        fontFamily: 'Pretendard',
-        textAlign: 'left',
-        fontWeight: '400'
-    };
+    let displayStyle = { fontFamily: 'Pretendard', textAlign: 'left', fontWeight: '400' };
 
     if (detail?.type === 'survey') {
         try {
@@ -122,7 +129,6 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
         if (!loginUser) { alert("로그인 후 투표에 참여해주세요! 😊"); return; }
         if (isAlreadyVoted) { alert("이미 이 설문에 참여하셨습니다! 🙏"); return; }
         if (timeLeft === "투표가 마감되었습니다.") { alert("마감된 투표에는 참여할 수 없습니다."); return; }
-
         try {
             await BoardService.updateVote(detail._id, index, loginUser);
             setHasVotedThisSession(true);
@@ -133,7 +139,7 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
         } catch (e) { alert("투표 처리 중 오류가 발생했습니다."); }
     };
 
-    // 북마크 로직
+    // 북마크 핸들러
     const isMyBookmark = Boolean(loginUser && Array.isArray(detail?.isBookmarked) && detail.isBookmarked.some(id => String(id) === String(loginUser)));
     const handleBookmarkClick = async () => {
         if (!loginUser) { alert("로그인이 필요한 서비스입니다. 😊"); return; }
@@ -146,8 +152,38 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
         } finally { setIsUpdating(false); }
     };
 
+    // 💬 댓글 등록
+    const handleCommentSubmit = async () => {
+        if (!loginUser) { alert("로그인이 필요한 서비스입니다. 😊"); return; }
+        if (!commentText.trim()) { alert("댓글 내용을 입력해주세요."); return; }
+        setCommentSubmitting(true);
+        try {
+            await BoardService.addComment(detail._id, { userId: loginUser, content: commentText.trim() });
+            setCommentText('');
+            const updated = await BoardService.getComments(detail._id);
+            setComments(Array.isArray(updated) ? updated : []);
+        } catch (e) {
+            alert("댓글 등록에 실패했습니다.");
+            console.error(e);
+        } finally {
+            setCommentSubmitting(false);
+        }
+    };
+
+    // 💬 댓글 삭제
+    const handleCommentDelete = async (commentId) => {
+        if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
+        try {
+            await BoardService.deleteComment(detail._id, commentId, loginUser);
+            const updated = await BoardService.getComments(detail._id);
+            setComments(Array.isArray(updated) ? updated : []);
+        } catch (e) {
+            alert("댓글 삭제에 실패했습니다.");
+        }
+    };
+
     const renderCard = (post, label) => (
-        <div key={post._id} onClick={() => { setDetail(post); window.scrollTo(0,0); }} style={{ flex: 1, cursor: 'pointer', border: '1px solid #eee', borderRadius: '8px', padding: '12px', background: '#fff' }}>
+        <div key={post._id} onClick={() => { setDetail(post); window.scrollTo(0, 0); }} style={{ flex: 1, cursor: 'pointer', border: '1px solid #eee', borderRadius: '8px', padding: '12px', background: '#fff' }}>
             <span style={{ fontSize: '11px', color: '#8a2130', fontWeight: 'bold' }}>{label} 게시글</span>
             <div style={{ fontSize: '14px', fontWeight: 'bold', margin: '5px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.title}</div>
             <div style={{ fontSize: '12px', color: '#093c71', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -162,8 +198,8 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
     return (
         <div className="detail-container">
             <div className="breadcrumb" style={{ fontSize: '13px', color: '#6a87aa', marginBottom: '12px' }}>
-                <span onClick={onBack} style={{ cursor: 'pointer' }}>게시판</span> / 
-                <span onClick={onBack} style={{ cursor: 'pointer', marginLeft: '8px' }}>{viewType === 'card' ? '이미지형' : '목록형'}</span> / 
+                <span onClick={onBack} style={{ cursor: 'pointer' }}>게시판</span> /
+                <span onClick={onBack} style={{ cursor: 'pointer', marginLeft: '8px' }}>{viewType === 'card' ? '이미지형' : '목록형'}</span> /
                 <span style={{ fontWeight: 'bold', color: '#093c71', marginLeft: '8px' }}>상세보기</span>
             </div>
 
@@ -179,8 +215,8 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
 
             <div style={{ marginBottom: '20px', paddingBottom: '15px', borderBottom: '1px solid #eee' }}>
                 <p className="detail-info" style={{ color: '#093c71', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'flex-end', margin: 0, fontSize: '13px' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><MdPerson /> {detail.userId}</span> | 
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><MdVisibility /> {detail.readCount || 0}</span> | 
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><MdPerson /> {detail.userId}</span> |
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><MdVisibility /> {detail.readCount || 0}</span> |
                     <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><MdCalendarToday /> {new Date(detail.sysdate).toLocaleString()}</span>
                 </p>
             </div>
@@ -188,18 +224,8 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
             <div className="detail-body" style={{ minHeight: '300px', padding: '20px 0' }}>
                 {detail.type === 'survey' ? (
                     <div className="survey-vote-container" style={{ background: '#f9f9f9', padding: '30px', borderRadius: '15px', border: '1px dashed #ddd' }}>
-                        
-                        {/* 🕒 실시간 타이머 UI 추가 */}
-                        <div style={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            justifyContent: 'center', 
-                            gap: '8px', 
-                            marginBottom: '15px',
-                            color: isUrgent ? '#ff4d4f' : '#8a2130',
-                            fontWeight: 'bold',
-                            fontSize: '15px'
-                        }}>
+                        {/* 🕒 실시간 타이머 */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '15px', color: isUrgent ? '#ff4d4f' : '#8a2130', fontWeight: 'bold', fontSize: '15px' }}>
                             <MdAccessTime size={20} className={isUrgent ? "pulse-animation" : ""} />
                             <span>{timeLeft}</span>
                         </div>
@@ -229,12 +255,10 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
                                 <img src={`/uploads/${detail.saveFileName}`} alt="맛집 사진" style={{ maxWidth: '40%', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                             </div>
                         )}
-                        <div 
-                            className="detail-subject" 
-                            style={{ 
-                                whiteSpace: 'pre-wrap', 
-                                lineHeight: '1.8', 
-                                fontSize: '16px',
+                        <div
+                            className="detail-subject"
+                            style={{
+                                whiteSpace: 'pre-wrap', lineHeight: '1.8', fontSize: '16px',
                                 fontFamily: displayStyle.fontFamily,
                                 textAlign: displayStyle.textAlign,
                                 fontWeight: displayStyle.fontWeight
@@ -257,6 +281,78 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
                     </div>
                 )}
             </div>
+
+            {/* ─────────────────────────────────────────────
+                💬 댓글 섹션 (text / image 타입만 노출)
+            ───────────────────────────────────────────── */}
+            {(detail.type === 'text' || detail.type === 'image') && (
+                <div className="comment-section">
+                    <h4 className="comment-title">
+                        <MdComment size={18} />
+                        댓글 <span className="comment-count">{comments.length}</span>
+                    </h4>
+
+                    {/* 댓글 입력창 */}
+                    <div className="comment-input-wrap">
+                        <span className="comment-author-badge">
+                            <MdPerson size={14} />
+                            {loginUser || '비로그인'}
+                        </span>
+                        <textarea
+                            className="comment-textarea"
+                            placeholder={loginUser ? "댓글을 입력하세요..." : "로그인 후 댓글을 남길 수 있습니다."}
+                            value={commentText}
+                            onChange={(e) => setCommentText(e.target.value)}
+                            disabled={!loginUser || commentSubmitting}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleCommentSubmit();
+                                }
+                            }}
+                        />
+                        <button
+                            className="comment-submit-btn"
+                            onClick={handleCommentSubmit}
+                            disabled={!loginUser || commentSubmitting || !commentText.trim()}
+                        >
+                            <MdSend size={16} />
+                            {commentSubmitting ? '등록 중...' : '등록'}
+                        </button>
+                    </div>
+
+                    {/* 댓글 목록 */}
+                    {commentLoading ? (
+                        <div className="comment-loading">댓글 불러오는 중...</div>
+                    ) : comments.length === 0 ? (
+                        <div className="comment-empty">첫 번째 댓글을 남겨보세요! 💬</div>
+                    ) : (
+                        <ul className="comment-list">
+                            {comments.map((c) => (
+                                <li key={c._id} className="comment-item">
+                                    <div className="comment-item-header">
+                                        <span className="comment-item-user">
+                                            <MdPerson size={14} /> {c.userId}
+                                        </span>
+                                        <span className="comment-item-date">
+                                            {new Date(c.createdAt).toLocaleString()}
+                                        </span>
+                                        {loginUser === c.userId && (
+                                            <button
+                                                className="comment-delete-btn"
+                                                onClick={() => handleCommentDelete(c._id)}
+                                            >
+                                                <MdDelete size={14} /> 삭제
+                                            </button>
+                                        )}
+                                    </div>
+                                    <p className="comment-item-content">{c.content}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            )}
 
             <hr className="detail-divider" />
             <div className="related-section" style={{ marginTop: '40px' }}>

@@ -39,7 +39,7 @@ export const toggleBookmark = async (userId, place, articleNo) => {
 export const getBookmarks = async (userId) => {
     
     const res = await axios.get(`/api/bookmarks?userId=${userId}`);
-    return res.data;
+     return res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 };
 
 export const deleteBookmark = async(id) =>{
