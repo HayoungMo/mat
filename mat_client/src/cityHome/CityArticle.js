@@ -7,6 +7,7 @@ import { toggleBookmark} from '../services/bookmarkService';
 import { searchKeyword } from '../services/SearchMapService';
 import style from './CityArticle.css'
 import { TiStarOutline, TiStarFullOutline  } from "react-icons/ti";
+import Loading from '../Loading';
 
 
 const CityArticle = ({loginUser,loginInfo}) => {
@@ -87,7 +88,7 @@ const CityArticle = ({loginUser,loginInfo}) => {
                 checkBookmarked();
             }, [loginUser, data]);
 
-    if(!data) return <div>로딩중... </div>
+    if(!data) return <Loading/>
 
     const {no,title,subject,userId,matAddr,matName,matTel} = data
 
