@@ -272,3 +272,101 @@
     object-fit: cover; /* 비율을 유지하면서 꽉 차게 자름 */
     object-position: center; /* 이미지의 중앙을 기준으로 자름 */
 }
+
+
+/* 전체 레이아웃: 본문 + 사이드바 */
+.article-page-layout {
+    display: flex;
+    gap: 30px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+    align-items: flex-start;
+}
+
+.article-read-container {
+    flex: 1;
+    min-width: 0;
+    margin: 40px 0 80px 0; /* 기존 auto 마진 제거 */
+    padding: 0;
+}
+
+/* 전체 레이아웃: 본문 + 사이드바 */
+.article-page-layout {
+    display: flex;
+    gap: 30px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+    align-items: flex-start;
+}
+
+.article-read-container {
+    flex: 1;
+    min-width: 0;
+    margin: 40px 0 80px 0;
+    padding: 0;
+}
+
+
+/* 사이드바 */
+.article-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    margin-top: 120px; /* 40px → 120px 으로 늘림 */
+    position: sticky;
+    top: 20px;
+}
+.sidebar-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #111;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #8a2130;
+    margin-bottom: 16px;
+}
+
+.sidebar-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: opacity 0.2s;
+}
+.sidebar-item:hover { opacity: 0.7; }
+.sidebar-item:last-child { border-bottom: none; }
+
+.sidebar-item img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.sidebar-item-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+}
+
+.sidebar-item-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #222;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.sidebar-item-mat {
+    font-size: 12px;
+    color: #8a2130;
+    font-weight: 600;
+    margin: 0;
+}

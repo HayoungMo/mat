@@ -1,48 +1,97 @@
-/* ====== 공통 헤더 ====== */
+/* ====== 공통 헤더: 2줄 구조 ====== */
 .auth-header {
     background: #8a2130;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     position: relative;
     z-index: 20;
     padding: 0 40px;
 }
 
+/* 1줄: MAT(중앙) + 로그인 제거 → MAT만 */
+.header-top {
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* ← center → flex-end */
+    padding: 20px 0 12px 0; /* ← 아래 패딩 늘림 */
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* 2줄: 네비 + 로그인 + 검색 */
+.header-bottom {
+     width: 100%;
+    max-width: 1400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0 18px 0;
+    gap: 12px;
+    box-sizing: border-box;
+}
+
+/* 하위 호환용 */
 .header-inner {
     width: 100%;
     max-width: 1400px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0;
-    height: 90px; /* 높이 넉넉하게 */
 }
-
-/* 로고 */
-.logo-text {
-    color: white;
-    font-size: 28px;
-    font-weight: 900;
-    text-decoration: none;
-    letter-spacing: 2px;
-    flex-shrink: 0;
-}
-
-/* 중앙 그룹: 네비 + 검색창 세로 배치 */
 .header-center {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     flex: 1;
     margin: 0 40px;
 }
 
+/* 로고: 중앙 고정 */
+.logo-text {
+    color: white;
+    font-size: 42px;
+    font-weight: 900;
+    text-decoration: none;
+    letter-spacing: 3px;
+    flex-shrink: 0;
+}
+
+/* 로그인/로그아웃: 오른쪽 */
+.header-right {
+    position: absolute;
+    right: 40px; /* padding과 동일하게 */
+    display: flex;
+    gap: 16px;
+    color: rgba(255, 255, 255, 0.8);
+    align-items: center;
+    flex-shrink: 0;
+}
+.header-right a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+.header-right a:hover { color: #fff; }
+.header-right span {
+    transition: 0.2s;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+}
+.header-right span:hover { color: #fff; }
+.bar { opacity: 0.3; }
+
 /* 네비게이션 */
 .header-nav {
     display: flex;
-    gap: 32px;
+    gap: 36px;
     align-items: center;
     justify-content: center;
 }
@@ -57,13 +106,23 @@
     transition: all 0.2s ease;
     cursor: pointer;
 }
-.header-nav span:hover,
-.header-nav span.active {
+.header-nav span:hover {
     color: #ffffff;
     border-bottom: 2px solid rgba(255, 255, 255, 0.6);
 }
 .header-nav span.active {
+    color: #ffffff;
     border-bottom: 2px solid #ffffff;
+}
+.header-nav-row {
+     width: 100%;
+    max-width: 1400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 0 40px; /* 양쪽 여백 */
+    box-sizing: border-box;
 }
 
 /* 검색창 */
@@ -117,25 +176,15 @@
     border-radius: 12px;
     overflow: hidden;
 }
-
-/* 로그인/로그아웃 */
-.header-right {
-    display: flex;
-    gap: 14px;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.8);
-    align-items: center;
-    flex-shrink: 0;
+.preview-slide a { text-decoration: none; color: #222; }
+.preview-slide > div {
+    padding: 10px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.15s;
 }
-.header-right a {
-    color: rgba(255, 255, 255, 0.8);
-    text-decoration: none;
-    transition: 0.2s;
-}
-.header-right a:hover { color: #fff; }
-.header-right span { transition: 0.2s; cursor: pointer; }
-.header-right span:hover { color: #fff; }
-.bar { opacity: 0.3; }
+.preview-slide > div:last-child { border-bottom: none; }
+.preview-slide > div:hover { background: #f8f8f8; }
 
 /* ====== 공통 푸터 ====== */
 .auth-footer {
@@ -161,9 +210,7 @@
 .footer-bar { color: rgba(255, 255, 255, 0.2); font-size: 10px; }
 .copy { margin-top: 25px; font-size: 11px; color: rgba(255, 255, 255, 0.4); letter-spacing: 0.5px; }
 
-
-
-/* 추가라인업들 */
+/* ====== 추가 효과 ====== */
 
 /* ① 현재 페이지 네비 하이라이트 */
 .header-nav a.active {
@@ -207,3 +254,15 @@
     border-bottom-color: #fff;
 }
 
+/* 검색창 흔들기 */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+}
+.header-search-input.shake {
+    animation: shake 0.5s ease;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+}
