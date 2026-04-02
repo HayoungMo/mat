@@ -352,16 +352,21 @@ a { transition: color 0.2s ease; }
 }
 .toast-message {
     position: fixed;
-    bottom: 80px;        /* top → bottom으로 변경 */
-    left: 50%;
-    transform: translateX(-50%);
+    top: 20px;            /* 위에서부터의 거리 (로그인 버튼과 같은 높이 혹은 아래) */
+    right: 20px;          /* 오른쪽 끝에서의 거리 */
+    
+    /* 기존 중앙 정렬 속성 제거 */
+    bottom: auto;         
+    left: auto;           
+    transform: none;      
+
     background: #093c71;
     color: white;
-    padding: 14px 28px;
-    border-radius: 25px;
+    padding: 12px 24px;   /* 가독성을 위해 패딩 살짝 조절 */
+    border-radius: 8px;   /* 상단 배치는 약간 각진 형태가 더 깔끔할 수 있습니다 */
     z-index: 9999;
     font-size: 14px;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     animation: pageFadeIn 0.3s ease both;
 }

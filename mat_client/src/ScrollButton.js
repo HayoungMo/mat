@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Fab from '@mui/material/Fab';
 
 const ScrollButton = () => {
     const [visible, setVisible] = useState(false);
@@ -21,8 +22,14 @@ const ScrollButton = () => {
             position: 'fixed', bottom: '40px', right: '30px',
             display: 'flex', flexDirection: 'column', gap: '8px', zIndex: 999
         }}>
-            <button onClick={goTop} style={btnStyle}><KeyboardArrowUpIcon /></button>
-            <button onClick={goBottom} style={btnStyle}><KeyboardArrowDownIcon /></button>
+            <Fab size="small" onClick={goTop}
+    sx={{ background: '#8a2130', color: 'white', '&:hover': { background: '#6d1a27' } }}>
+    <KeyboardArrowUpIcon />
+</Fab>
+<Fab size="small" onClick={goBottom}
+    sx={{ background: '#8a2130', color: 'white', '&:hover': { background: '#6d1a27' } }}>
+    <KeyboardArrowDownIcon />
+</Fab>
         </div>
     );
 };
