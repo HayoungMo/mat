@@ -11,10 +11,10 @@ import dongjakImg from './image/동작구.png'
 import mapoImg from './image/마포구.png'
 import jungImg from './image/중구.png'
 import './CityAll.css'
-import { useLocation } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 
 const CityAll = ({loginUser,loginInfo}) => {
-
+        const navigate = useNavigate();
         const onUpdate= async (id,formData)=>{
         await articleServices.updateArticle(id,formData)
     }
@@ -35,10 +35,10 @@ const CityAll = ({loginUser,loginInfo}) => {
     
 
     useEffect(() => {
-  if (location.pathname === '/city') {
-    setSelectedCity(null)
-  }
-}, [location.pathname])
+        if (location.pathname === '/city') {
+            setSelectedCity(null)
+        }
+        }, [location.pathname])
 
 
 
@@ -57,6 +57,7 @@ const CityAll = ({loginUser,loginInfo}) => {
                             if (selectedCity === 'Gangnam') {
                                 e.preventDefault();
                                 setSelectedCity(null); // 전체 리스트로
+                                navigate('/city');
                                 return;
                             }
                             setSelectedCity('Gangnam');
@@ -72,6 +73,7 @@ const CityAll = ({loginUser,loginInfo}) => {
                         if (selectedCity === 'Yongsan') {
                             e.preventDefault();
                             setSelectedCity(null);
+                            navigate('/city');
                             return;
                         }
                         setSelectedCity('Yongsan');
@@ -87,6 +89,7 @@ const CityAll = ({loginUser,loginInfo}) => {
                             if (selectedCity === 'Dongjak') {
                                 e.preventDefault();
                                 setSelectedCity(null);
+                                navigate('/city');
                                 return;
                             }
                             setSelectedCity('Dongjak');
@@ -101,6 +104,7 @@ const CityAll = ({loginUser,loginInfo}) => {
                             if (selectedCity === 'Mapo') {
                                 e.preventDefault();
                                 setSelectedCity(null);
+                                navigate('/city');
                                 return;
                             }
                             setSelectedCity('Mapo');
@@ -116,6 +120,7 @@ const CityAll = ({loginUser,loginInfo}) => {
                         if (selectedCity === 'Jung') {
                             e.preventDefault();
                             setSelectedCity(null);
+                            navigate('/city');
                             return;
                         }
                         setSelectedCity('Jung');

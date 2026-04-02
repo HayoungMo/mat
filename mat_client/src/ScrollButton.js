@@ -33,6 +33,7 @@ const btnStyle = {
     background: '#8a2130',
     color: 'white',
     border: 'none',
+    border: '2px solid rgba(255,255,255,0.5)',
     cursor: 'pointer',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     boxShadow: '0 2px 8px rgba(0,0,0,0.2)',

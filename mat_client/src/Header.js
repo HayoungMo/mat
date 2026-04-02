@@ -53,9 +53,8 @@ const Header = ({ loginUser, onLogout }) => {
             <div className="header-right"  >
                 {loginUser ? (
                     <>
-                        <span>{loginUser}님</span>
-                        <span className="bar">|</span>
-                        <span onClick={() => navigate('/mypage')}>마이페이지</span>
+                        
+                        <span onClick={() => navigate('/mypage')}>{loginUser}님</span>
                         <span className="bar">|</span>
                         <span onClick={onLogout}>로그아웃</span>
                     </>
