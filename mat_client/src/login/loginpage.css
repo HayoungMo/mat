@@ -22,8 +22,16 @@
 }
 .navy-top { border-top: 12px solid #093c71 !important; }
 .card-title {
-    display: flex; align-items: baseline; justify-content: center;
-    gap: 10px; font-size: 26px; font-weight: 800; color: #222; margin-bottom: 35px;
+    display: flex;
+    align-items: center; /* baseline → center */
+    justify-content: center;
+    flex-direction: column; /* ← 세로로 */
+    gap: 4px;
+    font-size: 26px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 35px;
+    text-align: center;
 }
 .title-en { color: #00aaff; font-size: 12px; font-weight: 600; letter-spacing: 1px; }
 
