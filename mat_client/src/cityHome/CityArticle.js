@@ -296,7 +296,10 @@ const CityArticle = ({loginUser,loginInfo}) => {
                 {/* 리뷰 목록 */}
                 <ul className="review-list">
                     {reviews.length === 0 ? (
-                        <li className="no-review">아직 작성된 리뷰가 없습니다. 첫 번째 리뷰를 남겨보세요!</li>
+                        <li className="no-review">
+                            아직 작성된 리뷰가 없습니다.<br/>
+                            <span style={{ fontSize: '12px', color: '#bbb' }}>첫 번째 리뷰를 남겨보세요!</span>
+                        </li>
                     ) : (
                         reviews.map(review => (
                             <li className="review-item" key={review._id}>

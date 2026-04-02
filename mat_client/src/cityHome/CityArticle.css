@@ -377,3 +377,12 @@
     font-weight: 600;
     margin: 0;
 }
+
+
+/* 빈 북마크 */
+.no-review {
+    text-align: center;
+    padding: 40px 0;
+    color: #999999;
+    font-size: 14px;
+}

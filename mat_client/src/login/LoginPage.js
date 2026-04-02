@@ -85,7 +85,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 setLoginUser(response.data.userId);
                 setLoginInfo(response.data.user);
-                alert(`${response.data.userId}님, 환영합니다!`);
+                // alert(`${response.data.userId}님, 환영합니다!`);
                 navigate('/');
             } else {
                 alert(response.data.message || "아이디 또는 비밀번호가 틀렸습니다");
