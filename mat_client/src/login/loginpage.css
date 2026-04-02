@@ -113,3 +113,33 @@
 .trademark-line { width: 30px; height: 2px; background: #093c71; margin: 0 auto 15px; opacity: 0.2; }
 .card-trademark { font-size: 10px; color: #555; letter-spacing: 1px; text-transform: uppercase; }
 .card-tagline { font-size: 8px; color: #555; letter-spacing: 2px; text-transform: uppercase; }
+
+/* 카드 등장 애니메이션 */
+@keyframes cardSlideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.card {
+    animation: cardSlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* input focus 시 라벨 색상 변경 */
+.input-group p:focus-within {
+    color: #8a2130;
+}
+
+/* 중복확인 버튼 hover */
+.btn-check:hover {
+    background: #0a4d91;
+    transform: scale(1.02);
+    transition: all 0.2s ease;
+}
+
+/* check 메시지 등장 */
+@keyframes msgFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.check-ok, .check-fail {
+    animation: msgFadeIn 0.2s ease both;
+}
