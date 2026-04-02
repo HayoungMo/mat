@@ -46,11 +46,23 @@ const Header = ({ loginUser, onLogout }) => {
 };
 
     return (
-        <header className="auth-header">
+    <header className="auth-header">
 
-            {/* 1줄: MAT 로고(좌) + 로그인정보(우) */}
-            <div className="header-top">
-                <Link to="/" className="logo-text">MAT</Link>
+        {/* 1줄: MAT만 중앙 */}
+        <div className="header-top">
+            <Link to="/" className="logo-text">MAT</Link>
+        </div>
+
+        {/* 2줄: 네비(좌중앙) + 로그인(우) */}
+        <div className="header-bottom">
+            <div className="header-nav-row">
+                <nav className="header-nav">
+       
+                    <span onClick={() => navigate('/map')} className={location.pathname === '/map' ? 'active' : ''}>지도</span>
+                    <span onClick={() => navigate('/city')} className={location.pathname.startsWith('/city') ? 'active' : ''}>블로그</span>
+                    <span onClick={() => navigate('/board')} className={location.pathname === '/board' ? 'active' : ''}>게시판</span>
+                 </nav>
+
                 <div className="header-right">
                     {loginUser ? (
                         <>
@@ -61,60 +73,40 @@ const Header = ({ loginUser, onLogout }) => {
                             <span onClick={onLogout}>로그아웃</span>
                         </>
                     ) : (
-                        <>
-                            <Link to="/login">로그인</Link>
-                        </>
+                        <Link to="/login">로그인</Link>
                     )}
                 </div>
             </div>
 
-            {/* 2줄: 네비게이션 + 검색창 */}
-            <div className="header-bottom">
-                <nav className="header-nav">
-                    <span
-                        onClick={() => navigate('/map')}
-                        className={location.pathname === '/map' ? 'active' : ''}
-                    >지도</span>
-                    <span
-                        onClick={() => navigate('/city')}
-                        className={location.pathname.startsWith('/city') ? 'active' : ''}
-                    >블로그</span>
-                    <span
-                        onClick={() => navigate('/board')}
-                        className={location.pathname === '/board' ? 'active' : ''}
-                    >게시판</span>
-                </nav>
-
-                {/* 검색창 */}
-                <div className="header-search-wrap">
-                    <input
-                        value={inputText}
-                        onChange={(e) => setInputText(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                        onBlur={() => setTimeout(() => setShowSlide(false), 200)}
-                        onFocus={() => { if (previewList.length > 0) setShowSlide(true); }}
-                        placeholder="검색해보세요"
-                        className="header-search-input"
-                    />
-                    <button onClick={handleSearch} className="header-search-btn">검색</button>
-                    {/* 미리보기 */}
-                    {showSlide && previewList.length > 0 && (
-                        <div className="preview-slide">
-                            {previewList.map(item => (
-                                <div key={item._id} onClick={() => {
-                                    setShowSlide(false);
-                                    setInputText('');
-                                }}>
-                                    <SearchItem item={item} keyword={inputText} />
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+            {/* 검색창 */}
+            <div className="header-search-wrap">
+                <input
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    onBlur={() => setTimeout(() => setShowSlide(false), 200)}
+                    onFocus={() => { if (previewList.length > 0) setShowSlide(true); }}
+                    placeholder="검색해보세요"
+                    className="header-search-input"
+                />
+                <button onClick={handleSearch} className="header-search-btn">검색</button>
+                {showSlide && previewList.length > 0 && (
+                    <div className="preview-slide">
+                        {previewList.map(item => (
+                            <div key={item._id} onClick={() => {
+                                setShowSlide(false);
+                                setInputText('');
+                            }}>
+                                <SearchItem item={item} keyword={inputText} />
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
+        </div>
 
-        </header>
-    );
+    </header>
+);
 };
 
 export default Header;
