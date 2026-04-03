@@ -150,8 +150,6 @@ const externalKeyword = useMemo(() =>
   "Yongsan-gu":"용산구",
   };
 
-
-
  return (
 
 

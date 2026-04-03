@@ -1,14 +1,43 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import SearchItem from "./totSearch/SearchItem";
 
 const Header = ({ loginUser, onLogout }) => {
     const navigate = useNavigate();
+    //로그인 유저 값을 인식하지 못하는 문제 개선을 위해 추가한 ref
+    const loginUserRef = useRef(loginUser)
     const location = useLocation();
     const [inputText, setInputText] = useState('');
     const [previewList, setPreviewList] = useState([]);
     const [showSlide, setShowSlide] = useState(false);
+
+  //커맨드 추가(로그인x => 로그인 페이지, 로그인o => 마이페이지)
+  const KEY_SEQUENCE = ['ArrowLeft', 'ArrowLeft', 'ArrowRight', 'ArrowRight']
+  const keyBuffer = useRef([])
+  
+  useEffect(() => {
+    loginUserRef.current = loginUser;
+    }, [loginUser]);
+
+  useEffect(()=>{
+    const handleKeyDown=(evt)=>{
+      keyBuffer.current = [...keyBuffer.current,evt.key].slice(-4)
+
+      if(keyBuffer.current.join(',')===KEY_SEQUENCE.join(',')){
+        keyBuffer.current=[]
+        if(loginUserRef.current){
+          navigate('/mypage')
+        }else{
+          navigate('/login')
+        }
+      
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  },[])
 
     // 페이지 이동하면 검색어 초기화
     useEffect(() => {

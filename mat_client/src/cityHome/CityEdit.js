@@ -15,8 +15,9 @@ const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
     const [existingImages,setExistingImages] = useState([])
     const [deletedImages,setDeletedImages] = useState([])
     const [newImages,setNewImages] =useState([])
+    const [isLoading, setIsLoading] =useState(false)
 
-    //데이터 가져오기 
+    //데이터 가져오기  
     useEffect(()=>{
         const fetchData= async()=>{
             try{
@@ -85,9 +86,9 @@ const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
         setNewImages(prev=>prev.filter((_,i)=> i !==index))
     }
 
-    const onSubmit=(evt)=>{
-
+    const onSubmit= async (evt)=>{
         evt.preventDefault()
+        setIsLoading(true)
 
         const formData = new FormData()
 
@@ -109,7 +110,7 @@ const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
         formData.append("deletedImages",JSON.stringify(deletedImages))
         
 
-        onUpdate(article._id,formData)
+        await onUpdate(article._id,formData)
 
         setArticle({
             userId:'',title:'',subject:'',region:'',matName:'',matTel:'',matAddr:''
@@ -118,6 +119,8 @@ const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
         navigate(`/city/${cityName}`)
     }
 
+    if(isLoading) return <Loading/>
+    
     return (
         <form className="editor-form" onSubmit={onSubmit}>
             <div className="editor-header">
