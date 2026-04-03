@@ -37,14 +37,31 @@ const BoardService = {
         return await axiosWithCreds.delete(`${API_URL}/${id}`);
     },
 
-
     updateBookmark: async (id, userId) => {
-       
         return await axiosWithCreds.patch(`${API_URL}/${id}/bookmark`, { userId });
     },
-
     updateVote: async (id, index) => {
         return await axiosWithCreds.patch(`${API_URL}/${id}/vote`, { index });
+    },
+
+    // ── 댓글 API ──────────────────────────────────────────────
+    getComments: async (boardId) => {
+        const res = await axiosWithCreds.get(`${API_URL}/${boardId}/comments`);
+        return res.data;
+    },
+
+    addComment: async (boardId, { userId, content }) => {
+        const res = await axiosWithCreds.post(`${API_URL}/${boardId}/comments`, { userId, content });
+        return res.data;
+    },
+
+   
+    deleteComment: async (boardId, commentId, userId) => {
+        const res = await axiosWithCreds.delete(
+            `${API_URL}/${boardId}/comments/${commentId}`,
+            { data: { userId } }   
+        );
+        return res.data;
     },
 };
 

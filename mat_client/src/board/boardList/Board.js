@@ -8,164 +8,108 @@ import { MdRestaurant, MdArticle } from "react-icons/md";
 import './Board.css';
 
 const Board = ({ loginUser }) => {
-    const [view, setView] = useState('list');
+    const [path, setPath] = useState(window.location.pathname);
     const [matList, setMatList] = useState([]);
-    const [selected, setSelected] = useState(null);
     const [viewType, setViewType] = useState('card');
-    const [loading, setLoading] = useState(false);
-    
     const [selectedCity, setSelectedCity] = useState("전체");
+    const [postStyle, setPostStyle] = useState({ font: "'Malgun Gothic', sans-serif", align: 'left' });
+
     const cities = ["전체", "강남구", "용산구", "동작구", "마포구", "중구"];
 
-    // ✅ 1. 브라우저 뒤로가기(Alt + 왼쪽 방향키) 감지 로직
-    useEffect(() => {
-        // 첫 진입 시 현재 상태(list)를 히스토리에 기록
-        if (!window.history.state) {
-            window.history.replaceState({ view: 'list' }, '');
-        }
-
-        const handlePopState = (event) => {
-            // 브라우저 뒤로가기 발생 시 실행
-            if (event.state && event.state.view) {
-                setView(event.state.view);
-                if (event.state.selected) {
-                    setSelected(event.state.selected);
-                } else {
-                    setSelected(null);
-                }
-            } else {
-                setView('list');
-                setSelected(null);
-            }
-        };
-
-        window.addEventListener('popstate', handlePopState);
-        return () => window.removeEventListener('popstate', handlePopState);
-    }, []);
-
-    // ✅ 2. 화면 전환 함수 (기록을 남기며 이동)
-    const changeView = (newView, item = null) => {
-        setSelected(item);
-        setView(newView);
-        // 브라우저 히스토리 스택에 현재 뷰와 선택된 아이템 저장
-        window.history.pushState({ view: newView, selected: item }, '');
+    const navigateTo = (url) => {
+        window.history.pushState({}, '', url);
+        setPath(url);
     };
 
     const fetchList = useCallback(async (keyword = "") => {
-        setLoading(true);
         try {
             const data = await BoardService.getMatList(keyword);
             setMatList(Array.isArray(data) ? data.filter(item => !item.isHidden) : []);
-        } catch (e) {
-            console.error("데이터 로드 실패", e);
-            setMatList([]);
-        } finally {
-            setLoading(false);
-        }
+        } catch (e) { console.error("리스트 로드 실패", e); }
     }, []);
 
     useEffect(() => {
         fetchList();
+        const handlePopState = () => setPath(window.location.pathname);
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
     }, [fetchList]);
 
-    const onBookmark = async (id) => {
-        if (!loginUser) {
-            alert("로그인이 필요한 서비스입니다. 로그인 후 이용해주세요! 😊");
-            return;
-        }
-        try {
-            await BoardService.updateBookmark(id, loginUser);
-            fetchList(); 
-        } catch (e) {
-            console.error("북마크 처리 실패:", e);
-        }
-    };
+    const getPathId = () => path.split('/').pop();
 
-    const onDelete = async (id) => {
-        if (!window.confirm("정말 삭제하시겠습니까?")) return;
-        try {
-            await BoardService.deleteMat(id);
-            alert("삭제되었습니다.");
-            // 삭제 후에는 히스토리를 덮어쓰며 리스트로 이동
-            window.history.replaceState({ view: 'list' }, '');
-            setView('list');
-            fetchList();
-        } catch (e) {
-            alert("삭제 실패");
-        }
-    };
+    // 페이지 판별 플래그
+    const isList = path === '/board' || path === '/board/';
+    const isWrite = path.endsWith('/write');
+    const isDetail = path.includes('/detail/');
+    const isEdit = path.includes('/edit/');
 
-    const goDetail = (item) => {
-        changeView('detail', item);
-    };
+    // 공통 북마크 핸들러 (400 에러 방지를 위한 예외 처리 포함)
+  // Board.js 내부 (예상되는 handleBookmark 위치)
+const handleBookmark = async (id) => {
+    if (!loginUser) {
+        alert("로그인이 필요합니다.");
+        return;
+    }
+
+    try {
+        // loginUser가 객체라면 .id 또는 .userId 인지 확인 필수!
+        const uid = loginUser.id || loginUser.userId || loginUser; 
+        await BoardService.updateBookmark(id, uid);
+        fetchList(); // 목록 새로고침
+    } catch (e) {
+        console.error("북마크 업데이트 실패", e.response?.data); // 서버가 보낸 구체적 에러 확인
+    }
+};
 
     return (
         <div className="board-container">
             <header className="board-header">
-                <h2>
-                    <MdRestaurant size={24} style={{ marginRight: 6 }} />
-                    자유게시판
-                </h2>
-                
-                {view === 'list' && (
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
-                        <button className="btn-submit" onClick={() => changeView('write')}>
-                            <MdArticle size={20} style={{ marginRight: 4 }} />
-                            글쓰기
-                        </button>
-                    </div>
+                <h2><MdRestaurant size={24} /> 자유게시판</h2>
+                {isList && (
+                    <button className="btn-submit" onClick={() => navigateTo('/board/write')}>
+                        <MdArticle size={20} /> 글쓰기
+                    </button>
                 )}
             </header>
 
-            {view === 'list' && (
-                <BoardList
-                    list={matList}
-                    viewType={viewType}
-                    setViewType={setViewType}
-                    onSearch={fetchList}
-                    onBookmark={onBookmark}
-                    loginUser={loginUser}
-                    onDetail={goDetail}
-                    cities={cities}
-                    selectedCity={selectedCity}
-                    setSelectedCity={setSelectedCity}
+            {isList && (
+                <BoardList 
+                    list={matList} viewType={viewType} setViewType={setViewType}
+                    onSearch={fetchList} onDetail={(item) => navigateTo(`/board/detail/${item._id}`)}
+                    cities={cities} selectedCity={selectedCity} setSelectedCity={setSelectedCity}
+                    loginUser={loginUser} onBookmark={handleBookmark}
                 />
             )}
 
-            {view === 'write' && (
-                <BoardWrite
-                    loginUser={loginUser}
-                    onAdd={() => { 
-                        fetchList(); 
-                        window.history.replaceState({ view: 'list' }, '');
-                        setView('list'); 
+            {isWrite && (
+                <BoardWrite 
+                    loginUser={loginUser} onAdd={() => navigateTo('/board')}
+                    onCancel={() => window.history.back()} onStyleChange={setPostStyle}
+                />
+            )}
+
+            {isDetail && (
+                <BoardItem 
+                    item={{ _id: getPathId() }} loginUser={loginUser} viewType={viewType}
+                    onBack={() => navigateTo('/board')}
+                    onEdit={() => navigateTo(`/board/edit/${getPathId()}`)}
+                    onDelete={async (id) => {
+                        if (window.confirm("삭제하시겠습니까?")) {
+                            await BoardService.deleteMat(id);
+                            navigateTo('/board');
+                            fetchList();
+                        }
                     }}
-                    onCancel={() => window.history.back()}
+                    onBookmark={handleBookmark} // ✅ 이 함수가 제대로 전달되어야 함
+                    postStyle={postStyle}
                 />
             )}
 
-            {view === 'detail' && selected && (
-                <BoardItem
-                    item={selected}
-                    loginUser={loginUser}
-                    viewType={viewType} 
-                    onBookmark={onBookmark}
-                    onBack={() => window.history.back()} 
-                    onEdit={() => changeView('edit', selected)}
-                    onDelete={onDelete}
-                    onVoteSuccess={fetchList}
-                />
-            )}
-
-            {view === 'edit' && selected && (
-                <BoardEdit
-                    item={selected}
-                    onUpdate={() => { 
-                        fetchList(); 
-                        window.history.replaceState({ view: 'list' }, '');
-                        setView('list'); 
-                    }}
-                    onCancel={() => window.history.back()} 
+            {isEdit && (
+                <BoardEdit 
+                    item={{ _id: getPathId() }}
+                    onUpdate={() => navigateTo(`/board/detail/${getPathId()}`)}
+                    onCancel={() => window.history.back()} onStyleChange={setPostStyle}
                 />
             )}
         </div>

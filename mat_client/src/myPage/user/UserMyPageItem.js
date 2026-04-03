@@ -33,8 +33,10 @@ const UserMyPageItem = ({item,loginUser,onDel}) => {
     return (
         <tr>
             <td onClick={goToArticle} 
-                style={{cursor:'pointer', color:'blue', textDecoration:'underline'}}>
+                style={{cursor:'pointer'}}>
+                    <div className='title-cell'>
                 {content}
+                </div>
             </td>
             <td className='rating-cell' style={{color:'#ffb703', fontSize:'1.2rem'}}>
                 {renderStars(rating)}

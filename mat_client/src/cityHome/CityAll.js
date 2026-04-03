@@ -11,10 +11,10 @@ import dongjakImg from './image/동작구.png'
 import mapoImg from './image/마포구.png'
 import jungImg from './image/중구.png'
 import './CityAll.css'
-import { useLocation } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 
 const CityAll = ({loginUser,loginInfo}) => {
-
+        const navigate = useNavigate();
         const onUpdate= async (id,formData)=>{
         await articleServices.updateArticle(id,formData)
     }
@@ -35,10 +35,10 @@ const CityAll = ({loginUser,loginInfo}) => {
     
 
     useEffect(() => {
-  if (location.pathname === '/city') {
-    setSelectedCity(null)
-  }
-}, [location.pathname])
+        if (location.pathname === '/city') {
+            setSelectedCity(null)
+        }
+        }, [location.pathname])
 
 
 
@@ -51,59 +51,84 @@ const CityAll = ({loginUser,loginInfo}) => {
             
             </Link>
 
-            {(!selectedCity || selectedCity==='Gangnam')&&(
+            {(!selectedCity || selectedCity === 'Gangnam') && (
+                    <Link to='/city/Gangnam' className="city-card"
+                        onClick={(e) => {
+                            if (selectedCity === 'Gangnam') {
+                                e.preventDefault();
+                                setSelectedCity(null); // 전체 리스트로
+                                navigate('/city');
+                                return;
+                            }
+                            setSelectedCity('Gangnam');
+                        }}>
+                    <img loading='lazy' src={gangnamImg} alt="강남구" />
+                    <div className='city-overlay'>강남구</div>
+                    </Link>
+                )}
 
-            <Link to='/city/Gangnam' className="city-card"
-             onClick={() => {
-                setSelectedCity('Gangnam');
-                
-                }}>
-            <img loading='lazy' src={gangnamImg} alt="강남구" />
-            <div className='city-overlay'>강남구</div>            
-       </Link>
-       )}
-            {(!selectedCity || selectedCity==='Yongsan')&&(
-            <Link to='/city/Yongsan' className="city-card"
-             onClick={() => {
-                setSelectedCity('Yongsan');
-               
-                }}>
-            <img loading='lazy' src={yongsanImg}  alt="용산구" />
-            <div className="city-overlay">용산구</div>            
-        </Link>
-         )}
+           {(!selectedCity || selectedCity === 'Yongsan') && (
+                <Link to='/city/Yongsan' className="city-card"
+                    onClick={(e) => {
+                        if (selectedCity === 'Yongsan') {
+                            e.preventDefault();
+                            setSelectedCity(null);
+                            navigate('/city');
+                            return;
+                        }
+                        setSelectedCity('Yongsan');
+                    }}>
+                <img loading='lazy' src={yongsanImg} alt="용산구" />
+                <div className="city-overlay">용산구</div>
+                </Link>
+            )}
             
-            {(!selectedCity || selectedCity==='Dongjak')&&(
-            <Link to='/city/Dongjak' className="city-card"
-             onClick={() => {
-                setSelectedCity('Dongjak');
-               
-                }}>
-            <img loading='lazy' src={dongjakImg} alt="동작구" />
-            <div className='city-overlay'>동작구</div>            
-        </Link>
-         )}
-            {(!selectedCity || selectedCity==='Mapo')&&(
-            <Link to='/city/Mapo' className="city-card"
-             onClick={() => {
-                setSelectedCity('Mapo');
-               
-                }}>
-            <img loading='lazy' src={mapoImg} alt="마포구" />
-            <div className='city-overlay'>마포구</div>            
-        </Link>
-         )}
+            {(!selectedCity || selectedCity === 'Dongjak') && (
+                    <Link to='/city/Dongjak' className="city-card"
+                        onClick={(e) => {
+                            if (selectedCity === 'Dongjak') {
+                                e.preventDefault();
+                                setSelectedCity(null);
+                                navigate('/city');
+                                return;
+                            }
+                            setSelectedCity('Dongjak');
+                        }}>
+                    <img loading='lazy' src={dongjakImg} alt="동작구" />
+                    <div className='city-overlay'>동작구</div>
+                    </Link>
+                )}
+            {(!selectedCity || selectedCity === 'Mapo') && (
+                    <Link to='/city/Mapo' className="city-card"
+                        onClick={(e) => {
+                            if (selectedCity === 'Mapo') {
+                                e.preventDefault();
+                                setSelectedCity(null);
+                                navigate('/city');
+                                return;
+                            }
+                            setSelectedCity('Mapo');
+                        }}>
+                    <img loading='lazy' src={mapoImg} alt="마포구" />
+                    <div className='city-overlay'>마포구</div>
+                    </Link>
+                )}
 
-           {(!selectedCity || selectedCity==='Jung')&&(
-            <Link to='/city/Jung' className="city-card"
-             onClick={() => {
-                setSelectedCity('Jung');
-               
-                }}>
-            <img loading='lazy' src={jungImg} alt="중구" />
-            <div className='city-overlay'>중구</div>            
-        </Link>
-        )}
+           {(!selectedCity || selectedCity === 'Jung') && (
+                <Link to='/city/Jung' className="city-card"
+                    onClick={(e) => {
+                        if (selectedCity === 'Jung') {
+                            e.preventDefault();
+                            setSelectedCity(null);
+                            navigate('/city');
+                            return;
+                        }
+                        setSelectedCity('Jung');
+                    }}>
+                <img loading='lazy' src={jungImg} alt="중구" />
+                <div className='city-overlay'>중구</div>
+                </Link>
+            )}
         </>)}    
 
  

@@ -9,8 +9,11 @@ const LoginPageInfo = ({name, onNext}) => {
                 회원가입이 완료되었습니다!
             </h2>
             <p style={{marginTop:'30px'}}>
-                <button 
-                    onClick={onNext}
+                <button
+                    onClick={() => {
+                        window.scrollTo({ top: 0, behavior: 'instant' });
+                        onNext();
+                    }}
                     className="btn-navy"
                     style={{ cursor:'pointer' }}
                 >

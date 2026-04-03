@@ -7,7 +7,7 @@ const Search = ({ keyword, setKeyword, onSearch }) => {
                 type="text" 
                 value={keyword} 
                 onChange={(e) => setKeyword(e.target.value)} 
-                placeholder="장소 검색" 
+                placeholder="키워드 검색" 
             /> 
             <button type="submit">검색</button> 
         </form>

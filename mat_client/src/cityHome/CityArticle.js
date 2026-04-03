@@ -8,7 +8,8 @@ import { searchKeyword } from '../services/SearchMapService';
 import style from './CityArticle.css'
 import { TiStarOutline, TiStarFullOutline  } from "react-icons/ti";
 import Loading from '../Loading';
-
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarIcon from '@mui/icons-material/Star';
 
 const CityArticle = ({loginUser,loginInfo}) => {
 
@@ -183,13 +184,14 @@ const CityArticle = ({loginUser,loginInfo}) => {
                     
                     {loginInfo?.role !== 'city' && (
                         <div 
-                            className="bookmark-btn" 
                             onClick={(e) => { e.stopPropagation(); handleBookmarkToggle(data); }}
-                            title={bookmarked ? "북마크 해제" : "북마크 추가"}
+                            style={{ cursor: 'pointer', display: 'inline-flex' }} // div에 커서 스타일 추가
                         >
-                            <span style={{ color: bookmarked ? '#f6e055' : '#cccccc' }}>
-                                {bookmarked ? <TiStarFullOutline /> : <TiStarOutline />}
-                            </span>
+                            {bookmarked ? (
+                                <StarIcon sx={{ color: '#f6e055', fontSize: 40, transition: 'color 0.2s' }} />
+                            ) : (
+                                <StarBorderIcon sx={{ color: '#ddd', fontSize: 40, transition: 'color 0.2s' }} />
+                            )}
                         </div>
                     )}
                 </div>
@@ -247,7 +249,7 @@ const CityArticle = ({loginUser,loginInfo}) => {
                 <div className="left-actions">
                     <button 
                         className="btn-list" 
-                        onClick={() => navigate(`/city/${cityName}`)}
+                        onClick={() => {navigate(`/city/${cityName}`); window.scrollTo(0, 0);}}
                     >
                         ← 목록으로
                     </button>
@@ -296,7 +298,10 @@ const CityArticle = ({loginUser,loginInfo}) => {
                 {/* 리뷰 목록 */}
                 <ul className="review-list">
                     {reviews.length === 0 ? (
-                        <li className="no-review">아직 작성된 리뷰가 없습니다. 첫 번째 리뷰를 남겨보세요!</li>
+                        <li className="no-review">
+                            아직 작성된 리뷰가 없습니다.<br/>
+                            <span style={{ fontSize: '12px', color: '#bbb' }}>첫 번째 리뷰를 남겨보세요!</span>
+                        </li>
                     ) : (
                         reviews.map(review => (
                             <li className="review-item" key={review._id}>
@@ -311,7 +316,11 @@ const CityArticle = ({loginUser,loginInfo}) => {
                                     )}
                                 </div>
                                 <div className="review-content">
-                                    {review.content}
+                                   {review.content.split(/(https?:\/\/[^\s]+)/g).map((part, i) =>
+                                    /^https?:\/\//.test(part)
+                                        ? <a key={i} href={part} target="_blank" rel="noreferrer">{part}</a>
+                                        : part
+                                    )}
                                 </div>
                             </li>
                         ))
@@ -327,10 +336,13 @@ const CityArticle = ({loginUser,loginInfo}) => {
             ) : (
                 relatedArticles.map(item => (
                     <div
-                        key={item._id}
-                        className="sidebar-item"
-                        onClick={() => navigate(`/city/${item.cityName}/article/${item._id}`)}
-                    >
+                            key={item._id}
+                            className="sidebar-item"
+                            onClick={() => {
+                                window.scrollTo({ top: 0, behavior: 'smooth' }); // ← 추가
+                                navigate(`/city/${item.cityName}/article/${item._id}`);
+                            }}
+                        >
                         {item.images?.[0] ? (
                             <img src={`/uploads/${item.images[0].saveFileName}`} alt={item.matName} />
                         ) : (

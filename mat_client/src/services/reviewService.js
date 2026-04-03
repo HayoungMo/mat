@@ -4,7 +4,7 @@ import axios from 'axios'
 
 const getReview = async(userId) => {
     const res = await axios.get(`/api/review/${userId}`) 
-    return res.data // 전체 조회
+     return res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 }
 
 //입력

@@ -9,19 +9,20 @@ const Footer = () => {
                     <span className="footer-bar">|</span>
                     <span>Eat=Log</span>
                     <span className="footer-bar">|</span>
-                    <span>사업자등록번호: 000-00-00000</span>
                 </div>
                 <div className="footer-address">
-                    <span>서울특별시 강남구 혁신로 123 발로란티스 타워 24F</span>
+                    <span>경기도 수원시 팔달구 중부대로 104
+                         휴먼교육센터 수원교육센터
+                    </span>
                 </div>
                 <div className="footer-contact">
                     <a href="https://open.kakao.com/o/sDZGgOni" target="_blank" rel="noreferrer" className="cs-number cs-link">
                     카카오 문의하기
                     </a>
                     <span className="footer-bar">|</span>
-                    <span>이메일: support@valorantis.com</span>
+                    <span>이메일: mohayoung80@gmail.com</span>
                 </div>
-                <p className="copy">© 2024 VALORANTIS SYSTEMS. ALL RIGHTS RESERVED.</p>
+                <p className="copy">© 2026 Eat=Log. Curating Local Tastes. All rights reserved..</p>
             </div>
         </footer>
     );

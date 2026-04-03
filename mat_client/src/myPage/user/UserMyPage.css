@@ -241,11 +241,20 @@ body {
   border-radius: 2px;
 }
 
+
+.title-cell {
+  display: block;        /* 중요 */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 /* ── 테이블 ── */
 .mypage-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.88rem;
+  table-layout: fixed;
 }
 
 .mypage-table thead th {
@@ -279,6 +288,15 @@ body {
 }
 
 /* ── 북마크 + 지도 ── */
+
+.bookmark-title {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 200px; /* 필요에 따라 조정 */
+}
+
 .bookmark-section {
   display: flex;
   gap: 18px;

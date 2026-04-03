@@ -1,7 +1,8 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const Board = require('../models/FreeBoardSchema'); // ← 파일명에 맞게 수정
+const Board = require('../models/FreeBoardSchema');
+const Comment = require('../models/CommentSchema');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => { cb(null, 'uploads'); },
@@ -41,7 +42,7 @@ module.exports = (app) => {
         }
     });
 
-    // [C] 글 작성 ('images' 로 프론트와 일치)
+    // [C] 글 작성
     app.post('/api/freeboard', upload.single('images'), async (req, res) => {
         try {
             const boardData = { ...req.body };
@@ -85,7 +86,7 @@ module.exports = (app) => {
         }
     });
 
-    // [D] 삭제 + 첨부파일 같이 삭제
+    // [D] 삭제 + 첨부파일 삭제 + 댓글도 함께 삭제
     app.delete('/api/freeboard/:id', async (req, res) => {
         try {
             const article = await Board.findById(req.params.id);
@@ -94,6 +95,10 @@ module.exports = (app) => {
                 if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
             }
             await Board.findByIdAndDelete(req.params.id);
+
+            // ✅ 게시글 삭제 시 해당 댓글도 모두 삭제
+            await Comment.deleteMany({ boardId: req.params.id });
+
             res.send({ success: true });
         } catch (err) {
             console.error('삭제 에러:', err);
@@ -102,40 +107,28 @@ module.exports = (app) => {
     });
 
     // [U] 북마크 토글
-        app.patch('/api/freeboard/:id/bookmark', async (req, res) => {
-            try {
-                const { userId } = req.body; // 클라이언트에서 보낸 로그인 유저 ID
-                if (!userId) return res.status(400).send({ message: "로그인이 필요합니다." });
+    app.patch('/api/freeboard/:id/bookmark', async (req, res) => {
+        try {
+            const { userId } = req.body;
+            if (!userId) return res.status(400).send({ message: "로그인이 필요합니다." });
 
-                const board = await Board.findById(req.params.id);
-                
-                // 1. 배열이 아니면 배열로 초기화 (방어 코드)
-                if (!Array.isArray(board.isBookmarked)) {
-                    board.isBookmarked = [];
-                }
+            const board = await Board.findById(req.params.id);
+            if (!Array.isArray(board.isBookmarked)) board.isBookmarked = [];
 
-                // 2. 이미 내 아이디가 배열에 있는지 확인
-                const index = board.isBookmarked.indexOf(userId);
-
-                if (index > -1) {
-                    // 이미 있다면 삭제 (북마크 해제)
-                    board.isBookmarked.splice(index, 1);
-                } else {
-                    // 없다면 추가 (북마크 등록)
-                    board.isBookmarked.push(userId);
-                }
-
-                await board.save();
-                res.send({ 
-                    success: true, 
-                    isBookmarked: board.isBookmarked, // 전체 배열 반환
-                    count: board.isBookmarked.length 
-                });
-            } catch (err) {
-                console.error('북마크 에러:', err);
-                res.status(500).send({ success: false });
+            const index = board.isBookmarked.indexOf(userId);
+            if (index > -1) {
+                board.isBookmarked.splice(index, 1);
+            } else {
+                board.isBookmarked.push(userId);
             }
-        });
+
+            await board.save();
+            res.send({ success: true, isBookmarked: board.isBookmarked, count: board.isBookmarked.length });
+        } catch (err) {
+            console.error('북마크 에러:', err);
+            res.status(500).send({ success: false });
+        }
+    });
 
     // [U] 투표 처리 + 3일 마감 체크
     app.patch('/api/freeboard/:id/vote', async (req, res) => {
@@ -164,4 +157,69 @@ module.exports = (app) => {
             res.status(500).send({ success: false });
         }
     });
+
+
+    // ============================================================
+    //  💬 댓글 API (text / image 타입 전용)
+    // ============================================================
+
+    // [R] 댓글 목록 조회
+    app.get('/api/freeboard/:id/comments', async (req, res) => {
+        try {
+            const comments = await Comment.find({
+                boardId: req.params.id,
+                isDeleted: false
+            }).sort({ createdAt: 1 }); // 오래된 순
+            res.send(comments);
+        } catch (err) {
+            console.error('댓글 조회 에러:', err);
+            res.status(500).send([]);
+        }
+    });
+
+    // [C] 댓글 등록
+    app.post('/api/freeboard/:id/comments', async (req, res) => {
+        try {
+            const { userId, content } = req.body;
+
+            if (!userId) return res.status(400).send({ message: "로그인이 필요합니다." });
+            if (!content || !content.trim()) return res.status(400).send({ message: "댓글 내용을 입력해주세요." });
+
+            // survey 타입엔 댓글 불가
+            const post = await Board.findById(req.params.id);
+            if (!post) return res.status(404).send({ message: "게시글이 없습니다." });
+            if (post.type === 'survey') return res.status(400).send({ message: "설문 게시글에는 댓글을 달 수 없습니다." });
+
+            const comment = await Comment.create({
+                boardId: req.params.id,
+                userId,
+                content: content.trim()
+            });
+            res.status(201).send(comment);
+        } catch (err) {
+            console.error('댓글 등록 에러:', err);
+            res.status(500).send({ success: false, message: err.message });
+        }
+    });
+
+    // [D] 댓글 삭제 (본인만 가능)
+    app.delete('/api/freeboard/:id/comments/:commentId', async (req, res) => {
+        try {
+            const { userId } = req.body;
+            const comment = await Comment.findById(req.params.commentId);
+
+            if (!comment) return res.status(404).send({ message: "댓글이 없습니다." });
+            if (comment.userId !== userId) return res.status(403).send({ message: "본인 댓글만 삭제할 수 있습니다." });
+
+            // 소프트 삭제
+            comment.isDeleted = true;
+            await comment.save();
+
+            res.send({ success: true });
+        } catch (err) {
+            console.error('댓글 삭제 에러:', err);
+            res.status(500).send({ success: false });
+        }
+    });
+
 };
