@@ -10,6 +10,7 @@ import React, { useState, useEffect } from 'react';
 import CityAll from './cityHome/CityAll';
 import Header from './Header';
 import Footer from './Footer';
+import Loading from './Loading';
 
 function App() {
 
@@ -38,7 +39,6 @@ function App() {
 
   return (
     <div>
-      
       <Header loginUser={loginUser} onLogout={onLogout} />
 
       <Routes>
