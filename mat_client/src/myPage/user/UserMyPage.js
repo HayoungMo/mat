@@ -223,7 +223,7 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
            {isEdit
             ? <>
                 <button className='btn btn-primary' onClick={onUpdate}>저장</button>
-                <button className='btn btn-outline' onClick={() => { setIsEdit(false); setProfile({ ...profile, currentPassword: '' }); }}>취소</button>
+                <button className='btn btn-outline' onClick={() => { setIsEdit(false); onProfile(); }}>취소</button>
               </>
             : <button className='btn btn-primary' onClick={() => setIsEdit(true)}>정보 수정</button>            
         }
@@ -235,7 +235,7 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
         ) : request?.status === 'rejected' ? (
             <button onClick={()=> navigate('/mypage/levelup-check')}>등업 확인하기</button>
         ) : request?.status === 'approved' ? (
-            <span>등업 완료! 재로그인 시 반영됩니다.</span>
+            <span>등업 완료!</span>
         ) : (
             <button className='btn btn2' onClick={() => navigate('/mypage/levelup-check')}>등업 신청</button>
         )}
