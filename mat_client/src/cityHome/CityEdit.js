@@ -116,7 +116,7 @@ const CityEdit = ({onUpdate,setIsEdit,loginUser}) => {
             userId:'',title:'',subject:'',region:'',matName:'',matTel:'',matAddr:''
         })
 
-        navigate(`/city/${cityName}`)
+        navigate(-1, {state:{message:'수정 완료됐습니다.'}})
     }
 
     if(isLoading) return <Loading/>
