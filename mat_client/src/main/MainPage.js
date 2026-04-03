@@ -151,6 +151,23 @@ const externalKeyword = useMemo(() =>
   };
 
 
+  //커맨드 추가
+  const KEY_SEQUENCE = ['ArrowLeft', 'ArrowLeft', 'ArrowRight', 'ArrowRight']
+  const keyBuffer = useRef([])
+
+  useEffect(()=>{
+    const handleKeyDown=(evt)=>{
+      keyBuffer.current = [...keyBuffer.current,evt.key].slice(-4)
+
+      if(keyBuffer.current.join(',')===KEY_SEQUENCE.join(',')){
+        keyBuffer.current=[]
+        navigate('/login')
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  },[])
 
  return (
 
