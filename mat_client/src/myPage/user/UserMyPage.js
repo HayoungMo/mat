@@ -25,7 +25,10 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
      const [users,setUsers] = useState([])
      const [profile,setProfile] = useState({})
      const [isEdit,setIsEdit] = useState(false)
-     const [isUserDel, setIsUserDel] = useState(false) //모하영 탈퇴유저 추가
+     
+     // ★ 커스텀 모달 상태 추가
+     const [showDelModal, setShowDelModal] = useState(false) 
+
      const [current,setCurrent] =useState({})
      const [bookmark,setBookmark] = useState([])
      const [selectedPlace, setSelectedPlace] = useState(null)
@@ -103,17 +106,16 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
                     alert('비밀번호가 다릅니다.');
                 }
             }
-            
-
         }
-        //모하영 탈퇴 버튼 추가 3월 30일
-        const onUserDel = async (user) =>{
-            const ok = window.confirm(
-                '회원 탈퇴 시 모든 정보가 영구 삭제 됩니다.\n 정말 탈퇴하시겠습니까?'
-            )
-            if (!ok) return
+        
+        // ★ 탈퇴 버튼 클릭 시 모달 열기
+        const onUserDelClick = () => {
+            setShowDelModal(true);
+        };
+
+        // ★ 모달에서 '탈퇴하기' 눌렀을 때 실제 실행되는 로직
+        const confirmUserDel = async () =>{
             try{
-                //등업 신청 데이터도 같이 삭제 : 모하영
                 await fetch('/api/upgrade', {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
@@ -121,10 +123,8 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
                  });
 
                 await profileService.deleteProfile(profile._id)
-                //localStorage 정리
                 localStorage.removeItem('userId')
                 localStorage.removeItem('user')
-
                 localStorage.removeItem(`notified_${loginUser}_approved`)
                 localStorage.removeItem(`notified_${loginUser}_rejected`)
 
@@ -133,13 +133,14 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
             }catch (err) {
                 console.log('탈퇴 오류', err)
                 alert('탈퇴 중 오류가 발생했습니다.')
+            } finally {
+                setShowDelModal(false); // 무조건 모달 닫기
             }
-            
         }
+
     const onData = async () => {
         try {
             const res = await reviewService.getReview(loginUser)
-            console.log('응답 확인:', res)  // 응답이 되는지 확인하기 위한 코딩임 필요는 없음
             setUsers(res) 
         } catch(err) {
             console.error(err)
@@ -156,9 +157,8 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
         const onProfile = async () => {
            try {
         const res = await profileService.getProfile(loginUser)
-        console.log('getProfile 응답:',res)
         if(res){
-        setProfile(res)
+            setProfile(res)
         }
     } catch(err) {
         console.error(err)
@@ -166,32 +166,16 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
             }
         }
 
-        const onBookmark = async () => {
-           try {
-        const res = await bookmarkService.getBookmarks(loginUser)
-        console.log('getbookmark 응답:',res)
-        if(res){
-        setBookmark(res)
-        }
-    } catch(err) {
-        console.error(err)
-        setBookmark({})
-            }
-        }
-
-
     const changeInput = (evt) => {
         //이메일에 한글 입력 방지
-    const { value, name } = evt.target;
-    if(name === 'email' && /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value)){
-        alert('이메일에 한글은 입력할 수 없습니다');
-        return;
-    }
-    setProfile({ ...profile, [name]: value })
-};
+        const { value, name } = evt.target;
+        if(name === 'email' && /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value)){
+            alert('이메일에 한글은 입력할 수 없습니다');
+            return;
+        }
+        setProfile({ ...profile, [name]: value })
+    };
 
-        
-        
     return (
         <div className='mypage-wrapper'>
          
@@ -205,15 +189,6 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
          }
 
             <div className='mypage-body'>
-            
-            {/* <Link to="/login">
-            <button>로그인</button>
-            </Link>
-            <Link to="/board">
-            <button>자유게시판</button>
-            </Link> */}
-
-
             <aside className="mypage-sidebar">
             <div className="profile-card">    
             <h3 className='profile-card-title'>프로필</h3>
@@ -229,7 +204,6 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
         }
         
        
-        {/* 등업 상태에 따라서 실시간으로 버튼 상태 변경이 되는것  */}
         {request?.status === 'pending' ? (
             <button onClick={()=> navigate('/mypage/levelup-check')}>등업 확인하기</button>
         ) : request?.status === 'rejected' ? (
@@ -239,14 +213,15 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
         ) : (
             <button className='btn btn2' onClick={() => navigate('/mypage/levelup-check')}>등업 신청</button>
         )}
-         <button className='btn btn3' onClick={onUserDel}>회원 탈퇴</button>
+         
+         {/* ★ 기존 onUserDel 대신 모달 여는 onUserDelClick으로 변경 */}
+         <button className='btn btn3' onClick={onUserDelClick}>회원 탈퇴</button>
 
          </div>
         </div>
         </aside>
 
-
-<main className='mypage-content'>
+        <main className='mypage-content'>
                 <Routes>
                     <Route path="/" element={
                         <>
@@ -278,6 +253,20 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
                 </Routes>
             </main>
            </div>
+
+           {/* ★ 커스텀 회원 탈퇴 모달 UI */}
+           {showDelModal && (
+                <div className="custom-modal-overlay">
+                    <div className="custom-modal">
+                        <h3 className="modal-warn-title">회원 탈퇴</h3>
+                        <p>회원 탈퇴 시 모든 정보가 영구 삭제됩니다.<br/>정말 탈퇴하시겠습니까?</p>
+                        <div className="modal-btn-group">
+                            <button className="btn-cancel" onClick={() => setShowDelModal(false)}>취소</button>
+                            <button className="btn-danger" onClick={confirmUserDel}>탈퇴하기</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

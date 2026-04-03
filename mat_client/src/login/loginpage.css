@@ -194,3 +194,31 @@
     from { opacity: 0; transform: translateY(-5px); }
     to   { opacity: 1; transform: translateY(0); }
 }
+/* 2. 에러 발생 시 흔들림 애니메이션 */
+@keyframes shakeError {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+}
+
+.shake-error {
+    animation: shakeError 0.4s ease-in-out;
+}
+/* 새로 추가된 motion.div를 위한 스타일 */
+.card-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px; /* 입체감을 위한 설정 */
+}
+
+/* 1. 회원가입 카드만 별도로 넓게 설정 */
+.join-card {
+    max-width: 540px !important; /* 기존 540px에서 확장 */
+}
+
+/* 3. 입력창이 가로로 넓어질 때 라벨과의 조화 */
+.join-card .input-group p {
+    margin-bottom: 20px; 
+}
