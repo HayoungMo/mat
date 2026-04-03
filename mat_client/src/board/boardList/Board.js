@@ -13,7 +13,7 @@ const Board = ({ loginUser }) => {
     const [matList, setMatList] = useState([]);
     const [viewType, setViewType] = useState('card');
     const [selectedCity, setSelectedCity] = useState("전체");
-    const [postStyle, setPostStyle] = useState({ font: "'Malgun Gothic', sans-serif", align: 'left' });
+    // postStyle은 BoardItem이 subject JSON에서 직접 파싱하므로 제거됨
 
     const cities = ["전체", "강남구", "용산구", "동작구", "마포구", "중구"];
 
@@ -87,7 +87,6 @@ const Board = ({ loginUser }) => {
                     loginUser={loginUser}
                     onAdd={() => navigateTo('/board')}
                     onCancel={() => window.history.back()}
-                    onStyleChange={setPostStyle}
                 />
             )}
 
@@ -105,7 +104,6 @@ const Board = ({ loginUser }) => {
                             fetchList();
                         }
                     }}
-                    postStyle={postStyle}
                 />
             )}
 
@@ -115,7 +113,6 @@ const Board = ({ loginUser }) => {
                     item={{ _id: getPathId() }}
                     onUpdate={() => navigateTo(`/board/detail/${getPathId()}`)}
                     onCancel={() => window.history.back()}
-                    onStyleChange={setPostStyle}
                 />
             )}
         </div>

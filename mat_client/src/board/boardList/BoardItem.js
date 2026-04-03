@@ -183,7 +183,11 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
     };
 
     const renderCard = (post, label) => (
-        <div key={post._id} onClick={() => { setDetail(post); window.scrollTo(0, 0); }} style={{ flex: 1, cursor: 'pointer', border: '1px solid #eee', borderRadius: '8px', padding: '12px', background: '#fff' }}>
+        <div key={post._id} onClick={() => {
+            window.history.pushState({}, '', `/board/detail/${post._id}`);
+            setDetail(post);
+            window.scrollTo(0, 0);
+        }} style={{ flex: 1, cursor: 'pointer', border: '1px solid #eee', borderRadius: '8px', padding: '12px', background: '#fff' }}>
             <span style={{ fontSize: '11px', color: '#8a2130', fontWeight: 'bold' }}>{label} 게시글</span>
             <div style={{ fontSize: '14px', fontWeight: 'bold', margin: '5px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.title}</div>
             <div style={{ fontSize: '12px', color: '#093c71', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -214,6 +218,10 @@ const BoardItem = ({ item, onBack, onEdit, onDelete, onBookmark, loginUser, view
             </div>
 
             <div style={{ marginBottom: '20px', paddingBottom: '15px', borderBottom: '1px solid #eee' }}>
+                {/* ✅ 제목 표시 추가 */}
+                <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#1a1a1a', margin: '0 0 12px 0', lineHeight: '1.4', wordBreak: 'keep-all' }}>
+                    {detail.title}
+                </h2>
                 <p className="detail-info" style={{ color: '#093c71', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'flex-end', margin: 0, fontSize: '13px' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><MdPerson /> {detail.userId}</span> |
                     <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><MdVisibility /> {detail.readCount || 0}</span> |

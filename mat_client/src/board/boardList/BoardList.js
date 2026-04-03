@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import BoardForm from './BoardForm';
-// ✅ 리액트 아이콘 임포트 (MdChatBubbleOutline 확인)
+
 import { 
     MdPoll, MdChevronLeft, MdChevronRight, MdHowToVote, 
-    MdSearch, MdPerson, MdVisibility, MdGridView, MdViewList,
+     MdPerson, MdVisibility, MdGridView, MdViewList,
     MdStar, MdStarBorder, MdLocationOn,
     MdChatBubbleOutline 
 } from "react-icons/md";
