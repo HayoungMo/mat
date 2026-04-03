@@ -110,7 +110,7 @@ const externalKeyword = useMemo(() =>
           return;
           
           }else{
-            alert("해당 맛집의 아티클이 없습니다");
+            alert("해당 맛집의 칼럼이 없습니다");
           }
   }
 

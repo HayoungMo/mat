@@ -249,6 +249,13 @@ body {
   text-overflow: ellipsis;
 }
 
+.booktitle-cell {
+   max-width: 150px;      
+  white-space: nowrap;  
+  overflow: hidden;      
+  text-overflow: ellipsis;
+}
+
 /* ── 테이블 ── */
 .mypage-table {
   width: 100%;
@@ -275,6 +282,8 @@ body {
   color: var(--gray-800);
   vertical-align: middle;
 }
+
+
 
 .mypage-table tbody tr:last-child td { border-bottom: none; }
 
@@ -516,4 +525,10 @@ body {
 @keyframes slideIn {
     from { opacity: 0; transform: translateY(-10px); }
     to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-num-btn.active {
+  background: #8a2130;
+  color: #fff;
+  border-color: #8a2130;
 }

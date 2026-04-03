@@ -8,6 +8,12 @@ const UserMyPageList = ({users,onDel}) => {
 
     const totalPage = Math.ceil(users.length / itemPerPage)
 
+    const pageCount = 5
+
+    const pageGroup = Math.ceil(page / pageCount);
+    const startPage = (pageGroup - 1) * pageCount + 1;
+    const endPage = Math.min(startPage + (pageCount-1), totalPage)
+
     useEffect(() => {
         if (page > totalPage){
             setPage(totalPage || 1)
@@ -37,15 +43,19 @@ const UserMyPageList = ({users,onDel}) => {
                 </thead>
                 <tbody>
                     {users.length === 0
-                    ? <tr><td colSpan='3'>게시글이 없습니다.</td></tr>
+                    ? <tr><td colSpan='4'>게시글이 없습니다.</td></tr>
                     :
                        currentItems.map(item=><UserMyPageItem key={item._id} item={item} onDel={onDel}/>)
                     }
+                     
                 </tbody>
             </table>
             {totalPage > 1 && (
                 <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                    {Array.from({ length: totalPage }, (_, i) => i + 1).map((num) => (
+                    {startPage > 1 && (<button onClick={() => setPage(startPage - 1)}>
+                이전
+            </button>)}
+                    {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((num) => (
                         <button
                             key={num}
                             onClick={() => setPage(num)}
@@ -62,6 +72,11 @@ const UserMyPageList = ({users,onDel}) => {
                             {num}
                         </button>
                     ))}
+                    {endPage < totalPage && (
+                        <button onClick={() => setPage(endPage + 1)}>
+                            다음
+                        </button>
+                    )}
                 </div>
                  )}
         </div>

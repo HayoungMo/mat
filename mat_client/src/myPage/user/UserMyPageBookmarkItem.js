@@ -13,9 +13,11 @@ const UserMyPageBookmarkItem = ({item, onSelectPlace}) => {
 
             <tr onClick={() => onSelectPlace({matName, matTel, matAddr, lat,   lng})} 
                 style={{cursor:'pointer'}}>
-                <td>{matName}</td>
+                
+                <td className="booktitle-cell">{matName}</td>                   
                 <td>{matTel}</td>
-                <td>{matAddr}</td>
+                <td className="booktitle-cell">{matAddr}</td>
+            
             
                 <td>
                     <button className="btn btn-primary" onClick={(e) => {
