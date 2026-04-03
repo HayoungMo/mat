@@ -5,19 +5,25 @@ import { useBookmark } from '../../contexts/BookmarkContext';
 const UserMyPageBookmarkList = ({onSelectPlace}) => {
     const {bookmarks, onDel} = useBookmark();
 
-     const [page,setPage]=useState(1)
-        const itemPerPage = 5
-    
-        const totalPage = Math.ceil(bookmarks.length / itemPerPage)
-    
-        useEffect(() => {
-            if (page > totalPage){
-                setPage(totalPage || 1)
-            }
-        },[bookmarks, totalPage, page])
-    
-        const startIndex = (page - 1) * itemPerPage
-        const currentItems = bookmarks.slice(startIndex, startIndex + itemPerPage)
+      const [page,setPage]=useState(1)
+         const itemPerPage = 3
+     
+         const totalPage = Math.ceil(bookmarks.length / itemPerPage)
+     
+         const pageCount = 3
+     
+         const pageGroup = Math.ceil(page / pageCount);
+         const startPage = (pageGroup - 1) * pageCount + 1;
+         const endPage = Math.min(startPage + (pageCount-1), totalPage)
+     
+         useEffect(() => {
+             if (page > totalPage){
+                 setPage(totalPage || 1)
+             }
+         },[bookmarks, totalPage, page])
+     
+         const startIndex = (page - 1) * itemPerPage
+         const currentItems = bookmarks.slice(startIndex, startIndex + itemPerPage)
    
     return (
         <div>
@@ -38,8 +44,6 @@ const UserMyPageBookmarkList = ({onSelectPlace}) => {
                     </tr>
                 </thead>
                 <tbody>
-
-                    
                     {
                         bookmarks.length === 0
                         ? <tr><td colSpan='3'>저장된 북마크가 없습니다.</td></tr>
@@ -47,12 +51,19 @@ const UserMyPageBookmarkList = ({onSelectPlace}) => {
                        currentItems.map(item=><UserMyPageBookmarkItem key={item._id} item={item}
                          onSelectPlace={onSelectPlace}/>)
                     }
+                   
+
+                    
+                    
                 </tbody>
             </table>
 
             {totalPage > 1 && (
                 <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                    {Array.from({ length: totalPage }, (_, i) => i + 1).map((num) => (
+                    {startPage > 1 && (<button onClick={() => setPage(startPage - 1)}>
+                이전
+            </button>)}
+                    {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((num) => (
                         <button
                             key={num}
                             onClick={() => setPage(num)}
@@ -69,10 +80,13 @@ const UserMyPageBookmarkList = ({onSelectPlace}) => {
                             {num}
                         </button>
                     ))}
+                    {endPage < totalPage && (
+                        <button onClick={() => setPage(endPage + 1)}>
+                            다음
+                        </button>
+                    )}
                 </div>
                  )}
-
-
         </div>
     );
 };
