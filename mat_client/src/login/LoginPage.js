@@ -137,8 +137,8 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
     const Trademark = () => (
         <div className="card-trademark-container">
             <div className="trademark-line"></div>
-            <p className="card-trademark">PROUDLY POWERED BY <strong>VALORANTIS SYSTEMS</strong> © 2024</p>
-            <p className="card-tagline">INNOVATION BEYOND BOUNDARIES</p>
+            <p className="card-trademark">POWERED BY <strong>EAT-LOG TEAM</strong> © 2026</p>
+            <p className="card-tagline">BEYOND THE PLATE, INTO THE MEMORY</p>
         </div>
     );
 
