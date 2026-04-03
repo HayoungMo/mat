@@ -154,7 +154,7 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                     <div className="input-group">
                         {/* 아이디 */}
                         <p>
-                            <label>ID</label>
+                            <label>아이디</label>
                             <div className="flex-row">
                                 <input type='text' name='userId' value={userId} onChange={onText}
                                     placeholder="아이디 입력" className="auth-input" />
@@ -168,14 +168,14 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
 
                         {/* 비밀번호 */}
                         <p>
-                            <label>PW</label>
+                            <label>비밀번호</label>
                             <input type='password' name='password' value={password} onChange={onText}
                                 placeholder="비밀번호 입력" className="auth-input" />
                         </p>
 
                         {/* 비밀번호 확인 */}
                         <p>
-                            <label>PW 확인</label>
+                            <label>비밀번호 확인</label>
                             <input type='password' value={pwCheck}
                                 onChange={(e) => setPwCheck(e.target.value)}
                                 placeholder="비밀번호 재입력" className="auth-input" />
@@ -252,12 +252,12 @@ const LoginPage = ({loginUser, setLoginUser, setLoginInfo}) => {
                     <h3 className="card-title">로그인 <span className="title-en">LOGIN</span></h3>
                     <div className="input-group">
                         <p>
-                            <label>ID</label>
+                            <label>아이디</label>
                             <input type='text' name='userId' value={userId} onChange={onText}
                                 placeholder="아이디 입력" className="auth-input" />
                         </p>
                         <p>
-                            <label>PW</label>
+                            <label>비밀번호</label>
                             <input type='password' name='password' value={password} onChange={onText}
                                 placeholder="비밀번호 입력" className="auth-input" />
                         </p>
