@@ -3,7 +3,7 @@ import CityList from './CityList';
 import articleService from '../services/articleServices'
 import CityMessage from './CityMessage';
 import CityAdd from './CityAdd';
-import { useParams,useNavigate } from 'react-router-dom';
+import { useParams,useNavigate, useLocation } from 'react-router-dom';
 import style from './CityHome.css';
 
 const cityNames = {
@@ -15,6 +15,8 @@ const cityNames = {
 };
 
 const CityHome = ({loginUser,loginInfo}) => {
+
+    const location = useLocation()
 
     const {cityName} = useParams()
     const [myCityName,setMyCityName] = useState('')
@@ -52,6 +54,13 @@ const CityHome = ({loginUser,loginInfo}) => {
     },[cityName])
 
     useEffect(()=>{
+        if(location.state?.message){
+            onShow(location.state.message)
+            window.history.replaceState({},'')
+        }
+    },[location.state])
+    
+    useEffect(()=>{
         const fetchCity = async()=>{
             const res = await fetch('/api/upgrade')
             const data = await res.json()
@@ -74,14 +83,14 @@ const CityHome = ({loginUser,loginInfo}) => {
         await articleService.addArticle(user,image)
         await onData()
 
-        onShow('글 추가')
+        onShow('글이 등록됐습니다.')
         setIsAddShow(false)
     }
     const onDel =async(item)=>{
         
         await articleService.deleteArticle(item._id)
         await onData()
-        onShow('글 삭제')
+        onShow('글이 성공적으로 삭제됐습니다.')
     }
     const onEdit=(item)=>{
         navigate(`/city/${cityName}/article/edit/${item._id}`)
