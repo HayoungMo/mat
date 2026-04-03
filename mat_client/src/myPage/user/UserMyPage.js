@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import UserMyPageItem from './UserMyPageItem';
 import UserMyPageList from './UserMyPageList';
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import UserMyPageProfile from './UserMyPageProfile';
 import reviewService from '../../services/reviewService';
 import profileService from '../../services/profileService';
@@ -16,174 +16,190 @@ import { Routes, Route } from 'react-router-dom';
 import LevelupStart from './levelup/LevelupStart';
 import LevelupAdd from './levelup/LevelupAdd';
 import LevelupPending from './levelup/LevelupPending';
-import LevelupRejected from './levelup/LevelupRejected'
+import LevelupRejected from './levelup/LevelupRejected';
 
 const UserMyPage = ({loginUser, className, ugUsers}) => {
 
-     const navigate = useNavigate()
-     const request = ugUsers?.[0]
-     const [users,setUsers] = useState([])
-     const [profile,setProfile] = useState({})
-     const [isEdit,setIsEdit] = useState(false)
-     
-     // ★ 커스텀 모달 상태 추가
-     const [showDelModal, setShowDelModal] = useState(false) 
-
-     const [current,setCurrent] =useState({})
-     const [bookmark,setBookmark] = useState([])
-     const [selectedPlace, setSelectedPlace] = useState(null)
-     const [toast,setToast] = useState(null)
-
-     console.log('loginUser 확인',loginUser)
-     console.log(selectedPlace);
+    const navigate = useNavigate();
+    const request = ugUsers?.[0];
+    const [users, setUsers] = useState([]);
+    const [profile, setProfile] = useState({});
+    const [isEdit, setIsEdit] = useState(false);
     
+    // 탈퇴 커스텀 모달 상태
+    const [showDelModal, setShowDelModal] = useState(false);
 
-        useEffect(() => {
-            onData()
-             onProfile()
-         },[])
-                 
-        useEffect(()=>{
-            if(!request || !loginUser) return
+    const [current, setCurrent] = useState({});
+    const [bookmark, setBookmark] = useState([]);
+    const [selectedPlace, setSelectedPlace] = useState(null);
+    const [toast, setToast] = useState(null);
 
-            const {status} = request
-            if(status !== 'approved' && status !=='rejected') return
+    // ★ 토스트 알림 통합 제어 함수 (alert 대체용)
+    const showToast = (message, type = 'approved') => {
+        setToast({ message, type });
+        setTimeout(() => setToast(null), 3000);
+    };
+
+    useEffect(() => {
+        onData();
+        onProfile();
+        onBookmark(); // ★ 누락되었던 북마크 호출 복구
+    }, []);
             
-            const notifyKey = `notified_${loginUser}_${status}`
-            if(localStorage.getItem(notifyKey)) return
-            
-            localStorage.setItem(notifyKey, 'true')
-            
-            if(status === 'rejected'){
-                setToast({message:'등업 신청이 거절됐습니다.',type:'rejected'})
-                const timer = setTimeout(()=>setToast(null),5000)
-                return ()=> clearTimeout(timer)
-            }
+    useEffect(() => {
+        if(!request || !loginUser) return;
 
-            if(status === 'approved'){
-                localStorage.setItem('pendingToast', '등업 신청이 승인됐습니다.')
-                localStorage.setItem('pendingToastType','approved')
-            }
-            
-        },[request,loginUser])
+        const { status } = request;
+        if(status !== 'approved' && status !== 'rejected') return;
+        
+        const notifyKey = `notified_${loginUser}_${status}`;
+        if(localStorage.getItem(notifyKey)) return;
+        
+        localStorage.setItem(notifyKey, 'true');
+        
+        if(status === 'rejected'){
+            showToast('등업 신청이 거절됐습니다.', 'rejected');
+        }
 
-         const onEdit = (user) => {
-            console.log('onEdit 받은 데이터:',user)
-            setCurrent(user)
-            setIsEdit(true)
-         }
-
-         //업데이트 수정(04.01)
-        const onUpdate= async (user) =>{
-            console.log('onUpdate 호출됨: ',profile)
-
-            if(!profile.currentPassword){
-                alert('비밀번호를 입력해주세요!')
-                return
-            }
-
-            try{
-
-                await axios.put('/api/profile',{
-                    id: profile._id,
-                    currentPassword: profile.currentPassword, 
-                    newPassword: profile.password,            
-                    tel: profile.tel,
-                    email: profile.email
-                })
-
-                setIsEdit(false);
-                setProfile(prev => ({ ...prev, currentPassword: '' })); 
-                onProfile(); 
-                alert('프로필 수정 완료.');
-
-            }catch(error){
-                console.error('비밀번호 검증 or update 오류', error)
-                
-                if (error.response && error.response.status === 401) {
-                    alert('현재 비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
-                } else {
-                    alert('비밀번호가 다릅니다.');
-                }
-            }
+        if(status === 'approved'){
+            localStorage.setItem('pendingToast', '등업 신청이 승인됐습니다.');
+            localStorage.setItem('pendingToastType','approved');
         }
         
-        // ★ 탈퇴 버튼 클릭 시 모달 열기
-        const onUserDelClick = () => {
-            setShowDelModal(true);
-        };
+    }, [request, loginUser]);
 
-        // ★ 모달에서 '탈퇴하기' 눌렀을 때 실제 실행되는 로직
-        const confirmUserDel = async () =>{
-            try{
-                await fetch('/api/upgrade', {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: loginUser })
-                 });
+    const onEdit = (user) => {
+        setCurrent(user);
+        setIsEdit(true);
+    };
 
-                await profileService.deleteProfile(profile._id)
-                localStorage.removeItem('userId')
-                localStorage.removeItem('user')
-                localStorage.removeItem(`notified_${loginUser}_approved`)
-                localStorage.removeItem(`notified_${loginUser}_rejected`)
+    // 업데이트 수정
+    const onUpdate = async (user) => {
+        if(!profile.currentPassword){
+            showToast('비밀번호를 입력해주세요!', 'rejected'); // alert 교체
+            return;
+        }
 
-                alert('탈퇴가 완료 되었습니다.')
-                window.location.href = '/' //메인으로 이동 + 새로고침
-            }catch (err) {
-                console.log('탈퇴 오류', err)
-                alert('탈퇴 중 오류가 발생했습니다.')
-            } finally {
-                setShowDelModal(false); // 무조건 모달 닫기
+        try {
+            await axios.put('/api/profile', {
+                id: profile._id,
+                currentPassword: profile.currentPassword, 
+                newPassword: profile.password,            
+                tel: profile.tel,
+                email: profile.email
+            });
+
+            setIsEdit(false);
+            setProfile(prev => ({ ...prev, currentPassword: '' })); 
+            onProfile(); 
+            showToast('프로필 수정 완료.', 'approved'); // alert 교체
+
+        } catch(error) {
+            console.error('비밀번호 검증 or update 오류', error);
+            
+            if (error.response && error.response.status === 401) {
+                showToast('현재 비밀번호가 일치하지 않습니다. 다시 확인해주세요.', 'rejected'); // alert 교체
+            } else {
+                showToast('비밀번호가 다릅니다.', 'rejected'); // alert 교체
             }
         }
+    };
+    
+    // 탈퇴 버튼 클릭 시 모달 열기
+    const onUserDelClick = () => {
+        setShowDelModal(true);
+    };
+
+    // 모달에서 '탈퇴하기' 눌렀을 때 실행되는 로직
+    const confirmUserDel = async () => {
+        try {
+            await fetch('/api/upgrade', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: loginUser })
+            });
+
+            await profileService.deleteProfile(profile._id);
+            localStorage.removeItem('userId');
+            localStorage.removeItem('user');
+            localStorage.removeItem(`notified_${loginUser}_approved`);
+            localStorage.removeItem(`notified_${loginUser}_rejected`);
+
+            showToast('탈퇴가 완료 되었습니다.', 'approved'); // alert 교체
+            
+            // 토스트를 읽을 수 있도록 1.5초 대기 후 메인으로 이동
+            setTimeout(() => {
+                window.location.href = '/'; 
+            }, 1500);
+
+        } catch (err) {
+            console.log('탈퇴 오류', err);
+            showToast('탈퇴 중 오류가 발생했습니다.', 'rejected'); // alert 교체
+        } finally {
+            setShowDelModal(false);
+        }
+    };
 
     const onData = async () => {
         try {
-            const res = await reviewService.getReview(loginUser)
-            setUsers(res) 
+            const res = await reviewService.getReview(loginUser);
+            setUsers(res); 
         } catch(err) {
-            console.error(err)
-            setUsers([])
-            }
+            console.error(err);
+            setUsers([]);
         }
+    };
 
-        const onDel=async (item) => {
-        await reviewService.deleteReview(item._id)
-        onData()
-        alert('리뷰가 삭제되었습니다.')
-    }
+    const onDel = async (item) => {
+        await reviewService.deleteReview(item._id);
+        onData();
+        showToast('리뷰가 삭제되었습니다.', 'approved'); // alert 교체
+    };
 
-        const onProfile = async () => {
-           try {
-        const res = await profileService.getProfile(loginUser)
-        if(res){
-            setProfile(res)
-        }
-    } catch(err) {
-        console.error(err)
-        setProfile({})
+    const onProfile = async () => {
+        try {
+            const res = await profileService.getProfile(loginUser);
+            if(res){
+                setProfile(res);
             }
+        } catch(err) {
+            console.error(err);
+            setProfile({});
         }
+    };
+
+    // ★ 누락되었던 북마크 데이터 로드 함수 복구
+    const onBookmark = async () => {
+        try {
+            const res = await bookmarkService.getBookmarks(loginUser);
+            if(res) {
+                setBookmark(res);
+            }
+        } catch(err) {
+            console.error(err);
+            setBookmark([]);
+        }
+    };
 
     const changeInput = (evt) => {
-        //이메일에 한글 입력 방지
+        // 이메일에 한글 입력 방지
         const { value, name } = evt.target;
         if(name === 'email' && /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(value)){
-            alert('이메일에 한글은 입력할 수 없습니다');
+            showToast('이메일에 한글은 입력할 수 없습니다', 'rejected'); // alert 교체
             return;
         }
-        setProfile({ ...profile, [name]: value })
+        setProfile({ ...profile, [name]: value });
     };
 
     return (
         <div className='mypage-wrapper'>
          
+         {/* 우측 상단 토스트 알림창 */}
          {
             toast &&(
                 <div className={`toast-notification toast-${toast.type}`}>
                     <span>{toast.message}</span>
-                    <button onClick={()=>setToast(null)}>✕</button>
+                    <button onClick={() => setToast(null)}>✕</button>
                 </div>
             )
          }
@@ -205,16 +221,16 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
         
        
         {request?.status === 'pending' ? (
-            <button onClick={()=> navigate('/mypage/levelup-check')}>등업 확인하기</button>
+            <button onClick={() => navigate('/mypage/levelup-check')}>등업 확인하기</button>
         ) : request?.status === 'rejected' ? (
-            <button onClick={()=> navigate('/mypage/levelup-check')}>등업 확인하기</button>
+            <button onClick={() => navigate('/mypage/levelup-check')}>등업 확인하기</button>
         ) : request?.status === 'approved' ? (
             <span>등업 완료!</span>
         ) : (
             <button className='btn btn2' onClick={() => navigate('/mypage/levelup-check')}>등업 신청</button>
         )}
          
-         {/* ★ 기존 onUserDel 대신 모달 여는 onUserDelClick으로 변경 */}
+         {/* 커스텀 모달을 여는 탈퇴 버튼 */}
          <button className='btn btn3' onClick={onUserDelClick}>회원 탈퇴</button>
 
          </div>
@@ -254,7 +270,7 @@ const UserMyPage = ({loginUser, className, ugUsers}) => {
             </main>
            </div>
 
-           {/* ★ 커스텀 회원 탈퇴 모달 UI */}
+           {/* 커스텀 회원 탈퇴 모달 UI */}
            {showDelModal && (
                 <div className="custom-modal-overlay">
                     <div className="custom-modal">
