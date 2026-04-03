@@ -150,8 +150,6 @@ const externalKeyword = useMemo(() =>
   "Yongsan-gu":"용산구",
   };
 
-
-
  return (
 
 
@@ -247,23 +245,25 @@ const externalKeyword = useMemo(() =>
         </div>
 
         <div className="featuredGrid">
-          {FEATURED_ITEMS.map((item) => (
+          {list
+          .filter(item => item.place_name)
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 4)
+          .map((item) => (
             
             <div
               key={item.id}
               className={`featuredCard${item.large ? ' large' : ''}`}
-              onClick={() =>navigate('/city')}
+              onClick={() =>moveArticle(item)}
             >
               <div className="featuredCardBody">
-                <div className="featuredCardTag">{item.tag}</div>
-                <div className="featuredCardTitle">{item.title}</div>
-                {item.desc && (
-                  <div className="featuredCardDesc">{item.desc}</div>
-                )}
+                <div className="featuredCardTag">{item.category_name}</div>
+                <div className="featuredCardTitle">{item.place_name}</div>
+                <div className="featuredCardDesc">{item.address_name}</div>
                 <div className="featuredCardMeta">
-                  <span>{item.area}</span>
+                  <span>{item.address_name}</span>
                   <span className="dot" />
-                  <span>{item.category}</span>
+                  <span>{item.category_name}</span>
                 </div>
               </div>
             </div>
