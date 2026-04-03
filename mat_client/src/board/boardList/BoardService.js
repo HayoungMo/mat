@@ -37,9 +37,14 @@ const BoardService = {
         return await axiosWithCreds.delete(`${API_URL}/${id}`);
     },
 
-    updateBookmark: async (id, userId) => {
-        return await axiosWithCreds.patch(`${API_URL}/${id}/bookmark`, { userId });
-    },
+        // BoardService.js 수정 제안
+        updateBookmark: async (id, userId) => {
+            if (!id || !userId) {
+                console.error("ID 또는 userId가 누락되었습니다.", { id, userId });
+                throw new Error("필수 파라미터 누락");
+            }
+            return await axiosWithCreds.patch(`${API_URL}/${id}/bookmark`, { userId });
+        },
 
     updateVote: async (id, index) => {
         return await axiosWithCreds.patch(`${API_URL}/${id}/vote`, { index });

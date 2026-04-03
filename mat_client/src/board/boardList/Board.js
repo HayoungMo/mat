@@ -75,9 +75,14 @@ const Board = ({ loginUser }) => {
                     setSelectedCity={setSelectedCity}
                     loginUser={loginUser}
                     onBookmark={async (id) => {
-                        await BoardService.updateBookmark(id, loginUser);
+                    // loginUser가 존재할 때만 ID를 추출해서 전달
+                    if (loginUser && loginUser.id) { 
+                        await BoardService.updateBookmark(id, loginUser.id); 
                         fetchList();
-                    }}
+                    } else {
+                        alert("로그인이 필요한 기능입니다.");
+                    }
+                }}
                 />
             )}
 
