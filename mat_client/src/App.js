@@ -43,14 +43,13 @@ function App() {
 
   // 헤더용 로그아웃 함수
   const onLogout = () => {
-    const ok = window.confirm('정말 로그아웃 하시겠습니까?');
-    if (!ok) return;
     localStorage.removeItem('userId');
     localStorage.removeItem('user');
     setLoginUser(null);
     setLoginInfo(null);
     setToast({ msg: '로그아웃 되었습니다', type: 'info' });
     setTimeout(() => setToast(null), 3000);
+    window.location.href = '/';
   };
 
   return (

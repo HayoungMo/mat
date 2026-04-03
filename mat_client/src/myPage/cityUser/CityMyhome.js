@@ -4,11 +4,14 @@ import articleService from '../../services/articleServices';
 import CityAdd from '../../cityHome/CityAdd';
 import axios from 'axios';
 import './CityMyhome.css'
+import CityMessage from '../../cityHome/CityMessage';
 
 const CityMyhome = ({ loginUser, loginInfo, isEditingProfile, setIsEditingProfile }) => {
 
     const [articles, setArticles] = useState([])
     const [cityName, setCityName] = useState('')
+    const [confirmModal, setConfirmModal] = useState({show: false, item:null})
+
     const navigate = useNavigate()
 
     const [currentPage, setCurrentPage] = useState(1)
@@ -18,6 +21,10 @@ const CityMyhome = ({ loginUser, loginInfo, isEditingProfile, setIsEditingProfil
 
     // 자물쇠 상태 (비밀번호를 풀었는가?)
     const [isVerified, setIsVerified] = useState(false);
+
+    // 글 추가,수정,삭제 상태를 알려주는 message창을 소환하기 위한 내용
+    const [msg,setMsg] = useState('')
+    const [isMsg,setIsMsg] = useState(false)
 
     const [profileForm, setProfileForm] = useState({
         currentPassword: '',
@@ -125,15 +132,23 @@ const CityMyhome = ({ loginUser, loginInfo, isEditingProfile, setIsEditingProfil
         const res = await articleService.getArticle()
         setArticles(res.filter(item => item.userId === loginUser))
         setIsShow(false)
+
+        //여기에 메세지 추가
+        setMsg('글이 등록됐습니다.')
+        setIsMsg(true)
     }
 
-    const onDel = async (item) => {
-        if (!window.confirm('삭제하시겠습니까?')) return
-        await articleService.deleteArticle(item._id)
-        setArticles(articles.filter(a => a._id !== item._id))
-        alert('삭제 완료!')
+    const onDel = (item) => {
+        setConfirmModal({show: true, item})
     }
 
+    const handleConfirmDel = async()=>{
+        await articleService.deleteArticle(confirmModal.item._id)
+        setArticles(articles.filter(a=>a._id!==confirmModal.item._id))
+        setConfirmModal({ show: false, item: null })
+        setMsg('글이 삭제됐습니다.')
+        setIsMsg(true)
+    }
     const onEdit = (item) => {
         navigate(`/city/${item.cityName}/article/edit/${item._id}`)
     }
@@ -230,6 +245,29 @@ const CityMyhome = ({ loginUser, loginInfo, isEditingProfile, setIsEditingProfil
             <CityAdd onAdd={onAdd} loginUser={loginUser} cityNameProp={cityName}/>
             )}
 
+            {confirmModal.show && (
+                <div style={{
+                    position: 'fixed', inset: 0,
+                    backgroundColor: 'rgba(0,0,0,0.4)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    zIndex: 9999
+                }}>
+                    <div style={{
+                        background: '#fff', borderRadius: '12px',
+                        padding: '30px', textAlign: 'center',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.2)', minWidth: '280px'
+                    }}>
+                        <p style={{ fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>
+                            정말 삭제하시겠습니까?
+                        </p>
+                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                            <button className="btn-mini btn-del" onClick={handleConfirmDel}>삭제</button>
+                            <button className="btn-mini btn-edit" onClick={() => setConfirmModal({ show: false, item: null })}>취소</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* 내 글 목록 영역 */}
             <div className="article-list-section" style={{ marginTop: '40px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -271,6 +309,8 @@ const CityMyhome = ({ loginUser, loginInfo, isEditingProfile, setIsEditingProfil
                     )}
                 </div>
 
+                {isMsg && <CityMessage msg={msg} isShow={isMsg} setIsShow={setIsMsg}/>}
+                
                 {totalPages > 1 && (
                     <div className="pagination">
                         {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (

@@ -20,7 +20,7 @@ const [inputText, setInputText] = useState(urlKeyword);
 const [list, setList] = useState([]);
 //페이징 처리
 const [currentPage, setCurrentPage] = useState(1);
-const itemsPerPage = 5; // 한 페이지에 5개씩
+const itemsPerPage = 6; // 한 페이지에 5개씩
 
 //전체 데이터에서 제목/본문 결과를 미리 분류해서 합친다.
 const allTitleMatches = list.filter(item =>
@@ -128,20 +128,33 @@ return (
 
                     {/* 페이징 버튼 UI */}
                     {totalPages > 1 && (
-                        <div className="paging-wrap">
-                            <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>이전</button>
-                            {Array.from({ length: totalPages }, (_, i) => (
-                                <button 
-                                    key={i + 1} 
-                                    onClick={() => setCurrentPage(i + 1)}
-                                    className={currentPage === i + 1 ? 'active' : ''}
-                                >
-                                    {i + 1}
-                                </button>
-                            ))}
-                            <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>다음</button>
-                        </div>
-                    )}
+                            <div className="paging-wrap">
+                                <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>이전</button>
+
+                                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                    .filter(page => {
+                                        // 1. 한 번에 보여줄 버튼 개수 (5개)
+                                        const pageSize = 5;
+                                        // 2. 현재 페이지가 속한 그룹의 시작 페이지 계산
+                                        // (예: 1~5p -> 1, 6~10p -> 6)
+                                        const startPage = Math.floor((currentPage - 1) / pageSize) * pageSize + 1;
+                                        // 3. 시작 페이지부터 pageSize만큼만 노출
+                                        return page >= startPage && page <= startPage + pageSize - 1;
+                                    })
+                                    .map(page => (
+                                        <button
+                                            key={page}
+                                            onClick={() => setCurrentPage(page)}
+                                            className={currentPage === page ? 'active' : ''}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))
+                                }
+
+                                <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>다음</button>
+                            </div>
+                        )}
                 </>
             ) : (
                 urlKeyword && <p style={{marginTop: '20px'}}>검색 결과가 없습니다.</p>

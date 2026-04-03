@@ -327,7 +327,7 @@ body {
 /* 카드 그리드 — 잡지 레이아웃 */
 .featuredGrid {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 18px;
 }
 
